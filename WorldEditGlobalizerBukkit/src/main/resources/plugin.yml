@@ -1,0 +1,5 @@
+name: WorldEditGlobalizerBukkit
+version: {VERSION}
+author: IllgiLP
+
+main: me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit

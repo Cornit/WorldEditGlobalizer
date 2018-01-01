@@ -1,0 +1,5 @@
+name: WorldEditGlobalizerBungee
+version: {VERSION}
+author: IllgiLP
+
+main: me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee
