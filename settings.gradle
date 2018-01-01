@@ -1,0 +1,4 @@
+rootProject.name = 'WorldEditGlobalizer'
+include 'WorldEditGlobalizerBukkit'
+include 'WorldEditGlobalizerBungee'
+

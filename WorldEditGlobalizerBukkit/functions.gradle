@@ -1,0 +1,19 @@
+
+
+def depend(dependency, export){
+    if (export) {
+        project.dependencies.add("extraLibs", dependency)
+        project.configurations.compile.extendsFrom(configurations.extraLibs)
+    }else{
+        project.dependencies.add("compile", dependency)
+    }
+}
+def repo(repo){
+    project.repositories.maven{
+        url repo
+    }
+}
+ext{
+    depend = this.&depend
+    repo = this.&repo
+}

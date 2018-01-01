@@ -1,0 +1,8 @@
+
+
+depend name: 'spigot',false
+depend name: 'worldedit',false
+
+
+
+
