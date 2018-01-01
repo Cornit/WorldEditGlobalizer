@@ -49,6 +49,7 @@ public class PluginMessageListener implements Listener {
             }else {
                 WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player,packetid,data.readArray(), (ServerConnection) e.getSender());
             }
+            e.setCancelled(true);
         }
     }
 

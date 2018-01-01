@@ -42,7 +42,7 @@ public class WEGSubCommands {
             desc = "shows the help list"
     )
     @Require(
-            value = "worldeditglobalizer.command.web"
+            value = "worldeditglobalizer.command.weg"
     )
     public void help(CommandSender sender){
         sender.sendMessage(ComponentUtils.addText(null,MessageManager.getInstance().getPrefix()+"§7Help: "));
