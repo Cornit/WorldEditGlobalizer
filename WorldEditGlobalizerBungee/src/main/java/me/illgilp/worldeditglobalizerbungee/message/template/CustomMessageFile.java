@@ -121,7 +121,7 @@ public class CustomMessageFile implements MessageFile {
 
         defaults.put("command.console","&cOnly players can use this command!");
 
-        defaults.put("timedOut", "&cThe current operation takes longer than {0} milliseconds and will be canceled!");
+        defaults.put("timedOut", "&cThe current operation takes longer than {0} milliseconds and will be cancelled!");
 
         defaults.put("command.start.reload","&7All configs and all message files will be reloaded...");
         defaults.put("command.finish.reload","&aAll configs and all message files has been reloaded!");
@@ -133,6 +133,19 @@ public class CustomMessageFile implements MessageFile {
                                            "&6&l>> &r&aUUID &7= &f{2}\n" +
                                            "&6&l>> &r&aUpload date &7= &f{3}\n"+
                                            "&6&l>> &r&aClipboard size &7= &f{4}");
+
+        defaults.put("command.stats.format","&3Stats:\n" +
+                "&6&l>> &r&aStored clipboards &7= &f{0}\n" +
+                "&6&l>> &r&aTotal space usage &7= &f{1}\n" +
+                "&6&l>> &r&aAverage space usage &7= &f{2}");
+
+        defaults.put("command.schematic.list", "&7Available schematics [{0}/{1}]:\n&2{2}");
+        defaults.put("command.schematic.save", "&aYour clipboard has been saved as schematic!");
+        defaults.put("command.schematic.delete", "&aThe schematic file has been deleted!");
+        defaults.put("schematic.notFound", "&cA schematic file with this name doesn't exists!");
+        defaults.put("command.schematic.load.success", "&aThe schematic file has been loaded to your clipboard! After the download has finished you can paste it with '//paste'!");
+
+        defaults.put("invalide.number", "&cPlease enter a valid number!");
 
 
 

@@ -1,6 +1,7 @@
 package me.illgilp.worldeditglobalizerbungee;
 
 import me.illgilp.worldeditglobalizerbungee.commands.WEGCommand;
+import me.illgilp.worldeditglobalizerbungee.commands.WEGSchematicCommands;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGSubCommands;
 import me.illgilp.worldeditglobalizerbungee.config.MainConfig;
 import me.illgilp.worldeditglobalizerbungee.listener.PacketReceivedListener;
@@ -82,6 +83,7 @@ public class WorldEditGlobalizerBungee extends Plugin {
 
         getProxy().getPluginManager().registerCommand(this, new WEGCommand());
         CommandManager.getInstance().addCommand(new WEGSubCommands());
+        CommandManager.getInstance().addSubCommand("schematic",new WEGSchematicCommands());
 
         if(!getMainConfig().isKeepClipboard()){
             ClipboardManager.getInstance().removeAll();

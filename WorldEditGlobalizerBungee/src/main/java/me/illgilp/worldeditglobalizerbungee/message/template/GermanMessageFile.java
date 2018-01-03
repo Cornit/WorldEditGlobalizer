@@ -131,6 +131,19 @@ public class GermanMessageFile implements MessageFile {
                 "&6&l>> &r&aUpload Datum &7= &f{3}\n"+
                 "&6&l>> &r&aZwischenablagen Größe &7= &f{4}");
 
+        defaults.put("command.stats.format","&3Statistiken:\n" +
+                "&6&l>> &r&aGespeicherte Zwischenablagen &7= &f{0}\n" +
+                "&6&l>> &r&aTotaler Speicherverbrauch &7= &f{1}\n" +
+                "&6&l>> &r&aDurchschnittlicher Speicherverbrauch &7= &f{2}");
+
+        defaults.put("command.schematic.list", "&7Verfügbare Schematics [{0}/{1}]:\n&2{2}");
+        defaults.put("command.schematic.save", "&aDeine Zwischenablage wurde in eine Schematic-Datei gespeichert!");
+        defaults.put("command.schematic.delete", "&aDie Schematic-Datei wurde gelöscht!");
+        defaults.put("schematic.notFound", "&cEine Schematic-Datei mit diesem Namen existiert nicht!");
+        defaults.put("command.schematic.load.success", "&aDie Schematic-Datei wurde in deine Zwischenablage geladen! Wenn der Download fertig ist, kannst du die Schematic mit '//paste' einfügen!");
+
+        defaults.put("invalide.number", "&cBitte gib eine gültige Nummer an!");
+
 
     }
 }

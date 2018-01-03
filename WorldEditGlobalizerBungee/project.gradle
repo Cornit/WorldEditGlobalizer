@@ -2,6 +2,7 @@ repo 'http://maven.sk89q.com/repo/'
 
 depend 'org.apache.commons:commons-lang3:3.6',true
 depend 'com.sk89q.intake:intake:4.2-SNAPSHOT',true
+depend 'org.apache.commons:commons-io:1.3.2',true
 
 depend name: 'BungeeCord',false
 

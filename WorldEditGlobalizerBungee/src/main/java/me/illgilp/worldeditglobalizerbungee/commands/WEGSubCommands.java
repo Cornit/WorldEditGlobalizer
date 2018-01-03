@@ -4,6 +4,7 @@ import com.sk89q.intake.Command;
 import com.sk89q.intake.CommandMapping;
 import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
+import com.sk89q.intake.parametric.annotation.Text;
 import jline.internal.Nullable;
 import me.illgilp.worldeditglobalizerbungee.Callback;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
@@ -28,7 +29,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class WEGSubCommands {
@@ -222,5 +225,50 @@ public class WEGSubCommands {
         }
     }
 
+
+    @Command(
+            aliases = {"stats","statistics"},
+            min = 0,
+            max = 0,
+            help = "stats",
+            desc = "shows statistics about the plugin"
+    )
+    @Require(
+            value = "worldeditglobalizer.command.stats"
+    )
+    public void stats(CommandSender sender){
+        List<Long> sizes = new ArrayList<>();
+        long full = 0;
+        for(UUID uuid : ClipboardManager.getInstance().getSavedClipboards()){
+            long size = ClipboardManager.getInstance().getClipboardFile(uuid).length();
+            sizes.add(size);
+            full+=size;
+        }
+
+        long average = 0;
+        try {
+            average = full / (long) sizes.size();
+        }catch (ArithmeticException e){
+
+        }
+
+
+        MessageManager.sendMessage(sender,"command.stats.format",sizes.size(),StringUtils.humanReadableByteCount(full,true),StringUtils.humanReadableByteCount(average,true));
+    }
+
+
+    @Command(
+            aliases = {"schematic"},
+            min = 0,
+            max = -1,
+            help = "schematic [subcommand]",
+            desc = "schematic system"
+    )
+    @Require(
+            value = "worldeditglobalizer.command.schematic"
+    )
+    public void schematic(CommandSender sender, @Optional @Text String args){
+        CommandManager.getInstance().handleSubCommand("weg schematic","schematic",args,sender);
+    }
 
 }

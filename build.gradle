@@ -1,7 +1,7 @@
 apply from: 'functions.gradle'
 
 group 'me.illgilp.worldeditglobalizer'
-version '1.0'
+version '1.2.1'
 
 apply plugin: 'java'
 
@@ -47,7 +47,11 @@ dependencies {
 }
 
 
+
+
 jar {
+	evaluationDependsOnChildren();
+
 	from {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
 	}

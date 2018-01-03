@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ClipboardManager {
@@ -85,6 +87,27 @@ public class ClipboardManager {
         for(File file : folder.listFiles()){
             file.delete();
         }
+    }
+
+    public List<UUID> getSavedClipboards(){
+        List<UUID> clipboards = new ArrayList<>();
+        checkFolder();
+        if(folder == null)return clipboards;
+        if(!folder.exists())return clipboards;
+        for(File file : folder.listFiles()){
+            if(file.isFile()){
+                if(file.getName().endsWith(".clipboard")){
+                    UUID uuid = null;
+                    try {
+                        uuid = UUID.fromString(file.getName().replace(".clipboard",""));
+                    }catch (Exception e){
+                        continue;
+                    }
+                    clipboards.add(uuid);
+                }
+            }
+        }
+        return clipboards;
     }
 
     public File getClipboardFile(UUID uuid){
