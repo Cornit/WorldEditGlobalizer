@@ -11,11 +11,7 @@ import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PacketManager {

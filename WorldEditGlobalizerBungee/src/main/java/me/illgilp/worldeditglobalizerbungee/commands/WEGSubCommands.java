@@ -131,13 +131,13 @@ public class WEGSubCommands {
                             }
                         }
                     }else{
-
                     }
                 }
             };
             PacketSender.sendPacket(player,req);
             callback.setUserData(player);
             MessageManager.sendMessage(player,"clipboard.start.uploading");
+            callback.start();
         }else {
             MessageManager.sendMessage(sender,"command.console");
         }

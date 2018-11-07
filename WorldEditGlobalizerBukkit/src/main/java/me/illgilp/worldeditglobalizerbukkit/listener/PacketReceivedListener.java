@@ -8,29 +8,25 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.world.registry.LegacyWorldData;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
-import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGBlockArrayClipboard;
-import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGClipboardHolder;
-import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSchematicReader;
-import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSchematicWriter;
-import me.illgilp.worldeditglobalizerbukkit.events.PacketReceivedEvent;
-import me.illgilp.worldeditglobalizerbukkit.manager.ConfigManager;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.*;
 import me.illgilp.worldeditglobalizerbukkit.manager.MessageManager;
-import me.illgilp.worldeditglobalizerbukkit.manager.PermissionManager;
-import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.*;
 import me.illgilp.worldeditglobalizerbukkit.runnables.ClipboardRunnable;
+import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
+import me.illgilp.worldeditglobalizerbukkit.events.PacketReceivedEvent;
+import me.illgilp.worldeditglobalizerbukkit.manager.ConfigManager;
+import me.illgilp.worldeditglobalizerbukkit.manager.PermissionManager;
+import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
 import me.illgilp.worldeditglobalizerbukkit.runnables.PacketRunnable;
 import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
-import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class PacketReceivedListener implements Listener {
 
@@ -43,11 +39,25 @@ public class PacketReceivedListener implements Listener {
 
                     ClipboardSendPacket packet = (ClipboardSendPacket) getPacket();
                     try {
-
-                        WEGSchematicReader reader = new WEGSchematicReader(new NBTInputStream(new ByteArrayInputStream(packet.getData())));
-                        Clipboard clipboard = reader.read(LegacyWorldData.getInstance());
+                        InputStream inputStream = new ByteArrayInputStream(packet.getData());
+                        Clipboard clipboard = null;
+                        if(WEGSpongeSchematicReader.isFormat(inputStream)){
+                            inputStream = new ByteArrayInputStream(packet.getData());
+                            WEGSpongeSchematicReader reader = new WEGSpongeSchematicReader(new NBTInputStream(inputStream));
+                            clipboard = reader.read();
+                        }
+                        inputStream = new ByteArrayInputStream(packet.getData());
+                        if(clipboard == null && WEGMcEditSchematicReader.isFormat(inputStream)){
+                            inputStream = new ByteArrayInputStream(packet.getData());
+                            WEGMcEditSchematicReader reader = new WEGMcEditSchematicReader(new NBTInputStream(inputStream));
+                            clipboard = reader.read();
+                        }
+                        if(clipboard == null){
+                            MessageManager.sendMessage(getPlayer(),"clipboard.unknownFormat");
+                            return;
+                        }
                         ((WEGBlockArrayClipboard)clipboard).setHashCode(packet.getClipboardhash());
-                        LocalSession session = WorldEdit.getInstance().getSessionManager().get(new BukkitPlayer(WorldEditGlobalizerBukkit.getInstance().getWorldEditPlugin(), WorldEdit.getInstance().getServer(),getPlayer()));
+                        LocalSession session = WorldEdit.getInstance().getSessionManager().get(new BukkitPlayer(WorldEditGlobalizerBukkit.getInstance().getWorldEditPlugin(),getPlayer()));
                         if(session == null){
                             MessageManager.sendMessage(getPlayer(),"clipboard.error.downloading");
                             return;
@@ -87,8 +97,8 @@ public class PacketReceivedListener implements Listener {
                             if (holder != null) {
                                 PacketDataSerializer serializer = new PacketDataSerializer();
                                 NBTOutputStream out = new NBTOutputStream(serializer.getBufOut());
-                                WEGSchematicWriter writer = new WEGSchematicWriter(out);
-                                writer.write(holder.getClipboard(), holder.getWorldData());
+                                WEGSpongeSchematicWriter writer = new WEGSpongeSchematicWriter(out);
+                                writer.write(holder.getClipboard());
                                 writer.close();
 
 

@@ -3,7 +3,6 @@ package me.illgilp.worldeditglobalizerbukkit.network.packets;
 import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class MessageRequestPacket extends Packet{

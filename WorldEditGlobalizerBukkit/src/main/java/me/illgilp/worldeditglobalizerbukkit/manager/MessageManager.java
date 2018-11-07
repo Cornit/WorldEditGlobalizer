@@ -1,10 +1,8 @@
 package me.illgilp.worldeditglobalizerbukkit.manager;
 
+import me.illgilp.worldeditglobalizerbukkit.network.packets.MessageResponsePacket;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.MessageRequestPacket;
-import me.illgilp.worldeditglobalizerbukkit.network.packets.MessageResponsePacket;
-import me.illgilp.worldeditglobalizerbukkit.network.packets.PermissionCheckRequestPacket;
-import me.illgilp.worldeditglobalizerbukkit.network.packets.PermissionCheckResponsePacket;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

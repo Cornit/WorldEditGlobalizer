@@ -1,16 +1,8 @@
-package me.illgilp.worldeditglobalizerbukkit.clipboard;
+package me.illgilp.worldeditglobalizersponge.clipboard;
 
 
 import com.google.common.base.Preconditions;
-import com.sk89q.jnbt.ByteArrayTag;
-import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.IntTag;
-import com.sk89q.jnbt.ListTag;
-import com.sk89q.jnbt.NBTInputStream;
-import com.sk89q.jnbt.NamedTag;
-import com.sk89q.jnbt.ShortTag;
-import com.sk89q.jnbt.StringTag;
-import com.sk89q.jnbt.Tag;
+import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEditException;
@@ -23,6 +15,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.registry.WorldData;
 import com.sk89q.worldedit.world.storage.NBTConversions;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,7 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nullable;
 
 public class WEGSchematicReader implements ClipboardReader {
     private static final Logger log = Logger.getLogger(com.sk89q.worldedit.extent.clipboard.io.SchematicReader.class.getCanonicalName());
@@ -170,9 +163,9 @@ public class WEGSchematicReader implements ClipboardReader {
                         index = 0;
                         Map<String, Tag> values = new HashMap();
 
-                        Map.Entry entry;
+                        Entry entry;
                         for(Iterator var24 = t.getValue().entrySet().iterator(); var24.hasNext(); values.put(entry.getKey()+"", (Tag) entry.getValue())) {
-                            entry = (Map.Entry)var24.next();
+                            entry = (Entry)var24.next();
                             if (((String)entry.getKey()).equals("x")) {
                                 if (entry.getValue() instanceof IntTag) {
                                     y = ((IntTag)entry.getValue()).getValue().intValue();

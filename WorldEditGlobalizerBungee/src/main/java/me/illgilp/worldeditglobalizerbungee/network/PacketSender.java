@@ -49,7 +49,7 @@ public class PacketSender {
                         ser.writeInt(Math.toIntExact(pos));
                         ser.writeArray(datas);
                         if(getPlayer().isConnected()) {
-                            getPlayer().getServer().sendData("WorldEditGlobalizer", ser.toByteArray());
+                            getPlayer().getServer().sendData("worldeditglobalizer:connection", ser.toByteArray());
                         }
 
                         pos++;
@@ -63,7 +63,7 @@ public class PacketSender {
                         if(getPlayer() != null) {
                             if (getPlayer().getServer() != null) {
                                 if (ser != null) {
-                                    getPlayer().getServer().sendData("WorldEditGlobalizer", ser.toByteArray());
+                                    getPlayer().getServer().sendData("worldeditglobalizer:connection", ser.toByteArray());
                                 }
                             }
                         }

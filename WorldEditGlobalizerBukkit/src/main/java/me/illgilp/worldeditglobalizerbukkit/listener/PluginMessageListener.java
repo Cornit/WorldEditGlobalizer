@@ -2,7 +2,6 @@ package me.illgilp.worldeditglobalizerbukkit.listener;
 
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
-import org.bukkit.craftbukkit.v1_12_R1.generator.SkyLandsChunkGenerator;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -14,7 +13,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] bytes) {
-        if (channel.equals("WorldEditGlobalizer")) {
+        if (channel.equals("worldeditglobalizer:connection")) {
             PacketDataSerializer data = new PacketDataSerializer(bytes);
             int packetid = data.readVarInt();
             boolean splitted = data.readBoolean();

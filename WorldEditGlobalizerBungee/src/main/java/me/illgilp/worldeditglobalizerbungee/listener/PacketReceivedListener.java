@@ -25,20 +25,20 @@ public class PacketReceivedListener implements Listener {
     @EventHandler
     public void onPacketReceived(PacketReceivedEvent e){
         if(e.getPacket() instanceof ClipboardSendPacket) {
-            if(Callback.callback(((ClipboardSendPacket) e.getPacket()).getIdentifier(),e.getPacket()) != null)return;
+            if(Callback.callback(((ClipboardSendPacket) e.getPacket()).getIdentifier(),e.getPacket()) != null){
+                return;
+            }
             Clipboard clipboard = new Clipboard(e.getPlayer().getUniqueId(),((ClipboardSendPacket) e.getPacket()).getData(),((ClipboardSendPacket) e.getPacket()).getClipboardhash(),e.getServer().getInfo().getName());
             Player.getPlayer(e.getPlayer()).setClipboard(clipboard);
             MessageManager.sendMessage(e.getPlayer(),"clipboard.finish.uploading", StringUtils.humanReadableByteCount(clipboard.getData().length,true));
         }else if(e.getPacket() instanceof PermissionCheckRequestPacket){
             PermissionCheckRequestPacket packet = (PermissionCheckRequestPacket) e.getPacket();
             Map<String,Boolean> map = new HashMap<>();
-
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(packet.getPlayer());
             if(player == null)return;
             for(String permission : packet.getPermissions()){
                 map.put(permission,((player != null) && player.hasPermission(permission)));
             }
-
             PermissionCheckResponsePacket resp = new PermissionCheckResponsePacket();
             resp.setIdentifier(packet.getIdentifier());
             resp.setPlayer(packet.getPlayer());

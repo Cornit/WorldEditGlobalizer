@@ -1,7 +1,6 @@
 package me.illgilp.worldeditglobalizerbukkit.network.packets;
 
 import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
-import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;

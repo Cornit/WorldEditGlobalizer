@@ -2,15 +2,13 @@ package me.illgilp.worldeditglobalizerbukkit.clipboard;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.world.registry.LegacyWorldData;
-import com.sk89q.worldedit.world.registry.WorldData;
 
 public class WEGClipboardHolder extends ClipboardHolder {
 
     private int hashCode;
 
     public WEGClipboardHolder(Clipboard clipboard, int hashcode) {
-        super(clipboard, LegacyWorldData.getInstance());
+        super(clipboard);
         this.hashCode = hashcode;
     }
 

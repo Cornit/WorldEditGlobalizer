@@ -72,7 +72,6 @@ public class PacketManager {
                } catch (IllegalAccessException e) {
                    e.printStackTrace();
                }
-
                PacketReceivedEvent event = new PacketReceivedEvent(player,packet,packetId,server);
                WorldEditGlobalizerBungee.getInstance().getProxy().getPluginManager().callEvent(event);
            }

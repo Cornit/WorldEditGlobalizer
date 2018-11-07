@@ -1,6 +1,5 @@
 package me.illgilp.worldeditglobalizerbukkit.manager;
 
-import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.PluginConfigRequestPacket;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.PluginConfigResponsePacket;

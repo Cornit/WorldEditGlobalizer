@@ -6,25 +6,19 @@ import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
-import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSchematicWriter;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSpongeSchematicWriter;
+import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
 import me.illgilp.worldeditglobalizerbukkit.manager.ConfigManager;
 import me.illgilp.worldeditglobalizerbukkit.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbukkit.manager.PermissionManager;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.ClipboardSendPacket;
 import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
-import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class ClipboardRunnable extends BukkitRunnable {
@@ -60,8 +54,8 @@ public class ClipboardRunnable extends BukkitRunnable {
 
                     PacketDataSerializer serializer = new PacketDataSerializer();
                     NBTOutputStream out = new NBTOutputStream(serializer.getBufOut());
-                    WEGSchematicWriter writer = new WEGSchematicWriter(out);
-                    writer.write(holder.getClipboard(), holder.getWorldData());
+                    WEGSpongeSchematicWriter writer = new WEGSpongeSchematicWriter(out);
+                    writer.write(holder.getClipboard());
                     writer.close();
 
                     long max = ConfigManager.getInstance().getPluginConfig(p).getMaxClipboardSize();

@@ -1,0 +1,14 @@
+repo 'http://maven.sk89q.com/repo/'
+
+depend 'org.apache.commons:commons-lang3:3.6',true
+depend 'org.apache.commons:commons-io:1.3.2',true
+
+depend name: 'spongeapi-7.0.0-shaded',false
+depend name: 'worldedit-core-6.1.9-SNAPSHOT-dist',false
+depend name: 'worldedit-sponge-6.1.9-SNAPSHOT-dist',false
+
+depend group: 'com.google.guava', name: 'guava', version: 'r05', true
+
+
+
+

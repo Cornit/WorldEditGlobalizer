@@ -73,6 +73,8 @@ public class SchematicManager {
                     if(rootTag.getString("Materials").equals("Alpha")){
                         return true;
                     }
+                }else if(rootTag.containsKey("Version")){
+                    return true;
                 }
             }
         } catch (Exception e) {

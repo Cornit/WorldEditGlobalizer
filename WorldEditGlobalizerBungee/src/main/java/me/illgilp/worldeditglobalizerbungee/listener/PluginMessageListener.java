@@ -24,7 +24,7 @@ public class PluginMessageListener implements Listener {
         String channel = e.getTag();
         byte[] bytes = e.getData();
         ProxiedPlayer player = (ProxiedPlayer) e.getReceiver();
-        if (channel.equals("WorldEditGlobalizer")) {
+        if (channel.equals("worldeditglobalizer:connection")) {
             PacketDataSerializer data = new PacketDataSerializer(bytes);
             int packetid = data.readVarInt();
             boolean splitted = data.readBoolean();

@@ -2,9 +2,9 @@ package me.illgilp.worldeditglobalizerbukkit.network;
 
 
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
+import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.Packet;
 import me.illgilp.worldeditglobalizerbukkit.runnables.PacketRunnable;
-import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -48,7 +48,7 @@ public class PacketSender {
                         ser.writeInt(Math.toIntExact(pos));
                         ser.writeArray(datas);
                         if(getPlayer().isOnline()) {
-                            getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(),"WorldEditGlobalizer", ser.toByteArray());
+                            getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(),"worldeditglobalizer:connection", ser.toByteArray());
                         }
 
                         pos++;
@@ -59,7 +59,7 @@ public class PacketSender {
                     ser.writeBoolean(false);
                     ser.writeArray(serializer.toByteArray());
                     if(getPlayer().isOnline()) {
-                        getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(),"WorldEditGlobalizer", ser.toByteArray());
+                        getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(),"worldeditglobalizer:connection", ser.toByteArray());
                     }
                 }
                 tasks.remove(getPlayer().getName());

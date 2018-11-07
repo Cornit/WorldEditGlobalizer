@@ -5,7 +5,6 @@ import me.illgilp.worldeditglobalizerbukkit.network.packets.Packet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class PacketReceivedEvent extends Event {
 

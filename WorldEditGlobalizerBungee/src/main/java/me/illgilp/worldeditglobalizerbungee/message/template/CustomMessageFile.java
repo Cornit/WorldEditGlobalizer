@@ -147,6 +147,10 @@ public class CustomMessageFile implements MessageFile {
 
         defaults.put("invalide.number", "&cPlease enter a valid number!");
 
+        defaults.put("incompatible.version", "&cIncompatible versions between BungeeCord-Plugin(&6{0}&c) and subserver: &8'{1}'&c(&6{2}&c)!");
+
+        defaults.put("clipboard.unknownFormat", "&cThe downloaded clipboard/schematic is in a wrong format, please delete it to fix the error.");
+
 
 
     }

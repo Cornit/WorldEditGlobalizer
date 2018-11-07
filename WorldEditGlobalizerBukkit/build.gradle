@@ -1,6 +1,6 @@
 apply from: 'functions.gradle'
 
-group 'me.illgilp.worldeditglobalizerbukkit'
+group 'me.illgilp.worldeditglobalizersponge'
 version '1.0'
 
 apply plugin: 'java'
@@ -50,6 +50,9 @@ dependencies {
 jar {
 	from {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+	from(zipTree("../WorldEditGlobalizerBungee/build/libs/WorldEditGlobalizer-Bungee-"+rootProject.version+".jar")){
+		include("**/*.*")
 	}
 	archiveName = "WorldEditGlobalizer-Bukkit-"+rootProject.version+".jar"
 }

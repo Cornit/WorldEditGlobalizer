@@ -144,6 +144,10 @@ public class GermanMessageFile implements MessageFile {
 
         defaults.put("invalide.number", "&cBitte gib eine gültige Nummer an!");
 
+        defaults.put("incompatible.version", "&cDie Version von dem BungeeCord-Plugin(&6{0}&c) ist nicht kompatibel mit der Version des Unterservers: &8'{1}'&c(&6{2}&c)!");
+
+        defaults.put("clipboard.unknownFormat", "&cDie heruntergeladene Zwischenablage/Schematic ist in einem falschen Format, lösche diese um den Fehler zu beheben.");
+
 
     }
 }

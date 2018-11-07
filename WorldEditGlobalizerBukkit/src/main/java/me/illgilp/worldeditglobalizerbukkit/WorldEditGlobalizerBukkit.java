@@ -1,16 +1,14 @@
 package me.illgilp.worldeditglobalizerbukkit;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import me.illgilp.worldeditglobalizerbukkit.listener.PacketReceivedListener;
 import me.illgilp.worldeditglobalizerbukkit.listener.PlayerJoinListener;
+import me.illgilp.worldeditglobalizerbukkit.listener.PacketReceivedListener;
 import me.illgilp.worldeditglobalizerbukkit.listener.PluginMessageListener;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketManager;
 import me.illgilp.worldeditglobalizerbukkit.network.packets.*;
 import me.illgilp.worldeditglobalizerbukkit.runnables.ClipboardRunnable;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WorldEditGlobalizerBukkit extends JavaPlugin{
@@ -33,8 +31,8 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin{
             getLogger().info("WorldEdit not found! Disable plugin!");
             Bukkit.getPluginManager().disablePlugin(this);
         }
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this,  "WorldEditGlobalizer");
-        Bukkit.getMessenger().registerIncomingPluginChannel(this,"WorldEditGlobalizer", new PluginMessageListener());
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this,  "worldeditglobalizer:connection");
+        Bukkit.getMessenger().registerIncomingPluginChannel(this,"worldeditglobalizer:connection", new PluginMessageListener());
 
         packetManager = new PacketManager();
         packetManager.registerPacket(Packet.Direction.TO_BUNGEE, ClipboardSendPacket.class,0x0);

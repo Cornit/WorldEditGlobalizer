@@ -33,6 +33,9 @@ public class WorldEditGlobalizerBungee extends Plugin {
     @Override
     public void onLoad() {
         instance = this;
+        if((!getDataFolder().exists()) && new File("plugins/WorldEditGlobalizerBungee").exists()){
+            new File("plugins/WorldEditGlobalizerBungee").renameTo(getDataFolder());
+        }
     }
 
     @Override
@@ -43,16 +46,7 @@ public class WorldEditGlobalizerBungee extends Plugin {
         configManager.addPlaceholder("{DATAFOLDER}",getDataFolder().getPath());
         configManager.registerConfig(new MainConfig());
 
-        Metrics metrics = null;
-        try {
-            metrics = new Metrics(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(metrics != null){
-            metrics.start();
-        }
-
+        Metrics metrics = new Metrics(this);
         packetManager.registerPacket(Packet.Direction.TO_BUNGEE, ClipboardSendPacket.class,0x0);
         packetManager.registerPacket(Packet.Direction.TO_BUKKIT, ClipboardSendPacket.class,0x1);
         packetManager.registerPacket(Packet.Direction.TO_BUNGEE, PermissionCheckRequestPacket.class, 0x2);
@@ -66,7 +60,7 @@ public class WorldEditGlobalizerBungee extends Plugin {
         packetManager.registerPacket(Packet.Direction.TO_BUNGEE, KeepAlivePacket.class,0x10);
         packetManager.registerPacket(Packet.Direction.TO_BUKKIT, KeepAlivePacket.class,0x10);
 
-        getProxy().registerChannel("WorldEditGlobalizer");
+        getProxy().registerChannel("worldeditglobalizer:connection");
         getProxy().getPluginManager().registerListener(this,new PluginMessageListener());
         getProxy().getPluginManager().registerListener(this, new PacketReceivedListener());
         getProxy().getPluginManager().registerListener(this, new PlayerQuitListener());
