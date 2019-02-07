@@ -3,7 +3,6 @@ package org.bukkit.configuration.file;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.MemoryConfigurationOptions;
-import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * Various settings for controlling the input and output of a {@link

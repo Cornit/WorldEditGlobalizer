@@ -16,7 +16,8 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     /**
      * Creates an empty {@link MemoryConfiguration} with no default values.
      */
-    public MemoryConfiguration() {}
+    public MemoryConfiguration() {
+    }
 
     /**
      * Creates an empty {@link MemoryConfiguration} using the specified {@link

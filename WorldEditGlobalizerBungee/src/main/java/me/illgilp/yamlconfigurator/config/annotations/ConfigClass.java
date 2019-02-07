@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.TYPE)
 public @interface ConfigClass {
     String name();
+
     String file();
+
     String[] header();
 }

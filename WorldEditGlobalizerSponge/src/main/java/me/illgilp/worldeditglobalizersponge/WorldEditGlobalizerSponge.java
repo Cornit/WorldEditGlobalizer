@@ -1,6 +1,5 @@
 package me.illgilp.worldeditglobalizersponge;
 
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import me.illgilp.worldeditglobalizersponge.listener.PacketReceivedListener;
 import me.illgilp.worldeditglobalizersponge.listener.PlayerJoinListener;
@@ -9,8 +8,6 @@ import me.illgilp.worldeditglobalizersponge.network.PacketManager;
 import me.illgilp.worldeditglobalizersponge.network.packets.*;
 import me.illgilp.worldeditglobalizersponge.runnables.ClipboardRunnable;
 import me.illgilp.worldeditglobalizersponge.task.AsyncTask;
-import me.illgilp.worldeditglobalizersponge.task.QueuedAsyncTask;
-import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -18,18 +15,10 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingEvent;
 import org.spongepowered.api.network.ChannelBinding;
-import org.spongepowered.api.network.ChannelBuf;
-import org.spongepowered.api.network.RawDataListener;
-import org.spongepowered.api.network.RemoteConnection;
-import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.scheduler.Task;
 
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
-@Plugin(id="worldeditglobalizersponge", name = "WorldEditGlobalizer", version = "1.2.1", authors = "IllgiLP")
+@Plugin(id = "worldeditglobalizersponge", name = "WorldEditGlobalizer", version = "1.2.1", authors = "IllgiLP", description = "WorldEditGlobalizer for Sponge")
 public class WorldEditGlobalizerSponge {
 
     private static WorldEditGlobalizerSponge instance;

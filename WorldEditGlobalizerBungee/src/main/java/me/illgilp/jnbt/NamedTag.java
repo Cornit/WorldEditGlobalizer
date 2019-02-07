@@ -1,5 +1,3 @@
-
-
 package me.illgilp.jnbt;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -16,7 +14,7 @@ public class NamedTag {
      * Create a new named tag.
      *
      * @param name the name
-     * @param tag the tag
+     * @param tag  the tag
      */
     public NamedTag(String name, Tag tag) {
         checkNotNull(name);

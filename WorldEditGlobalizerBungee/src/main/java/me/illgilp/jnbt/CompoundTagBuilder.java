@@ -1,5 +1,3 @@
-
-
 package me.illgilp.jnbt;
 
 import java.util.HashMap;
@@ -34,7 +32,7 @@ public class CompoundTagBuilder {
     /**
      * Put the given key and tag into the compound tag.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -49,7 +47,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code ByteArrayTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -61,7 +59,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code ByteTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -73,7 +71,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code DoubleTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -85,7 +83,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code FloatTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -97,7 +95,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code IntArrayTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -108,7 +106,7 @@ public class CompoundTagBuilder {
     /**
      * Put the given key and value into the compound tag as an {@code IntTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -120,7 +118,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code LongTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -132,7 +130,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code ShortTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */
@@ -144,7 +142,7 @@ public class CompoundTagBuilder {
      * Put the given key and value into the compound tag as a
      * {@code StringTag}.
      *
-     * @param key they key
+     * @param key   they key
      * @param value the value
      * @return this object
      */

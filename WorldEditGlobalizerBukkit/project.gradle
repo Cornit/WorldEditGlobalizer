@@ -1,7 +1,6 @@
-
-
-depend name: 'spigot-1.13.1-R0.1-SNAPSHOT-b1940',false
-depend name: 'worldedit-bukkit-7.0.0-beta-01',false
+depend name: 'spigot-1.13.1-R0.1-SNAPSHOT-b1940', false
+depend name: 'worldedit-bukkit-7.0.0-SNAPSHOT-dist-3937', false
+depend project(":Common"), true
 
 
 

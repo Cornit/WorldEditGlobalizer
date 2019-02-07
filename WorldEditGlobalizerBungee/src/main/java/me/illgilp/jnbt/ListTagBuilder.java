@@ -1,5 +1,3 @@
-
-
 package me.illgilp.jnbt;
 
 import java.util.ArrayList;
@@ -80,7 +78,7 @@ public class ListTagBuilder {
      *
      * @return a new builder
      */
-    public static <T extends Tag> ListTagBuilder createWith(T ... entries) {
+    public static <T extends Tag> ListTagBuilder createWith(T... entries) {
         checkNotNull(entries);
 
         if (entries.length == 0) {

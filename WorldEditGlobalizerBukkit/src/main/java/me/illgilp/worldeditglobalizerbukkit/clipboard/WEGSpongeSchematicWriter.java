@@ -1,30 +1,17 @@
 package me.illgilp.worldeditglobalizerbukkit.clipboard;
 
 import com.google.common.base.Preconditions;
-import com.sk89q.jnbt.ByteArrayTag;
-import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.jnbt.IntArrayTag;
-import com.sk89q.jnbt.IntTag;
-import com.sk89q.jnbt.ListTag;
-import com.sk89q.jnbt.NBTOutputStream;
-import com.sk89q.jnbt.ShortTag;
-import com.sk89q.jnbt.StringTag;
-import com.sk89q.jnbt.Tag;
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BaseBlock;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.BiConsumer;
 
 public class WEGSpongeSchematicWriter implements ClipboardWriter {
     private static final int MAX_SIZE = 65535;
@@ -41,9 +28,9 @@ public class WEGSpongeSchematicWriter implements ClipboardWriter {
 
     private Map<String, Tag> write1(Clipboard clipboard) throws IOException {
         Region region = clipboard.getRegion();
-        Vector origin = clipboard.getOrigin();
-        Vector min = region.getMinimumPoint();
-        Vector offset = min.subtract(origin);
+        BlockVector3 origin = clipboard.getOrigin();
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 offset = min.subtract(origin);
         int width = region.getWidth();
         int height = region.getHeight();
         int length = region.getLength();
@@ -61,31 +48,31 @@ public class WEGSpongeSchematicWriter implements ClipboardWriter {
             metadata.put("WEOffsetY", new IntTag(offset.getBlockY()));
             metadata.put("WEOffsetZ", new IntTag(offset.getBlockZ()));
             schematic.put("Metadata", new CompoundTag(metadata));
-            schematic.put("Width", new ShortTag((short)width));
-            schematic.put("Height", new ShortTag((short)height));
-            schematic.put("Length", new ShortTag((short)length));
+            schematic.put("Width", new ShortTag((short) width));
+            schematic.put("Height", new ShortTag((short) height));
+            schematic.put("Length", new ShortTag((short) length));
             schematic.put("Offset", new IntArrayTag(new int[]{min.getBlockX(), min.getBlockY(), min.getBlockZ()}));
             int paletteMax = 0;
             Map<String, Integer> palette = new HashMap();
             List<CompoundTag> tileEntities = new ArrayList();
             ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
 
-            for(int y = 0; y < height; ++y) {
+            for (int y = 0; y < height; ++y) {
                 int y0 = min.getBlockY() + y;
 
-                for(int z = 0; z < length; ++z) {
+                for (int z = 0; z < length; ++z) {
                     int z0 = min.getBlockZ() + z;
 
-                    for(int x = 0; x < width; ++x) {
+                    for (int x = 0; x < width; ++x) {
                         int x0 = min.getBlockX() + x;
-                        BlockVector point = new BlockVector(x0, y0, z0);
+                        BlockVector3 point = BlockVector3.at(x0, y0, z0);
                         BaseBlock block = clipboard.getFullBlock(point);
                         if (block.getNbtData() != null) {
                             Map<String, Tag> values = new HashMap();
                             Iterator var24 = block.getNbtData().getValue().entrySet().iterator();
 
-                            while(var24.hasNext()) {
-                                Entry<String, Tag> entry = (Entry)var24.next();
+                            while (var24.hasNext()) {
+                                Entry<String, Tag> entry = (Entry) var24.next();
                                 values.put(entry.getKey(), entry.getValue());
                             }
 
@@ -101,14 +88,14 @@ public class WEGSpongeSchematicWriter implements ClipboardWriter {
                         String blockKey = block.toImmutableState().getAsString();
                         int blockId;
                         if (palette.containsKey(blockKey)) {
-                            blockId = (Integer)palette.get(blockKey);
+                            blockId = palette.get(blockKey);
                         } else {
                             blockId = paletteMax;
                             palette.put(blockKey, paletteMax);
                             ++paletteMax;
                         }
 
-                        while((blockId & -128) != 0) {
+                        while ((blockId & -128) != 0) {
                             buffer.write(blockId & 127 | 128);
                             blockId >>>= 7;
                         }
@@ -121,7 +108,7 @@ public class WEGSpongeSchematicWriter implements ClipboardWriter {
             schematic.put("PaletteMax", new IntTag(paletteMax));
             Map<String, Tag> paletteTag = new HashMap();
             palette.forEach((key, value) -> {
-                Tag var10000 = (Tag)paletteTag.put(key, new IntTag(value));
+                Tag var10000 = paletteTag.put(key, new IntTag(value));
             });
             schematic.put("Palette", new CompoundTag(paletteTag));
             schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));

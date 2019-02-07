@@ -28,7 +28,7 @@ public class YamlConfiguration extends FileConfiguration {
     private final DumperOptions yamlOptions = new DumperOptions();
     private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
-    private Map<String,Object> data = new HashMap<>();
+    private Map<String, Object> data = new HashMap<>();
     private ConfigManager configManager;
 
 
@@ -46,7 +46,7 @@ public class YamlConfiguration extends FileConfiguration {
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlOptions.setAllowUnicode(SYSTEM_UTF);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        if(configName == null){
+        if (configName == null) {
             try {
                 throw new IllegalAccessException("config has been loaded wrongly!");
             } catch (IllegalAccessException e) {
@@ -108,20 +108,18 @@ public class YamlConfiguration extends FileConfiguration {
             }
 
             Config config = configManager.getConfig(configName);
-            writeLines=config.onLineSerialize(line,search,writeLines,configManager,config,depth-2);
+            writeLines = config.onLineSerialize(line, search, writeLines, configManager, config, depth - 2);
 
         }
 
-        dump =writeLines.toString();
-
-
+        dump = writeLines.toString();
 
 
         if (dump.equals(BLANK_CONFIG)) {
             dump = "";
         }
 
-        return header+"\n" + dump;
+        return header + "\n" + dump;
     }
 
 
@@ -146,7 +144,7 @@ public class YamlConfiguration extends FileConfiguration {
 
         Map<?, ?> input;
         try {
-            input = (Map<?, ?>) yaml.load(contents);
+            input = yaml.load(contents);
         } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
         } catch (ClassCastException e) {
@@ -292,9 +290,9 @@ public class YamlConfiguration extends FileConfiguration {
      * @param stream Input stream
      * @return Resulting configuration
      * @throws IllegalArgumentException Thrown if stream is null
-     * @deprecated does not properly consider encoding
      * @see #load(InputStream)
      * @see #loadConfiguration(Reader, ConfigManager)
+     * @deprecated does not properly consider encoding
      */
     @Deprecated
     public static YamlConfiguration loadConfiguration(InputStream stream, ConfigManager configManager) {
@@ -312,7 +310,6 @@ public class YamlConfiguration extends FileConfiguration {
 
         return config;
     }
-
 
 
     public void load(File file, String configname) throws IOException, InvalidConfigurationException {

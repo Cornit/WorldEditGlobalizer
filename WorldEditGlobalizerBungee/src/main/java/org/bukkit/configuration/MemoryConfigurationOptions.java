@@ -1,8 +1,5 @@
 package org.bukkit.configuration;
 
-import org.bukkit.configuration.ConfigurationOptions;
-import org.bukkit.configuration.MemoryConfiguration;
-
 /**
  * Various settings for controlling the input and output of a {@link
  * MemoryConfiguration}

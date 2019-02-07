@@ -1,8 +1,5 @@
 package org.bukkit.configuration.serialization;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,5 +30,5 @@ public @interface SerializableAs {
      *
      * @return Name to serialize the class as.
      */
-    public String value();
+    String value();
 }

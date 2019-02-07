@@ -18,74 +18,74 @@ public class MessageManager {
 
     private File messageFolder;
 
-    private Map<String,MessageFile> messageFiles = new HashMap<>();
+    private Map<String, MessageFile> messageFiles = new HashMap<>();
     private String language = "en";
     private String prefix = "§3WEG §7§l>> §r";
-
 
 
     public MessageManager(File messageFolder) {
         this.messageFolder = messageFolder;
         messageFolder.mkdirs();
-        messageFiles.put("en", new CustomMessageFile("en",new File(messageFolder,"messages_en.yml")));
-        messageFiles.put("de", new GermanMessageFile(new File(messageFolder,"messages_de.yml")));
+        messageFiles.put("en", new CustomMessageFile("en", new File(messageFolder, "messages_en.yml")));
+        messageFiles.put("de", new GermanMessageFile(new File(messageFolder, "messages_de.yml")));
 
-        for(File file : messageFolder.listFiles()){
-            if(file.getName().endsWith(".yml")&&file.getName().startsWith("messages_")){
-                String lang = file.getName().replace(".yml","").replace("messages_","");
-                messageFiles.put(lang,new CustomMessageFile(lang,file));
+        for (File file : messageFolder.listFiles()) {
+            if (file.getName().endsWith(".yml") && file.getName().startsWith("messages_")) {
+                String lang = file.getName().replace(".yml", "").replace("messages_", "");
+                messageFiles.put(lang, new CustomMessageFile(lang, file));
             }
         }
 
     }
 
-    public String getMessageWithReplacedPlaceholders(String message, Object... placeholders){
-        for(int i = 0; i<placeholders.length;i++){
-            message = message.replace("{"+i+"}",placeholders[i].toString());
+    public String getMessageWithReplacedPlaceholders(String message, Object... placeholders) {
+        for (int i = 0; i < placeholders.length; i++) {
+            message = message.replace("{" + i + "}", placeholders[i].toString());
         }
         return message;
     }
 
-    public String getRawMessage(String path){
+    public String getRawMessage(String path) {
         return getMessageFile(language).getRawMessage(path);
     }
 
-    public boolean hasMessageFile(String language){
+    public boolean hasMessageFile(String language) {
         return messageFiles.containsKey(language);
     }
 
-    public MessageFile getMessageFile(String language){
-        if(!messageFiles.containsKey(language))return messageFiles.get(getLanguage());
+    public MessageFile getMessageFile(String language) {
+        if (!messageFiles.containsKey(language)) return messageFiles.get(getLanguage());
         return messageFiles.get(language);
     }
 
-    public void addMessageFile(MessageFile messageFile){
-        messageFiles.put(messageFile.getLanguage(),messageFile);
+    public void addMessageFile(MessageFile messageFile) {
+        messageFiles.put(messageFile.getLanguage(), messageFile);
     }
 
-    public String[] getLanguages(){
+    public String[] getLanguages() {
         return new ArrayList<String>(messageFiles.keySet()).toArray(new String[0]);
     }
 
     public static MessageManager getInstance() {
-        if(instance == null) instance = new MessageManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(),"lang"));
+        if (instance == null)
+            instance = new MessageManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "lang"));
         return instance;
     }
 
-    public static String sendMessage(CommandSender commandSender, String path, Object... placeholders){
-        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(getInstance().language).getMessage(path),placeholders);
-        if(!message.equalsIgnoreCase("none")) {
+    public static String sendMessage(CommandSender commandSender, String path, Object... placeholders) {
+        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(getInstance().language).getMessage(path), placeholders);
+        if (!message.equalsIgnoreCase("none")) {
             commandSender.sendMessage(ComponentUtils.addText(null, getInstance().getPrefix() + message));
         }
         return message;
     }
 
-    public static String getMessage(String lang, String path, Object... placeholders){
-        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(lang).getMessage(path),placeholders);
-        if(message.equalsIgnoreCase("none")){
+    public static String getMessage(String lang, String path, Object... placeholders) {
+        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(lang).getMessage(path), placeholders);
+        if (message.equalsIgnoreCase("none")) {
             return "none";
-        }else {
-            return getInstance().getPrefix()+message;
+        } else {
+            return getInstance().getPrefix() + message;
         }
     }
 
@@ -106,9 +106,9 @@ public class MessageManager {
         this.prefix = prefix;
     }
 
-    public void reload(){
+    public void reload() {
         instance = null;
-        instance = new MessageManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(),"lang"));
+        instance = new MessageManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "lang"));
 
     }
 

@@ -1,5 +1,3 @@
-
-
 package me.illgilp.jnbt;
 
 /**

@@ -1,10 +1,7 @@
 package org.bukkit.configuration.serialization;
 
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.apache.commons.lang3.Validate;
+import org.bukkit.configuration.Configuration;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -136,7 +133,7 @@ public class ConfigurationSerialization {
      * If a new instance could not be made, an example being the class not
      * fully implementing the interface, null will be returned.
      *
-     * @param args Arguments for deserialization
+     * @param args  Arguments for deserialization
      * @param clazz Class to deserialize into
      * @return New instance of the specified class
      */
@@ -227,7 +224,6 @@ public class ConfigurationSerialization {
      */
     public static void unregisterClass(Class<? extends ConfigurationSerializable> clazz) {
         while (aliases.values().remove(clazz)) {
-            ;
         }
     }
 

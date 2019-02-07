@@ -1,7 +1,7 @@
 package me.illgilp.worldeditglobalizerbukkit.events;
 
 
-import me.illgilp.worldeditglobalizerbukkit.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

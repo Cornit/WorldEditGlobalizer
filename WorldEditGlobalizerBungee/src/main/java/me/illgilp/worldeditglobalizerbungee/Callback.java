@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Callback {
 
-    private static Map<UUID,Callback> callbacks = new HashMap<>();
+    private static Map<UUID, Callback> callbacks = new HashMap<>();
 
     private long timeOut = 1000;
     private UUID identifier;
@@ -26,12 +26,13 @@ public abstract class Callback {
     public Callback(long timeOut, UUID identifier) {
         this.timeOut = timeOut;
         this.identifier = identifier;
-        callbacks.put(identifier,this);
+        callbacks.put(identifier, this);
         instance = this;
     }
 
 
     public abstract void onTimeOut(Callback callback);
+
     public abstract void onCallback(Callback callback, Object response);
 
 
@@ -55,51 +56,53 @@ public abstract class Callback {
         this.userData = userData;
     }
 
-    public boolean hasUserData(){
-        return userData!=null;
+    public boolean hasUserData() {
+        return userData != null;
     }
 
-    public void waitFor(){
-        synchronized (this){
+    public void waitFor() {
+        synchronized (this) {
             try {
                 this.wait(timeOut);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(!called)onTimeOut(this);
+            if (!called) onTimeOut(this);
         }
     }
 
-    public void start(){
+    public void start() {
         startTime = System.currentTimeMillis();
         task = BungeeCord.getInstance().getScheduler().schedule(WorldEditGlobalizerBungee.getInstance(), new Runnable() {
             @Override
             public void run() {
-                if(System.currentTimeMillis()-startTime >= timeOut){
-                    if(!called){
+                if (System.currentTimeMillis() - startTime >= timeOut) {
+                    if (!called) {
                         onTimeOut(instance);
                         task.cancel();
                         callbacks.remove(identifier);
-                    }else {
+                    } else {
                         task.cancel();
                         callbacks.remove(identifier);
                     }
                 }
             }
-        },1,1, TimeUnit.MILLISECONDS);
+        }, 1, 1, TimeUnit.MILLISECONDS);
     }
+
     private boolean called = false;
-    public static Callback callback(UUID identifier, Object response){
-        if(callbacks.containsKey(identifier)){
+
+    public static Callback callback(UUID identifier, Object response) {
+        if (callbacks.containsKey(identifier)) {
             Callback callback = callbacks.get(identifier);
-            callback.onCallback(callback,response);
+            callback.onCallback(callback, response);
             callbacks.remove(identifier);
             callback.called = true;
             synchronized (callback) {
                 callback.notify();
             }
             return callback;
-        }else {
+        } else {
             return null;
         }
     }

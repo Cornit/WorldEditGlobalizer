@@ -22,7 +22,7 @@ public class MemorySection implements ConfigurationSection {
      * will throw an exception!
      *
      * @throws IllegalStateException Thrown if this is not a {@link
-     *     Configuration} root.
+     *                               Configuration} root.
      */
     protected MemorySection() {
         if (!(this instanceof Configuration)) {
@@ -39,10 +39,10 @@ public class MemorySection implements ConfigurationSection {
      * Creates an empty MemorySection with the specified parent and path.
      *
      * @param parent Parent section that contains this own section.
-     * @param path Path that you may access this section from via the root
-     *     {@link Configuration}.
+     * @param path   Path that you may access this section from via the root
+     *               {@link Configuration}.
      * @throws IllegalArgumentException Thrown is parent or path is null, or
-     *     if parent contains no root Configuration.
+     *                                  if parent contains no root Configuration.
      */
     protected MemorySection(ConfigurationSection parent, String path) {
         Validate.notNull(parent, "Parent cannot be null");
@@ -286,7 +286,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     private int toInt(Object def) {
-        return Integer.parseInt(def+"");
+        return Integer.parseInt(def + "");
     }
 
     public int getInt(String path, int def) {
@@ -320,7 +320,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     private double toDouble(Object def) {
-        return Double.parseDouble(def+"");
+        return Double.parseDouble(def + "");
     }
 
     public double getDouble(String path, double def) {
@@ -339,7 +339,7 @@ public class MemorySection implements ConfigurationSection {
     }
 
     private long toLong(Object def) {
-        return Long.parseLong(def+"");
+        return Long.parseLong(def + "");
     }
 
     public long getLong(String path, long def) {
@@ -616,7 +616,6 @@ public class MemorySection implements ConfigurationSection {
     }
 
 
-
     public ConfigurationSection getConfigurationSection(String path) {
         Object val = get(path, null);
         if (val != null) {
@@ -698,7 +697,7 @@ public class MemorySection implements ConfigurationSection {
      * only {@link MemorySection}.
      *
      * @param section Section to create a path for.
-     * @param key Name of the specified section.
+     * @param key     Name of the specified section.
      * @return Full path of the section from its root.
      */
     public static String createPath(ConfigurationSection section, String key) {
@@ -712,8 +711,8 @@ public class MemorySection implements ConfigurationSection {
      * You may use this method for any given {@link ConfigurationSection}, not
      * only {@link MemorySection}.
      *
-     * @param section Section to create a path for.
-     * @param key Name of the specified section.
+     * @param section    Section to create a path for.
+     * @param key        Name of the specified section.
      * @param relativeTo Section to create the path relative to.
      * @return Full path of the section from its root.
      */
@@ -751,12 +750,12 @@ public class MemorySection implements ConfigurationSection {
     public String toString() {
         Configuration root = getRoot();
         return new StringBuilder()
-            .append(getClass().getSimpleName())
-            .append("[path='")
-            .append(getCurrentPath())
-            .append("', root='")
-            .append(root == null ? null : root.getClass().getSimpleName())
-            .append("']")
-            .toString();
+                .append(getClass().getSimpleName())
+                .append("[path='")
+                .append(getCurrentPath())
+                .append("', root='")
+                .append(root == null ? null : root.getClass().getSimpleName())
+                .append("']")
+                .toString();
     }
 }

@@ -1,9 +1,5 @@
 package org.bukkit.configuration;
 
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemoryConfigurationOptions;
-import org.bukkit.configuration.MemorySection;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
@@ -20,7 +16,8 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     /**
      * Creates an empty {@link org.bukkit.configuration.MemoryConfiguration} with no default values.
      */
-    public MemoryConfiguration() {}
+    public MemoryConfiguration() {
+    }
 
     /**
      * Creates an empty {@link org.bukkit.configuration.MemoryConfiguration} using the specified {@link

@@ -42,18 +42,18 @@ public class UUIDFetcher {
         String output = callURL("https://api.mojang.com/users/profiles/minecraft/" + playername);
 
         StringBuilder result = new StringBuilder();
-        if(output.isEmpty()){
+        if (output.isEmpty()) {
             return null;
         }
-        Map<String,Object> map = readData(output);
+        Map<String, Object> map = readData(output);
 
         String u = (String) map.get("id");
 
         String uuid = "";
 
-        for(int i = 0; i <= 31; i++) {
+        for (int i = 0; i <= 31; i++) {
             uuid = uuid + u.charAt(i);
-            if(i == 7 || i == 11 || i == 15 || i == 19) {
+            if (i == 7 || i == 11 || i == 15 || i == 19) {
                 uuid = uuid + "-";
             }
         }
@@ -61,8 +61,8 @@ public class UUIDFetcher {
         return new PlayerData(UUID.fromString(uuid), (String) map.get("name"));
     }
 
-    private static Map<String,Object> readData(String toRead) {
-        return new Gson().fromJson(toRead,Map.class);
+    private static Map<String, Object> readData(String toRead) {
+        return new Gson().fromJson(toRead, Map.class);
     }
 
     private static String callURL(String URL) {

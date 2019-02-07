@@ -21,7 +21,7 @@ public class UserDataRunnable implements Runnable {
         this.userData = userData;
     }
 
-    public boolean hasUserData(){
-        return userData!=null;
+    public boolean hasUserData() {
+        return userData != null;
     }
 }

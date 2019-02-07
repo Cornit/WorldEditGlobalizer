@@ -6,13 +6,11 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-import java.util.List;
-
-public class PlayerQuitListener implements Listener{
+public class PlayerQuitListener implements Listener {
 
     @EventHandler
-    public void onQuit(PlayerDisconnectEvent e){
-        if(WorldEditGlobalizerBungee.getInstance().getMainConfig().isKeepClipboard())return;
+    public void onQuit(PlayerDisconnectEvent e) {
+        if (WorldEditGlobalizerBungee.getInstance().getMainConfig().isKeepClipboard()) return;
         ClipboardManager.getInstance().removeClipboard(e.getPlayer().getUniqueId());
     }
 

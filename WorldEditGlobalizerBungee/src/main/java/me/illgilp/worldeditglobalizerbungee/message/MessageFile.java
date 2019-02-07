@@ -1,7 +1,6 @@
 package me.illgilp.worldeditglobalizerbungee.message;
 
 import java.io.File;
-import java.util.Locale;
 import java.util.Set;
 
 public interface MessageFile {

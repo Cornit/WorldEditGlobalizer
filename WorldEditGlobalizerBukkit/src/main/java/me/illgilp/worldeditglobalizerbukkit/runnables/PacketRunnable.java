@@ -1,6 +1,6 @@
 package me.illgilp.worldeditglobalizerbukkit.runnables;
 
-import me.illgilp.worldeditglobalizerbukkit.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
