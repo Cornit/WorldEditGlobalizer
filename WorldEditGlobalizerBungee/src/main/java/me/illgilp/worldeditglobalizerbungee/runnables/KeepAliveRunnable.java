@@ -24,6 +24,11 @@ public class KeepAliveRunnable implements Runnable {
         this.player = player;
     }
 
+    public static void start(Server server, ProxiedPlayer player) {
+        KeepAliveRunnable runnable = new KeepAliveRunnable(server, player);
+        runnable.setTask(BungeeCord.getInstance().getScheduler().schedule(WorldEditGlobalizerBungee.getInstance(), runnable, 1000, 1000, TimeUnit.MILLISECONDS));
+    }
+
     @Override
     public void run() {
         if (!player.isConnected() || player.getServer() == null) {
@@ -58,11 +63,6 @@ public class KeepAliveRunnable implements Runnable {
 
     public void setTask(ScheduledTask task) {
         this.task = task;
-    }
-
-    public static void start(Server server, ProxiedPlayer player) {
-        KeepAliveRunnable runnable = new KeepAliveRunnable(server, player);
-        runnable.setTask(BungeeCord.getInstance().getScheduler().schedule(WorldEditGlobalizerBungee.getInstance(), runnable, 1000, 1000, TimeUnit.MILLISECONDS));
     }
 
 }

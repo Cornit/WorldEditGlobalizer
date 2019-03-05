@@ -18,6 +18,9 @@ public class ConfigManager {
     private Map<String, Object> placeholders = new HashMap<>();
 
 
+    public ConfigManager() {
+    }
+
     public void addPlaceholder(String placeholder, Object value) {
         placeholders.put(placeholder, value);
     }
@@ -28,10 +31,6 @@ public class ConfigManager {
 
     public Map<String, Object> getPlaceholders() {
         return placeholders;
-    }
-
-
-    public ConfigManager() {
     }
 
     public void registerConfig(Config config) {

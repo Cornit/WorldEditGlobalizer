@@ -29,6 +29,10 @@ public class WorldEditGlobalizerBungee extends Plugin {
     private PacketManager packetManager;
     private ConfigManager configManager;
 
+    public static WorldEditGlobalizerBungee getInstance() {
+        return instance;
+    }
+
     @Override
     public void onLoad() {
         instance = this;
@@ -86,10 +90,6 @@ public class WorldEditGlobalizerBungee extends Plugin {
     @Override
     public void onDisable() {
 
-    }
-
-    public static WorldEditGlobalizerBungee getInstance() {
-        return instance;
     }
 
     public PacketManager getPacketManager() {

@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.sk89q.jnbt.*;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -12,14 +14,16 @@ import com.sk89q.worldedit.extent.clipboard.io.legacycompat.NBTCompatibilityHand
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.entity.EntityType;
+import com.sk89q.worldedit.world.entity.EntityTypes;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -31,12 +35,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WEGSpongeSchematicReader extends NBTSchematicReader {
 
     private static final List<NBTCompatibilityHandler> COMPATIBILITY_HANDLERS = new ArrayList<>();
+    private static final Logger log = Logger.getLogger(WEGSpongeSchematicReader.class.getCanonicalName());
 
     static {
         // If NBT Compat handlers are needed - add them here.
     }
 
-    private static final Logger log = Logger.getLogger(WEGSpongeSchematicReader.class.getCanonicalName());
     private final NBTInputStream inputStream;
 
     /**
@@ -47,6 +51,26 @@ public class WEGSpongeSchematicReader extends NBTSchematicReader {
     public WEGSpongeSchematicReader(NBTInputStream inputStream) {
         checkNotNull(inputStream);
         this.inputStream = inputStream;
+    }
+
+    public static boolean isFormat(InputStream inputStream) {
+        try (NBTInputStream str = new NBTInputStream(inputStream)) {
+            NamedTag rootTag = str.readNamedTag();
+            if (!rootTag.getName().equals("Schematic")) {
+                return false;
+            }
+            CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
+
+            // Check
+            Map<String, Tag> schematic = schematicTag.getValue();
+            if (!schematic.containsKey("Version")) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -191,32 +215,40 @@ public class WEGSpongeSchematicReader extends NBTSchematicReader {
 
             index++;
         }
-
+        if (schematic.containsKey("WorldEditGlobalizer")) {
+            CompoundTag weg = (CompoundTag) schematic.get("WorldEditGlobalizer");
+            if (weg != null) {
+                if (weg.containsKey("Entities")) {
+                    List<CompoundTag> entities = weg.getList("Entities", CompoundTag.class);
+                    for (CompoundTag ent : entities) {
+                        if (ent.containsKey("WEGTypeId")) {
+                            String id = ent.getString("WEGTypeId");
+                            if (EntityTypes.get(id.toLowerCase()) != null) {
+                                EntityType entityType = EntityTypes.get(id.toLowerCase());
+                                Map<String, Tag> entM = new HashMap<>(ent.getValue());
+                                entM.remove("WEGTypeId");
+                                if (ent.containsKey("Pos")) {
+                                    List<DoubleTag> pos = ent.getList("Pos", DoubleTag.class);
+                                    double entX = pos.get(0).getValue();
+                                    double entY = pos.get(1).getValue();
+                                    double entZ = pos.get(2).getValue();
+                                    if (ent.containsKey("WorldUUIDLeast") && ent.containsKey("WorldUUIDMost")) {
+                                        UUID uuid = new UUID(ent.getLong("WorldUUIDMost"), ent.getLong("WorldUUIDLeast"));
+                                        World world = Bukkit.getWorld(uuid) != null ? Bukkit.getWorld(uuid) : Bukkit.getWorlds().get(0);
+                                        clipboard.createEntity(new Location(new BukkitWorld(world), entX, entY, entZ), new BaseEntity(entityType, new CompoundTag(entM)));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return clipboard;
     }
 
     @Override
     public void close() throws IOException {
         inputStream.close();
-    }
-
-    public static boolean isFormat(InputStream inputStream) {
-        try (NBTInputStream str = new NBTInputStream(inputStream)) {
-            NamedTag rootTag = str.readNamedTag();
-            if (!rootTag.getName().equals("Schematic")) {
-                return false;
-            }
-            CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
-
-            // Check
-            Map<String, Tag> schematic = schematicTag.getValue();
-            if (!schematic.containsKey("Version")) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
     }
 }

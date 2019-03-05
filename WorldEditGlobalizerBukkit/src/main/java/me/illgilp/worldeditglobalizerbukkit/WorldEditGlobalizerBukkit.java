@@ -17,12 +17,14 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
     private PacketManager packetManager;
     private WorldEditPlugin worldEditPlugin;
 
+    public static WorldEditGlobalizerBukkit getInstance() {
+        return instance;
+    }
 
     @Override
     public void onLoad() {
         instance = this;
     }
-
 
     @Override
     public void onEnable() {
@@ -61,11 +63,6 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
     public void onDisable() {
 
 
-    }
-
-
-    public static WorldEditGlobalizerBukkit getInstance() {
-        return instance;
     }
 
     public PacketManager getPacketManager() {

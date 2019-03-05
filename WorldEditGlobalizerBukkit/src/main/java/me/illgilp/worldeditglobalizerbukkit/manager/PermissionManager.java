@@ -18,6 +18,12 @@ public class PermissionManager {
     private PermissionManager() {
     }
 
+    public static PermissionManager getInstance() {
+
+        if (instance == null) instance = new PermissionManager();
+
+        return instance;
+    }
 
     public boolean hasPermission(Player player, String permission) {
         if (player == null || permission == null) return false;
@@ -55,12 +61,5 @@ public class PermissionManager {
                 tmpPerms.get(packet.getPlayer()).notify();
             }
         }
-    }
-
-    public static PermissionManager getInstance() {
-
-        if (instance == null) instance = new PermissionManager();
-
-        return instance;
     }
 }

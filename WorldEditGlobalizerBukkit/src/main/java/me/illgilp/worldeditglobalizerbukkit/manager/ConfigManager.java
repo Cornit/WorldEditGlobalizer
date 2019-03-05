@@ -16,6 +16,10 @@ public class ConfigManager {
     private Map<UUID, String> tmpName = new HashMap<>();
     private Map<UUID, PluginConfigResponsePacket> tmpResponse = new HashMap<>();
 
+    public static ConfigManager getInstance() {
+        if (instance == null) instance = new ConfigManager();
+        return instance;
+    }
 
     public PluginConfigResponsePacket getPluginConfig(Player player) {
         if (player == null) {
@@ -62,10 +66,5 @@ public class ConfigManager {
                 tmpName.get(packet.getIdentifier()).notify();
             }
         }
-    }
-
-    public static ConfigManager getInstance() {
-        if (instance == null) instance = new ConfigManager();
-        return instance;
     }
 }

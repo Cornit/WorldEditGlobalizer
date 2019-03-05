@@ -2,11 +2,13 @@ package me.illgilp.worldeditglobalizerbukkit.clipboard;
 
 import com.google.common.base.Preconditions;
 import com.sk89q.jnbt.*;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.entity.EntityTypes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -113,6 +115,21 @@ public class WEGSpongeSchematicWriter implements ClipboardWriter {
             schematic.put("Palette", new CompoundTag(paletteTag));
             schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
             schematic.put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
+            Map<String, Tag> weg = new HashMap<>();
+            List<CompoundTag> entities = new ArrayList<>();
+            for (Entity entity : clipboard.getEntities(region)) {
+                if (entity.getState().getNbtData() != null) {
+                    if (entity.getState().getType() != EntityTypes.PLAYER) {
+                        CompoundTag compoundTag = entity.getState().getNbtData();
+                        Map<String, Tag> values = new HashMap<>(compoundTag.getValue());
+                        values.put("WEGTypeId", new StringTag(entity.getState().getType().getId()));
+                        compoundTag = compoundTag.setValue(values);
+                        entities.add(compoundTag);
+                    }
+                }
+            }
+            weg.put("Entities", new ListTag(CompoundTag.class, entities));
+            schematic.put("WorldEditGlobalizer", new CompoundTag(weg));
             return schematic;
         }
     }

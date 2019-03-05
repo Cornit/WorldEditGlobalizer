@@ -34,6 +34,12 @@ public class ClipboardRunnable extends BukkitRunnable {
         runnables.put(p.getName(), this);
     }
 
+    public static void setClipboard(String playerName, int hascode) {
+        if (runnables.containsKey(playerName)) {
+            runnables.get(playerName).lastHashCode = hascode;
+        }
+    }
+
     @Override
     public void run() {
         try {
@@ -82,11 +88,5 @@ public class ClipboardRunnable extends BukkitRunnable {
     public synchronized void cancel() throws IllegalStateException {
         super.cancel();
         runnables.remove(p.getName());
-    }
-
-    public static void setClipboard(String playerName, int hascode) {
-        if (runnables.containsKey(playerName)) {
-            runnables.get(playerName).lastHashCode = hascode;
-        }
     }
 }

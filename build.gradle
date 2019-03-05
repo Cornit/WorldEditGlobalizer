@@ -1,7 +1,7 @@
 apply from: 'functions.gradle'
 
 group 'me.illgilp.worldeditglobalizer'
-version '1.3.2'
+version '1.3.3'
 
 apply plugin: 'java'
 
@@ -46,36 +46,29 @@ configurations {
 dependencies {
 }
 
-
-
-
-jar {
+jar{
 	evaluationDependsOnChildren()
 
 	from {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
 	}
-	from(zipTree("WorldEditGlobalizerBukkit/build/libs/WorldEditGlobalizer-Bukkit-"+rootProject.version+".jar")){
+	from(zipTree("WorldEditGlobalizerBukkit/build/libs/WorldEditGlobalizer-Bukkit-"+project.version+".jar")){
 		include("**/*.*")
 	}
 
 //	from(zipTree("WorldEditGlobalizerBungee/build/libs/WorldEditGlobalizer-Bungee-"+rootProject.version+".jar")){
 //		include("**/*.*")
 //	}
-	archiveName = "WorldEditGlobalizer-"+rootProject.version+".jar"
+	archiveName = "WorldEditGlobalizer-"+project.version+".jar"
 
 
 }
-
-
 
 processResources{
     filter{
-        String line -> line.replace("{VERSION}",rootProject.version)
+        String line -> line.replace("{VERSION}",project.version)
     }
 }
-
-
 
 
 apply from: 'project.gradle'

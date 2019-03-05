@@ -18,6 +18,20 @@ public class MessageManager {
     private MessageManager() {
     }
 
+    public static String sendMessage(Player player, String path, Object... placeholders) {
+        String msg = getInstance().getMessage(player, path, placeholders);
+        if (!msg.equalsIgnoreCase("none")) {
+            player.sendMessage(msg);
+        }
+        return msg;
+    }
+
+    public static MessageManager getInstance() {
+
+        if (instance == null) instance = new MessageManager();
+
+        return instance;
+    }
 
     public String getMessage(Player player, String path, Object... placeholder) {
         if (player == null || path == null) return "none";
@@ -55,21 +69,5 @@ public class MessageManager {
                 tmpPath.get(packet.getIdentifier()).notify();
             }
         }
-    }
-
-
-    public static String sendMessage(Player player, String path, Object... placeholders) {
-        String msg = getInstance().getMessage(player, path, placeholders);
-        if (!msg.equalsIgnoreCase("none")) {
-            player.sendMessage(msg);
-        }
-        return msg;
-    }
-
-    public static MessageManager getInstance() {
-
-        if (instance == null) instance = new MessageManager();
-
-        return instance;
     }
 }

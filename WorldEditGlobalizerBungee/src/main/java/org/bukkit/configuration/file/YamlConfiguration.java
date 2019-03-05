@@ -19,29 +19,13 @@ import java.util.Map;
  * Note that this implementation is not synchronized.
  */
 public class YamlConfiguration extends FileConfiguration {
-    private String configName;
     protected static final String COMMENT_PREFIX = "# ";
     protected static final String BLANK_CONFIG = "{}\n";
     private final DumperOptions yamlOptions = new DumperOptions();
     private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+    private String configName;
     private Map<String, Object> data = new HashMap<>();
-
-
-    @Override
-    public String saveToString() {
-        this.yamlOptions.setIndent(options().indent());
-        this.yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        this.yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-        String header = buildHeader();
-        String dump = this.yaml.dump(getValues(false));
-        if (dump.equals("{}\n")) {
-            dump = "";
-        }
-        return header + dump;
-    }
-
 
     private static String join(List<String> list, String conjunction) {
         StringBuilder sb = new StringBuilder();
@@ -56,6 +40,109 @@ public class YamlConfiguration extends FileConfiguration {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given file.
+     * <p>
+     * Any errors loading the Configuration will be logged and then ignored.
+     * If the specified input is not a valid config, a blank config will be
+     * returned.
+     * <p>
+     * The encoding used may follow the system dependent default.
+     *
+     * @param file Input file
+     * @return Resulting configuration
+     * @throws IllegalArgumentException Thrown if file is null
+     */
+    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(File file) {
+        Validate.notNull(file, "File cannot be null");
+
+        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
+
+        try {
+            config.load(file);
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+        }
+
+        return config;
+    }
+
+    /**
+     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given stream.
+     * <p>
+     * Any errors loading the Configuration will be logged and then ignored.
+     * If the specified input is not a valid config, a blank config will be
+     * returned.
+     *
+     * @param stream Input stream
+     * @return Resulting configuration
+     * @throws IllegalArgumentException Thrown if stream is null
+     * @see #load(InputStream)
+     * @see #loadConfiguration(Reader)
+     * @deprecated does not properly consider encoding
+     */
+    @Deprecated
+    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(InputStream stream) {
+        Validate.notNull(stream, "Stream cannot be null");
+
+        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
+
+        try {
+            config.load(stream);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+        }
+
+        return config;
+    }
+
+    /**
+     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given reader.
+     * <p>
+     * Any errors loading the Configuration will be logged and then ignored.
+     * If the specified input is not a valid config, a blank config will be
+     * returned.
+     *
+     * @param reader input
+     * @return resulting configuration
+     * @throws IllegalArgumentException Thrown if stream is null
+     */
+
+    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(Reader reader) {
+        Validate.notNull(reader, "Stream cannot be null");
+
+        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
+
+        try {
+            config.load(reader);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+        }
+
+        return config;
+    }
+
+    @Override
+    public String saveToString() {
+        this.yamlOptions.setIndent(options().indent());
+        this.yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        this.yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+        String header = buildHeader();
+        String dump = this.yaml.dump(getValues(false));
+        if (dump.equals("{}\n")) {
+            dump = "";
+        }
+        return header + dump;
     }
 
     @Override
@@ -170,98 +257,8 @@ public class YamlConfiguration extends FileConfiguration {
         return (YamlConfigurationOptions) options;
     }
 
-    /**
-     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given file.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     * <p>
-     * The encoding used may follow the system dependent default.
-     *
-     * @param file Input file
-     * @return Resulting configuration
-     * @throws IllegalArgumentException Thrown if file is null
-     */
-    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(File file) {
-        Validate.notNull(file, "File cannot be null");
-
-        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
-
-        try {
-            config.load(file);
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            ex.printStackTrace();
-        }
-
-        return config;
-    }
-
-    /**
-     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given stream.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     *
-     * @param stream Input stream
-     * @return Resulting configuration
-     * @throws IllegalArgumentException Thrown if stream is null
-     * @see #load(InputStream)
-     * @see #loadConfiguration(Reader)
-     * @deprecated does not properly consider encoding
-     */
-    @Deprecated
-    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(InputStream stream) {
-        Validate.notNull(stream, "Stream cannot be null");
-
-        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
-
-        try {
-            config.load(stream);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            ex.printStackTrace();
-        }
-
-        return config;
-    }
-
-
     public void load(File file, String configname) throws IOException, InvalidConfigurationException {
         this.configName = configname;
         super.load(file);
-    }
-
-    /**
-     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given reader.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     *
-     * @param reader input
-     * @return resulting configuration
-     * @throws IllegalArgumentException Thrown if stream is null
-     */
-
-    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(Reader reader) {
-        Validate.notNull(reader, "Stream cannot be null");
-
-        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
-
-        try {
-            config.load(reader);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            ex.printStackTrace();
-        }
-
-        return config;
     }
 }

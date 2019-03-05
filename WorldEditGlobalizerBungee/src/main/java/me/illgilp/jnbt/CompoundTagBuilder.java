@@ -30,6 +30,15 @@ public class CompoundTagBuilder {
     }
 
     /**
+     * Create a new builder instance.
+     *
+     * @return a new builder
+     */
+    public static CompoundTagBuilder create() {
+        return new CompoundTagBuilder();
+    }
+
+    /**
      * Put the given key and tag into the compound tag.
      *
      * @param key   they key
@@ -171,15 +180,6 @@ public class CompoundTagBuilder {
      */
     public CompoundTag build() {
         return new CompoundTag(new HashMap<String, Tag>(entries));
-    }
-
-    /**
-     * Create a new builder instance.
-     *
-     * @return a new builder
-     */
-    public static CompoundTagBuilder create() {
-        return new CompoundTagBuilder();
     }
 
 }

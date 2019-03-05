@@ -17,20 +17,19 @@ import java.util.zip.ZipException;
 public class SchematicManager {
 
     private static SchematicManager instance;
-
-    public static SchematicManager getInstance() {
-        if (instance == null) {
-            instance = new SchematicManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "schematics"));
-        }
-        return instance;
-    }
-
     private File schematicsFolder;
 
     public SchematicManager(File schematicsFolder) {
         instance = this;
 
         this.schematicsFolder = schematicsFolder;
+    }
+
+    public static SchematicManager getInstance() {
+        if (instance == null) {
+            instance = new SchematicManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "schematics"));
+        }
+        return instance;
     }
 
     public File getSchematicsFolder() {

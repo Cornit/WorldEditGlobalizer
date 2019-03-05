@@ -11,16 +11,13 @@ import java.util.UUID;
 
 public final class Player {
 
-    private ProxiedPlayer proxiedPlayer;
-
-
     private static Map<UUID, Player> players = new HashMap<>();
+    private ProxiedPlayer proxiedPlayer;
+    private boolean pluginOnCurrentServerInstalled = false;
 
     private Player(ProxiedPlayer proxiedPlayer) {
         this.proxiedPlayer = proxiedPlayer;
     }
-
-    private boolean pluginOnCurrentServerInstalled = false;
 
     public static Player getPlayer(ProxiedPlayer player) {
         if (players.containsKey(player.getUniqueId())) return players.get(player.getUniqueId());

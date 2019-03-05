@@ -34,13 +34,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WEGMcEditSchematicReader extends NBTSchematicReader {
 
     private static final List<NBTCompatibilityHandler> COMPATIBILITY_HANDLERS = new ArrayList<>();
+    private static final Logger log = Logger.getLogger(WEGMcEditSchematicReader.class.getCanonicalName());
 
     static {
         COMPATIBILITY_HANDLERS.add(new SignCompatibilityHandler());
         // TODO Add a handler for skulls, flower pots, note blocks, etc.
     }
 
-    private static final Logger log = Logger.getLogger(WEGMcEditSchematicReader.class.getCanonicalName());
     private final NBTInputStream inputStream;
 
     /**
@@ -51,6 +51,25 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
     public WEGMcEditSchematicReader(NBTInputStream inputStream) {
         checkNotNull(inputStream);
         this.inputStream = inputStream;
+    }
+
+    public static boolean isFormat(InputStream inputStream) {
+        try (NBTInputStream str = new NBTInputStream(inputStream)) {
+            NamedTag rootTag = str.readNamedTag();
+            if (!rootTag.getName().equals("Schematic")) {
+                return false;
+            }
+            CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
+            // Check
+            Map<String, Tag> schematic = schematicTag.getValue();
+            if (!schematic.containsKey("Materials")) {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -286,24 +305,5 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
     @Override
     public void close() throws IOException {
         inputStream.close();
-    }
-
-    public static boolean isFormat(InputStream inputStream) {
-        try (NBTInputStream str = new NBTInputStream(inputStream)) {
-            NamedTag rootTag = str.readNamedTag();
-            if (!rootTag.getName().equals("Schematic")) {
-                return false;
-            }
-            CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
-            // Check
-            Map<String, Tag> schematic = schematicTag.getValue();
-            if (!schematic.containsKey("Materials")) {
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 }

@@ -38,6 +38,29 @@ public class MessageManager {
 
     }
 
+    public static MessageManager getInstance() {
+        if (instance == null)
+            instance = new MessageManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "lang"));
+        return instance;
+    }
+
+    public static String sendMessage(CommandSender commandSender, String path, Object... placeholders) {
+        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(getInstance().language).getMessage(path), placeholders);
+        if (!message.equalsIgnoreCase("none")) {
+            commandSender.sendMessage(ComponentUtils.addText(null, getInstance().getPrefix() + message));
+        }
+        return message;
+    }
+
+    public static String getMessage(String lang, String path, Object... placeholders) {
+        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(lang).getMessage(path), placeholders);
+        if (message.equalsIgnoreCase("none")) {
+            return "none";
+        } else {
+            return getInstance().getPrefix() + message;
+        }
+    }
+
     public String getMessageWithReplacedPlaceholders(String message, Object... placeholders) {
         for (int i = 0; i < placeholders.length; i++) {
             message = message.replace("{" + i + "}", placeholders[i].toString());
@@ -65,30 +88,6 @@ public class MessageManager {
     public String[] getLanguages() {
         return new ArrayList<String>(messageFiles.keySet()).toArray(new String[0]);
     }
-
-    public static MessageManager getInstance() {
-        if (instance == null)
-            instance = new MessageManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "lang"));
-        return instance;
-    }
-
-    public static String sendMessage(CommandSender commandSender, String path, Object... placeholders) {
-        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(getInstance().language).getMessage(path), placeholders);
-        if (!message.equalsIgnoreCase("none")) {
-            commandSender.sendMessage(ComponentUtils.addText(null, getInstance().getPrefix() + message));
-        }
-        return message;
-    }
-
-    public static String getMessage(String lang, String path, Object... placeholders) {
-        String message = getInstance().getMessageWithReplacedPlaceholders(getInstance().getMessageFile(lang).getMessage(path), placeholders);
-        if (message.equalsIgnoreCase("none")) {
-            return "none";
-        } else {
-            return getInstance().getPrefix() + message;
-        }
-    }
-
 
     public String getLanguage() {
         return language;

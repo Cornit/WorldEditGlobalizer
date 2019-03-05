@@ -21,6 +21,7 @@ public abstract class Callback {
     private ScheduledTask task;
 
     private Callback instance;
+    private boolean called = false;
 
 
     public Callback(long timeOut, UUID identifier) {
@@ -30,11 +31,24 @@ public abstract class Callback {
         instance = this;
     }
 
+    public static Callback callback(UUID identifier, Object response) {
+        if (callbacks.containsKey(identifier)) {
+            Callback callback = callbacks.get(identifier);
+            callback.onCallback(callback, response);
+            callbacks.remove(identifier);
+            callback.called = true;
+            synchronized (callback) {
+                callback.notify();
+            }
+            return callback;
+        } else {
+            return null;
+        }
+    }
 
     public abstract void onTimeOut(Callback callback);
 
     public abstract void onCallback(Callback callback, Object response);
-
 
     public long getTimeOut() {
         return timeOut;
@@ -88,22 +102,5 @@ public abstract class Callback {
                 }
             }
         }, 1, 1, TimeUnit.MILLISECONDS);
-    }
-
-    private boolean called = false;
-
-    public static Callback callback(UUID identifier, Object response) {
-        if (callbacks.containsKey(identifier)) {
-            Callback callback = callbacks.get(identifier);
-            callback.onCallback(callback, response);
-            callbacks.remove(identifier);
-            callback.called = true;
-            synchronized (callback) {
-                callback.notify();
-            }
-            return callback;
-        } else {
-            return null;
-        }
     }
 }

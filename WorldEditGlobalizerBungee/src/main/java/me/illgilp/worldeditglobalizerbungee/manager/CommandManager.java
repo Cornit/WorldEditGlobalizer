@@ -19,20 +19,13 @@ import java.util.*;
 public class CommandManager {
 
     private static CommandManager instance;
+    private Dispatcher dispatcher;
+    private Map<String, Dispatcher> subCommandDispatchers = new HashMap<>();
 
     public static CommandManager getInstance() {
         if (instance == null) instance = new CommandManager();
         return instance;
     }
-
-    private Dispatcher dispatcher;
-
-    private Map<String, Dispatcher> subCommandDispatchers = new HashMap<>();
-
-    public void setDispatcher(Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
-    }
-
 
     public void removeCommand(CommandCallable cc) {
         Injector injector = Intake.createInjector();
@@ -178,9 +171,12 @@ public class CommandManager {
         return new ArrayList<>(dispatcher.getCommands());
     }
 
-
     public Dispatcher getDispatcher() {
         return this.dispatcher;
+    }
+
+    public void setDispatcher(Dispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
 
