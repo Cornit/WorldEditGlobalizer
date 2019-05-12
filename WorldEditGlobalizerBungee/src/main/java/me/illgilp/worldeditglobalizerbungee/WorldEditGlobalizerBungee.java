@@ -15,8 +15,10 @@ import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
 import me.illgilp.worldeditglobalizerbungee.message.template.CustomMessageFile;
 import me.illgilp.worldeditglobalizerbungee.metrics.Metrics;
 import me.illgilp.worldeditglobalizerbungee.network.PacketManager;
+import me.illgilp.worldeditglobalizerbungee.runnables.UpdateRunnable;
 import me.illgilp.worldeditglobalizercommon.network.packets.*;
 import me.illgilp.yamlconfigurator.config.ConfigManager;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -85,6 +87,9 @@ public class WorldEditGlobalizerBungee extends Plugin {
         if (!getMainConfig().isKeepClipboard()) {
             ClipboardManager.getInstance().removeAll();
         }
+
+        BungeeCord.getInstance().getScheduler().runAsync(this, new UpdateRunnable());
+
     }
 
     @Override

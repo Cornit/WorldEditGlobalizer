@@ -106,9 +106,13 @@ public class SchematicManager {
         checkFolder();
         File schematicFile = new File(schematicsFolder, name + ".schematic");
         if (!schematicFile.exists()) return new byte[0];
-        try {
-            if (isValidSchematic(new FileInputStream(schematicFile))) {
-                return IOUtils.toByteArray(new GZIPInputStream(new FileInputStream(schematicFile)));
+        try (FileInputStream fisForValidation = new FileInputStream(schematicFile)) {
+            if (isValidSchematic(fisForValidation)) {
+                try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(schematicFile))) {
+                    return IOUtils.toByteArray(gzipInputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

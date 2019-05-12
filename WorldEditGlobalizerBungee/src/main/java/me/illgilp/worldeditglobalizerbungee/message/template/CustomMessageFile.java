@@ -150,6 +150,12 @@ public class CustomMessageFile implements MessageFile {
 
         defaults.put("clipboard.unknownFormat", "&cThe downloaded clipboard/schematic is in a wrong format, please delete it to fix the error.");
 
+        defaults.put("update.notify", "&3There is a new Version for this Plugin!\n" +
+                "&6&l>> &r&aCurrent &7= &f{1}\n" +
+                "&6&l>> &r&aLatest &7= &f{2}\n" +
+                "&6&l>> &r&aUpdate Message &7= &f{3}\n" +
+                "&6&l>> &r&aDownload Link &7= &f{4}");
+
 
     }
 }

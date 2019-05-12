@@ -148,6 +148,10 @@ public class GermanMessageFile implements MessageFile {
 
         defaults.put("clipboard.unknownFormat", "&cDie heruntergeladene Zwischenablage/Schematic ist in einem falschen Format, lösche diese um den Fehler zu beheben.");
 
-
+        defaults.put("update.notify", "&3Es gibt eine neue Version von diesem Plugin!\n" +
+                "&6&l>> &r&aAktuelle Version &7= &f{1}\n" +
+                "&6&l>> &r&aNeuste Version &7= &f{2}\n" +
+                "&6&l>> &r&aUpdate Nachricht &7= &f{3}\n" +
+                "&6&l>> &r&aDownload Link &7= &f{4}");
     }
 }

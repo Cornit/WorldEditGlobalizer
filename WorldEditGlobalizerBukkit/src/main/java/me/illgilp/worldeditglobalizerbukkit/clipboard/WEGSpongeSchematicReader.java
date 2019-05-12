@@ -6,6 +6,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -232,10 +233,11 @@ public class WEGSpongeSchematicReader extends NBTSchematicReader {
                                     double entX = pos.get(0).getValue();
                                     double entY = pos.get(1).getValue();
                                     double entZ = pos.get(2).getValue();
-                                    if (ent.containsKey("WorldUUIDLeast") && ent.containsKey("WorldUUIDMost")) {
+                                    if (ent.containsKey("WorldUUIDLeast") && ent.containsKey("WorldUUIDMost") && ent.containsKey("Rotation")) {
+                                        List<FloatTag> rot = ent.getList("Rotation", FloatTag.class);
                                         UUID uuid = new UUID(ent.getLong("WorldUUIDMost"), ent.getLong("WorldUUIDLeast"));
                                         World world = Bukkit.getWorld(uuid) != null ? Bukkit.getWorld(uuid) : Bukkit.getWorlds().get(0);
-                                        clipboard.createEntity(new Location(new BukkitWorld(world), entX, entY, entZ), new BaseEntity(entityType, new CompoundTag(entM)));
+                                        Entity entity = clipboard.createEntity(new Location(new BukkitWorld(world), entX, entY, entZ, rot.get(0).getValue(), rot.get(1).getValue()), new BaseEntity(entityType, new CompoundTag(entM)));
                                     }
                                 }
                             }
