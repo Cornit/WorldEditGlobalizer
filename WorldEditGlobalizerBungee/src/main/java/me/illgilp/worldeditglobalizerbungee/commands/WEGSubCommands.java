@@ -51,6 +51,8 @@ public class WEGSubCommands {
         for (CommandMapping map : CommandManager.getInstance().getCommands()) {
             sender.sendMessage(ComponentUtils.addText(null, "§6§l>> §r§f§o/weg " + map.getDescription().getHelp() + " §r§6= §a" + map.getDescription().getShortDescription()));
         }
+        sender.sendMessage(ComponentUtils.addText(null, "\n"));
+        MessageManager.sendMessage(sender, "command.help.discord");
     }
 
     @Command(

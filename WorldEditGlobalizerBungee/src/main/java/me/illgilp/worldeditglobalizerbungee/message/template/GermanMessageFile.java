@@ -153,5 +153,7 @@ public class GermanMessageFile implements MessageFile {
                 "&6&l>> &r&aNeuste Version &7= &f{2}\n" +
                 "&6&l>> &r&aUpdate Nachricht &7= &f{3}\n" +
                 "&6&l>> &r&aDownload Link &7= &f{4}");
+
+        defaults.put("command.help.discord", "§7Du brauchst Hilfe? Joine einfach unserem Discord Server. §7https://discord.gg/B8BEaNV");
     }
 }

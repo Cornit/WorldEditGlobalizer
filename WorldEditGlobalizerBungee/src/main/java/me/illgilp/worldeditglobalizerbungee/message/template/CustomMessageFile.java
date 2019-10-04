@@ -156,6 +156,8 @@ public class CustomMessageFile implements MessageFile {
                 "&6&l>> &r&aUpdate Message &7= &f{3}\n" +
                 "&6&l>> &r&aDownload Link &7= &f{4}");
 
+        defaults.put("command.help.discord", "§7You need help? Simply join our Discord Server. §7https://discord.gg/B8BEaNV");
+
 
     }
 }
