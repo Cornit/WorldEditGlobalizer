@@ -2,11 +2,21 @@ package me.illgilp.worldeditglobalizerbukkit;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.illgilp.worldeditglobalizerbukkit.listener.PacketReceivedListener;
-import me.illgilp.worldeditglobalizerbukkit.listener.PlayerJoinListener;
+import me.illgilp.worldeditglobalizerbukkit.listener.PlayerConnectionListener;
 import me.illgilp.worldeditglobalizerbukkit.listener.PluginMessageListener;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketManager;
+import me.illgilp.worldeditglobalizerbukkit.runnables.AWEClipboardRunnable;
 import me.illgilp.worldeditglobalizerbukkit.runnables.ClipboardRunnable;
-import me.illgilp.worldeditglobalizercommon.network.packets.*;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,9 +61,13 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
         packetManager.registerPacket(Packet.Direction.TO_BUKKIT, KeepAlivePacket.class, 0x10);
 
         Bukkit.getPluginManager().registerEvents(new PacketReceivedListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerConnectionListener(), this);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            new ClipboardRunnable(p).runTaskTimerAsynchronously(WorldEditGlobalizerBukkit.getInstance(), 20 * 10, 20);
+            if (isAsyncWorldEdit()) {
+                new AWEClipboardRunnable(p).runTaskTimerAsynchronously(this, 20, 20);
+            } else {
+                new ClipboardRunnable(p).runTaskTimerAsynchronously(this, 20, 20);
+            }
         }
 
 
@@ -71,5 +85,9 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
 
     public WorldEditPlugin getWorldEditPlugin() {
         return worldEditPlugin;
+    }
+
+    public boolean isAsyncWorldEdit() {
+        return Bukkit.getPluginManager().isPluginEnabled("AsyncWorldEdit");
     }
 }

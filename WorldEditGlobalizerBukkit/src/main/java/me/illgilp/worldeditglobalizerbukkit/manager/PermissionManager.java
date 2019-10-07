@@ -25,8 +25,10 @@ public class PermissionManager {
         return instance;
     }
 
+
     public boolean hasPermission(Player player, String permission) {
         if (player == null || permission == null) return false;
+
         tmpPerms.put(player.getUniqueId(), permission);
         PermissionCheckRequestPacket packet = new PermissionCheckRequestPacket();
         packet.setPermissions(new String[]{permission});

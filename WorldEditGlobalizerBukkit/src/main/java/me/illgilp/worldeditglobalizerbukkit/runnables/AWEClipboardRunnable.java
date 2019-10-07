@@ -15,21 +15,26 @@ import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
 import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.primesoft.asyncworldedit.api.IAsyncWorldEdit;
+import org.primesoft.asyncworldedit.api.blockPlacer.IBlockPlacerPlayer;
+import org.primesoft.asyncworldedit.api.playerManager.IPlayerEntry;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClipboardRunnable extends BukkitRunnable {
+public class AWEClipboardRunnable extends BukkitRunnable {
 
-    private static Map<String, ClipboardRunnable> runnables = new HashMap<>();
+    private static Map<String, AWEClipboardRunnable> runnables = new HashMap<>();
 
     private Player p;
 
     private int lastHashCode;
 
-    public ClipboardRunnable(Player p) {
+    public AWEClipboardRunnable(Player p) {
         this.p = p;
         runnables.put(p.getName(), this);
     }
@@ -62,27 +67,17 @@ public class ClipboardRunnable extends BukkitRunnable {
                 if (lastHashCode == holder.hashCode()) {
                     return;
                 }
-                if (PermissionManager.getInstance().hasPermission(p, "worldeditglobalizer.use.global.clipboard")) {
-                    lastHashCode = holder.hashCode();
-
-                    PacketDataSerializer serializer = new PacketDataSerializer();
-                    NBTOutputStream out = new NBTOutputStream(serializer.getBufOut());
-                    WEGSpongeSchematicWriter writer = new WEGSpongeSchematicWriter(out);
-                    writer.write(holder.getClipboard());
-                    writer.close();
-
-                    long max = ConfigManager.getInstance().getPluginConfig(p).getMaxClipboardSize();
-                    if (max < serializer.toByteArray().length) {
-                        MessageManager.sendMessage(p, "clipboard.tooBig", StringUtils.humanReadableByteCount(max, true), StringUtils.humanReadableByteCount(serializer.toByteArray().length, true));
-                        return;
+                IAsyncWorldEdit awe = (IAsyncWorldEdit) Bukkit.getPluginManager().getPlugin("AsyncWorldEdit");
+                IPlayerEntry iplayer = awe.getPlayerManager().getPlayer(p.getUniqueId());
+                if (iplayer != null) {
+                    IBlockPlacerPlayer placer = awe.getBlockPlacer().getPlayerEvents(iplayer);
+                    if (placer != null) {
+                        if (!placer.hasJobs()) {
+                            sendClipboard(holder);
+                        }
+                    } else {
+                        sendClipboard(holder);
                     }
-
-                    ClipboardSendPacket packet = new ClipboardSendPacket();
-                    packet.setClipboardhash(holder.hashCode());
-                    packet.setData(serializer.toByteArray());
-
-                    MessageManager.sendMessage(p, "clipboard.start.uploading");
-                    PacketSender.sendPacket(p, packet);
                 }
             }
         } catch (Exception e) {
@@ -95,5 +90,30 @@ public class ClipboardRunnable extends BukkitRunnable {
     public synchronized void cancel() throws IllegalStateException {
         super.cancel();
         runnables.remove(p.getName());
+    }
+
+    private void sendClipboard(ClipboardHolder holder) throws IOException {
+        if (PermissionManager.getInstance().hasPermission(p, "worldeditglobalizer.use.global.clipboard")) {
+            lastHashCode = holder.hashCode();
+
+            PacketDataSerializer serializer = new PacketDataSerializer();
+            NBTOutputStream out = new NBTOutputStream(serializer.getBufOut());
+            WEGSpongeSchematicWriter writer = new WEGSpongeSchematicWriter(out);
+            writer.write(holder.getClipboard());
+            writer.close();
+
+            long max = ConfigManager.getInstance().getPluginConfig(p).getMaxClipboardSize();
+            if (max < serializer.toByteArray().length) {
+                MessageManager.sendMessage(p, "clipboard.tooBig", StringUtils.humanReadableByteCount(max, true), StringUtils.humanReadableByteCount(serializer.toByteArray().length, true));
+                return;
+            }
+
+            ClipboardSendPacket packet = new ClipboardSendPacket();
+            packet.setClipboardhash(holder.hashCode());
+            packet.setData(serializer.toByteArray());
+
+            MessageManager.sendMessage(p, "clipboard.start.uploading");
+            PacketSender.sendPacket(p, packet);
+        }
     }
 }
