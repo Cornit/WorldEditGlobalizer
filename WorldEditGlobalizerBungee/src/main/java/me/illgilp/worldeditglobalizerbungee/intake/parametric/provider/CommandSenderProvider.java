@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public class CommandSenderProvider implements Provider<CommandSender>{
+public class CommandSenderProvider implements Provider<CommandSender> {
 
 
     @Override

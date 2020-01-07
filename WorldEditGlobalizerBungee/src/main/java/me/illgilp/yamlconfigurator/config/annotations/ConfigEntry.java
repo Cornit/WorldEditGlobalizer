@@ -10,8 +10,11 @@ import java.lang.annotation.Target;
 public @interface ConfigEntry {
 
     String path();
+
     boolean shouldDefault() default false;
+
     boolean finalValue() default false;
+
     String[] comments() default {};
 
 }

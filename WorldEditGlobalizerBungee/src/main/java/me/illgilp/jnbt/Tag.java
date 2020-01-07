@@ -1,5 +1,3 @@
-
-
 package me.illgilp.jnbt;
 
 /**
@@ -9,7 +7,7 @@ public abstract class Tag {
 
     /**
      * Gets the value of this tag.
-     * 
+     *
      * @return the value
      */
     public abstract Object getValue();

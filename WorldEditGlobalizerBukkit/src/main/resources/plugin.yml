@@ -2,6 +2,6 @@ name: WorldEditGlobalizerBukkit
 version: {VERSION}
 author: IllgiLP
 
-depend: [WorldEdit]
+softdepend: [WorldEdit,FastAsyncWorldEdit,AsyncWorldEdit]
 
 main: me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit

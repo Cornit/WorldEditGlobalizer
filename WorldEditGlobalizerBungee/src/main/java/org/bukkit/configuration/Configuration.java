@@ -1,9 +1,5 @@
 package org.bukkit.configuration;
 
-import org.bukkit.configuration.ConfigurationOptions;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemoryConfiguration;
-
 import java.util.Map;
 
 /**
@@ -20,11 +16,11 @@ public interface Configuration extends ConfigurationSection {
      * If value is null, the value will be removed from the default
      * Configuration source.
      *
-     * @param path Path of the value to set.
+     * @param path  Path of the value to set.
      * @param value Value to set the default to.
      * @throws IllegalArgumentException Thrown if path is null.
      */
-    public void addDefault(String path, Object value);
+    void addDefault(String path, Object value);
 
     /**
      * Sets the default values of the given paths as provided.
@@ -36,7 +32,7 @@ public interface Configuration extends ConfigurationSection {
      * @param defaults A map of Path->Values to add to defaults.
      * @throws IllegalArgumentException Thrown if defaults is null.
      */
-    public void addDefaults(Map<String, Object> defaults);
+    void addDefaults(Map<String, Object> defaults);
 
     /**
      * Sets the default values of the given paths as provided.
@@ -53,18 +49,7 @@ public interface Configuration extends ConfigurationSection {
      * @param defaults A configuration holding a list of defaults to copy.
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
-    public void addDefaults(org.bukkit.configuration.Configuration defaults);
-
-    /**
-     * Sets the source of all default values for this {@link org.bukkit.configuration.Configuration}.
-     * <p>
-     * If a previous source was set, or previous default values were defined,
-     * then they will not be copied to the new source.
-     *
-     * @param defaults New source of default values for this configuration.
-     * @throws IllegalArgumentException Thrown if defaults is null or this.
-     */
-    public void setDefaults(org.bukkit.configuration.Configuration defaults);
+    void addDefaults(org.bukkit.configuration.Configuration defaults);
 
     /**
      * Gets the source {@link org.bukkit.configuration.Configuration} for this configuration.
@@ -75,7 +60,18 @@ public interface Configuration extends ConfigurationSection {
      *
      * @return Configuration source for default values, or null if none exist.
      */
-    public org.bukkit.configuration.Configuration getDefaults();
+    org.bukkit.configuration.Configuration getDefaults();
+
+    /**
+     * Sets the source of all default values for this {@link org.bukkit.configuration.Configuration}.
+     * <p>
+     * If a previous source was set, or previous default values were defined,
+     * then they will not be copied to the new source.
+     *
+     * @param defaults New source of default values for this configuration.
+     * @throws IllegalArgumentException Thrown if defaults is null or this.
+     */
+    void setDefaults(org.bukkit.configuration.Configuration defaults);
 
     /**
      * Gets the {@link ConfigurationOptions} for this {@link org.bukkit.configuration.Configuration}.
@@ -84,5 +80,5 @@ public interface Configuration extends ConfigurationSection {
      *
      * @return Options for this configuration
      */
-    public ConfigurationOptions options();
+    ConfigurationOptions options();
 }

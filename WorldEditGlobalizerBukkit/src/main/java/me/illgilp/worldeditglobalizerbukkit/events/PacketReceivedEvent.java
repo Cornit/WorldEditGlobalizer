@@ -1,7 +1,7 @@
 package me.illgilp.worldeditglobalizerbukkit.events;
 
 
-import me.illgilp.worldeditglobalizerbukkit.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -20,6 +20,9 @@ public class PacketReceivedEvent extends Event {
         this.packetid = packetid;
     }
 
+    public static HandlerList getHandlerList() {
+        return haandlers;
+    }
 
     public Player getPlayer() {
         return player;
@@ -31,10 +34,6 @@ public class PacketReceivedEvent extends Event {
 
     public int getPacketId() {
         return packetid;
-    }
-
-    public static HandlerList getHandlerList() {
-        return haandlers;
     }
 
     @Override

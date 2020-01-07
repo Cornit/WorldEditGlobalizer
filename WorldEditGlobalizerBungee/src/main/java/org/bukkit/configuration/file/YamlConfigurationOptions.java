@@ -1,7 +1,5 @@
 package org.bukkit.configuration.file;
 
-import org.bukkit.configuration.file.FileConfigurationOptions;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.apache.commons.lang3.Validate;
 
 /**

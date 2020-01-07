@@ -9,17 +9,26 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
-import me.illgilp.worldeditglobalizerbukkit.clipboard.*;
-import me.illgilp.worldeditglobalizerbukkit.manager.MessageManager;
-import me.illgilp.worldeditglobalizerbukkit.network.packets.*;
-import me.illgilp.worldeditglobalizerbukkit.runnables.ClipboardRunnable;
-import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGBlockArrayClipboard;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGClipboardHolder;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGMcEditSchematicReader;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSpongeSchematicReader;
+import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSpongeSchematicWriter;
 import me.illgilp.worldeditglobalizerbukkit.events.PacketReceivedEvent;
 import me.illgilp.worldeditglobalizerbukkit.manager.ConfigManager;
+import me.illgilp.worldeditglobalizerbukkit.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbukkit.manager.PermissionManager;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
+import me.illgilp.worldeditglobalizerbukkit.runnables.ClipboardRunnable;
 import me.illgilp.worldeditglobalizerbukkit.runnables.PacketRunnable;
-import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
+import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -31,9 +40,9 @@ import java.io.InputStream;
 public class PacketReceivedListener implements Listener {
 
     @EventHandler
-    public void onPacket(PacketReceivedEvent e){
-        if(e.getPacket() instanceof ClipboardSendPacket){
-            new PacketRunnable(e.getPlayer(),e.getPacket()){
+    public void onPacket(PacketReceivedEvent e) {
+        if (e.getPacket() instanceof ClipboardSendPacket) {
+            new PacketRunnable(e.getPlayer(), e.getPacket()) {
                 @Override
                 public void run() {
 
@@ -41,32 +50,32 @@ public class PacketReceivedListener implements Listener {
                     try {
                         InputStream inputStream = new ByteArrayInputStream(packet.getData());
                         Clipboard clipboard = null;
-                        if(WEGSpongeSchematicReader.isFormat(inputStream)){
+                        if (WEGSpongeSchematicReader.isFormat(inputStream)) {
                             inputStream = new ByteArrayInputStream(packet.getData());
                             WEGSpongeSchematicReader reader = new WEGSpongeSchematicReader(new NBTInputStream(inputStream));
                             clipboard = reader.read();
                         }
                         inputStream = new ByteArrayInputStream(packet.getData());
-                        if(clipboard == null && WEGMcEditSchematicReader.isFormat(inputStream)){
+                        if (clipboard == null && WEGMcEditSchematicReader.isFormat(inputStream)) {
                             inputStream = new ByteArrayInputStream(packet.getData());
                             WEGMcEditSchematicReader reader = new WEGMcEditSchematicReader(new NBTInputStream(inputStream));
                             clipboard = reader.read();
                         }
-                        if(clipboard == null){
-                            MessageManager.sendMessage(getPlayer(),"clipboard.unknownFormat");
+                        if (clipboard == null) {
+                            MessageManager.sendMessage(getPlayer(), "clipboard.unknownFormat");
                             return;
                         }
-                        ((WEGBlockArrayClipboard)clipboard).setHashCode(packet.getClipboardhash());
-                        LocalSession session = WorldEdit.getInstance().getSessionManager().get(new BukkitPlayer(WorldEditGlobalizerBukkit.getInstance().getWorldEditPlugin(),getPlayer()));
-                        if(session == null){
-                            MessageManager.sendMessage(getPlayer(),"clipboard.error.downloading");
+                        ((WEGBlockArrayClipboard) clipboard).setHashCode(packet.getClipboardhash());
+                        LocalSession session = WorldEdit.getInstance().getSessionManager().get(new BukkitPlayer(WorldEditGlobalizerBukkit.getInstance().getWorldEditPlugin(), getPlayer()));
+                        if (session == null) {
+                            MessageManager.sendMessage(getPlayer(), "clipboard.error.downloading");
                             return;
                         }
-                        ClipboardRunnable.setClipboard(getPlayer().getName(),-1);
+                        ClipboardRunnable.setClipboard(getPlayer().getName(), -1);
                         session.setClipboard(new WEGClipboardHolder(clipboard, packet.getClipboardhash()));
-                        ClipboardRunnable.setClipboard(getPlayer().getName(),clipboard.hashCode());
+                        ClipboardRunnable.setClipboard(getPlayer().getName(), clipboard.hashCode());
 
-                        MessageManager.sendMessage(getPlayer(),"clipboard.finish.downloading", StringUtils.humanReadableByteCount(packet.getData().length,true));
+                        MessageManager.sendMessage(getPlayer(), "clipboard.finish.downloading", StringUtils.humanReadableByteCount(packet.getData().length, true));
 
 
                     } catch (IOException e1) {
@@ -74,12 +83,12 @@ public class PacketReceivedListener implements Listener {
                     }
                 }
             }.runTaskAsynchronously(WorldEditGlobalizerBukkit.getInstance());
-        }else if(e.getPacket() instanceof PermissionCheckResponsePacket){
+        } else if (e.getPacket() instanceof PermissionCheckResponsePacket) {
             PermissionManager.getInstance().callPermissionResponse((PermissionCheckResponsePacket) e.getPacket());
-        }else if(e.getPacket() instanceof MessageResponsePacket){
+        } else if (e.getPacket() instanceof MessageResponsePacket) {
             MessageManager.getInstance().callMessageResponse((MessageResponsePacket) e.getPacket());
-        }else if(e.getPacket() instanceof ClipboardRequestPacket){
-            new PacketRunnable(e.getPlayer(),e.getPacket()) {
+        } else if (e.getPacket() instanceof ClipboardRequestPacket) {
+            new PacketRunnable(e.getPlayer(), e.getPacket()) {
                 @Override
                 public void run() {
                     ClipboardRequestPacket req = (ClipboardRequestPacket) getPacket();
@@ -87,9 +96,7 @@ public class PacketReceivedListener implements Listener {
                     res.setIdentifier(req.getIdentifier());
                     org.bukkit.entity.Player p = getPlayer();
                     LocalSession session = WorldEdit.getInstance().getSessionManager().findByName(p.getName());
-                    if(session !=null)
-
-                    {
+                    if (session != null) {
 
 
                         try {
@@ -121,21 +128,19 @@ public class PacketReceivedListener implements Listener {
                             ex.printStackTrace();
                         }
                     }
-                    if(res.getData()==null&&res.getClipboardhash()==0)
-
-                    {
+                    if (res.getData() == null && res.getClipboardhash() == 0) {
                         res.setData(new byte[0]);
                         res.setClipboardhash(-1);
                     }
-                    PacketSender.sendPacket(p,res);
+                    PacketSender.sendPacket(p, res);
                 }
             }.runTaskAsynchronously(WorldEditGlobalizerBukkit.getInstance());
-        }else if (e.getPacket() instanceof PluginConfigResponsePacket){
+        } else if (e.getPacket() instanceof PluginConfigResponsePacket) {
             ConfigManager.getInstance().callPLuginConfigResponse((PluginConfigResponsePacket) e.getPacket());
-        }else if(e.getPacket() instanceof KeepAlivePacket){
-            KeepAlivePacket res = new KeepAlivePacket();
+        } else if (e.getPacket() instanceof KeepAlivePacket) {
+            KeepAlivePacket res = new KeepAlivePacket(WorldEditGlobalizerBukkit.getInstance().getDescription().getVersion());
             res.setIdentifier(((KeepAlivePacket) e.getPacket()).getIdentifier());
-            PacketSender.sendPacket(e.getPlayer(),res);
+            PacketSender.sendPacket(e.getPlayer(), res);
         }
 
     }

@@ -22,18 +22,122 @@ import java.util.Map;
  * Note that this implementation is not synchronized.
  */
 public class YamlConfiguration extends FileConfiguration {
-    private String configName;
     protected static final String COMMENT_PREFIX = "# ";
     protected static final String BLANK_CONFIG = "{}\n";
     private final DumperOptions yamlOptions = new DumperOptions();
     private final Representer yamlRepresenter = new YamlRepresenter();
     private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
-    private Map<String,Object> data = new HashMap<>();
+    private String configName;
+    private Map<String, Object> data = new HashMap<>();
     private ConfigManager configManager;
 
 
     public YamlConfiguration(ConfigManager configManager) {
         this.configManager = configManager;
+    }
+
+    private static String join(List<String> list, String conjunction) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (String item : list) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(conjunction);
+            }
+            sb.append(item);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Creates a new {@link YamlConfiguration}, loading from the given file.
+     * <p>
+     * Any errors loading the Configuration will be logged and then ignored.
+     * If the specified input is not a valid config, a blank config will be
+     * returned.
+     * <p>
+     * The encoding used may follow the system dependent default.
+     *
+     * @param file Input file
+     * @return Resulting configuration
+     * @throws IllegalArgumentException Thrown if file is null
+     */
+    public static YamlConfiguration loadConfiguration(File file, ConfigManager configManager) {
+        Validate.notNull(file, "File cannot be null");
+
+        YamlConfiguration config = new YamlConfiguration(configManager);
+
+        try {
+            config.load(file);
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+        }
+
+        return config;
+    }
+
+    /**
+     * Creates a new {@link YamlConfiguration}, loading from the given stream.
+     * <p>
+     * Any errors loading the Configuration will be logged and then ignored.
+     * If the specified input is not a valid config, a blank config will be
+     * returned.
+     *
+     * @param stream Input stream
+     * @return Resulting configuration
+     * @throws IllegalArgumentException Thrown if stream is null
+     * @see #load(InputStream)
+     * @see #loadConfiguration(Reader, ConfigManager)
+     * @deprecated does not properly consider encoding
+     */
+    @Deprecated
+    public static YamlConfiguration loadConfiguration(InputStream stream, ConfigManager configManager) {
+        Validate.notNull(stream, "Stream cannot be null");
+
+        YamlConfiguration config = new YamlConfiguration(configManager);
+
+        try {
+            config.load(stream);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+        }
+
+        return config;
+    }
+
+    /**
+     * Creates a new {@link YamlConfiguration}, loading from the given reader.
+     * <p>
+     * Any errors loading the Configuration will be logged and then ignored.
+     * If the specified input is not a valid config, a blank config will be
+     * returned.
+     *
+     * @param reader input
+     * @return resulting configuration
+     * @throws IllegalArgumentException Thrown if stream is null
+     */
+
+    public static YamlConfiguration loadConfiguration(Reader reader, ConfigManager configManager) {
+        Validate.notNull(reader, "Stream cannot be null");
+
+        YamlConfiguration config = new YamlConfiguration(configManager);
+
+        try {
+            config.load(reader);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (InvalidConfigurationException ex) {
+            ex.printStackTrace();
+        }
+
+        return config;
     }
 
     public ConfigManager getConfigManager() {
@@ -46,7 +150,7 @@ public class YamlConfiguration extends FileConfiguration {
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlOptions.setAllowUnicode(SYSTEM_UTF);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        if(configName == null){
+        if (configName == null) {
             try {
                 throw new IllegalAccessException("config has been loaded wrongly!");
             } catch (IllegalAccessException e) {
@@ -108,36 +212,18 @@ public class YamlConfiguration extends FileConfiguration {
             }
 
             Config config = configManager.getConfig(configName);
-            writeLines=config.onLineSerialize(line,search,writeLines,configManager,config,depth-2);
+            writeLines = config.onLineSerialize(line, search, writeLines, configManager, config, depth - 2);
 
         }
 
-        dump =writeLines.toString();
-
-
+        dump = writeLines.toString();
 
 
         if (dump.equals(BLANK_CONFIG)) {
             dump = "";
         }
 
-        return header+"\n" + dump;
-    }
-
-
-    private static String join(List<String> list, String conjunction) {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (String item : list) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append(conjunction);
-            }
-            sb.append(item);
-        }
-
-        return sb.toString();
+        return header + "\n" + dump;
     }
 
     @Override
@@ -146,7 +232,7 @@ public class YamlConfiguration extends FileConfiguration {
 
         Map<?, ?> input;
         try {
-            input = (Map<?, ?>) yaml.load(contents);
+            input = yaml.load(contents);
         } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
         } catch (ClassCastException e) {
@@ -252,99 +338,8 @@ public class YamlConfiguration extends FileConfiguration {
         return (YamlConfigurationOptions) options;
     }
 
-    /**
-     * Creates a new {@link YamlConfiguration}, loading from the given file.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     * <p>
-     * The encoding used may follow the system dependent default.
-     *
-     * @param file Input file
-     * @return Resulting configuration
-     * @throws IllegalArgumentException Thrown if file is null
-     */
-    public static YamlConfiguration loadConfiguration(File file, ConfigManager configManager) {
-        Validate.notNull(file, "File cannot be null");
-
-        YamlConfiguration config = new YamlConfiguration(configManager);
-
-        try {
-            config.load(file);
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            ex.printStackTrace();
-        }
-
-        return config;
-    }
-
-    /**
-     * Creates a new {@link YamlConfiguration}, loading from the given stream.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     *
-     * @param stream Input stream
-     * @return Resulting configuration
-     * @throws IllegalArgumentException Thrown if stream is null
-     * @deprecated does not properly consider encoding
-     * @see #load(InputStream)
-     * @see #loadConfiguration(Reader, ConfigManager)
-     */
-    @Deprecated
-    public static YamlConfiguration loadConfiguration(InputStream stream, ConfigManager configManager) {
-        Validate.notNull(stream, "Stream cannot be null");
-
-        YamlConfiguration config = new YamlConfiguration(configManager);
-
-        try {
-            config.load(stream);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            ex.printStackTrace();
-        }
-
-        return config;
-    }
-
-
-
     public void load(File file, String configname) throws IOException, InvalidConfigurationException {
         this.configName = configname;
         super.load(file);
-    }
-
-    /**
-     * Creates a new {@link YamlConfiguration}, loading from the given reader.
-     * <p>
-     * Any errors loading the Configuration will be logged and then ignored.
-     * If the specified input is not a valid config, a blank config will be
-     * returned.
-     *
-     * @param reader input
-     * @return resulting configuration
-     * @throws IllegalArgumentException Thrown if stream is null
-     */
-
-    public static YamlConfiguration loadConfiguration(Reader reader, ConfigManager configManager) {
-        Validate.notNull(reader, "Stream cannot be null");
-
-        YamlConfiguration config = new YamlConfiguration(configManager);
-
-        try {
-            config.load(reader);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (InvalidConfigurationException ex) {
-            ex.printStackTrace();
-        }
-
-        return config;
     }
 }

@@ -17,14 +17,6 @@ import java.util.zip.ZipException;
 public class SchematicManager {
 
     private static SchematicManager instance;
-
-    public static SchematicManager getInstance() {
-        if(instance == null){
-            instance = new SchematicManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(),"schematics"));
-        }
-        return instance;
-    }
-
     private File schematicsFolder;
 
     public SchematicManager(File schematicsFolder) {
@@ -33,15 +25,22 @@ public class SchematicManager {
         this.schematicsFolder = schematicsFolder;
     }
 
+    public static SchematicManager getInstance() {
+        if (instance == null) {
+            instance = new SchematicManager(new File(WorldEditGlobalizerBungee.getInstance().getDataFolder(), "schematics"));
+        }
+        return instance;
+    }
+
     public File getSchematicsFolder() {
         return schematicsFolder;
     }
 
-    private void checkFolder(){
-        if(!schematicsFolder.exists())schematicsFolder.mkdirs();
+    private void checkFolder() {
+        if (!schematicsFolder.exists()) schematicsFolder.mkdirs();
     }
 
-    public void saveSchematic(String name, Clipboard clipboard){
+    public void saveSchematic(String name, Clipboard clipboard) {
         checkFolder();
         try {
             File schematicFile = new File(schematicsFolder, name + ".schematic");
@@ -58,27 +57,27 @@ public class SchematicManager {
             in.close();
             outStream.close();
 
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean isValidSchematic(InputStream inputStream){
+    public boolean isValidSchematic(InputStream inputStream) {
         try {
             NamedTag rootNamedTag = new NBTInputStream(new GZIPInputStream(inputStream)).readNamedTag();
-            if(rootNamedTag.getName().endsWith("Schematic")&&rootNamedTag.getTag() instanceof CompoundTag){
+            if (rootNamedTag.getName().endsWith("Schematic") && rootNamedTag.getTag() instanceof CompoundTag) {
                 CompoundTag rootTag = (CompoundTag) rootNamedTag.getTag();
-                if(rootTag.containsKey("Blocks")&&rootTag.getTag("Blocks") instanceof ByteArrayTag&&
-                        rootTag.containsKey("Materials") && rootTag.getTag("Materials") instanceof StringTag){
-                    if(rootTag.getString("Materials").equals("Alpha")){
+                if (rootTag.containsKey("Blocks") && rootTag.getTag("Blocks") instanceof ByteArrayTag &&
+                        rootTag.containsKey("Materials") && rootTag.getTag("Materials") instanceof StringTag) {
+                    if (rootTag.getString("Materials").equals("Alpha")) {
                         return true;
                     }
-                }else if(rootTag.containsKey("Version")){
+                } else if (rootTag.containsKey("Version")) {
                     return true;
                 }
             }
         } catch (Exception e) {
-            if(e instanceof ZipException){
+            if (e instanceof ZipException) {
                 return false;
             }
             e.printStackTrace();
@@ -86,13 +85,13 @@ public class SchematicManager {
         return false;
     }
 
-    public List<String> getSchematics(){
+    public List<String> getSchematics() {
         checkFolder();
         List<String> list = new ArrayList<>();
-        for(File file : schematicsFolder.listFiles()){
-            if(file.getName().endsWith(".schematic")) {
+        for (File file : schematicsFolder.listFiles()) {
+            if (file.getName().endsWith(".schematic")) {
                 try {
-                    if(isValidSchematic(new FileInputStream(file))) {
+                    if (isValidSchematic(new FileInputStream(file))) {
                         list.add(file.getName().replace(".schematic", ""));
                     }
                 } catch (FileNotFoundException e) {
@@ -103,13 +102,17 @@ public class SchematicManager {
         return list;
     }
 
-    public byte[] loadSchematic(String name){
+    public byte[] loadSchematic(String name) {
         checkFolder();
-        File schematicFile = new File(schematicsFolder,name+".schematic");
-        if(!schematicFile.exists())return new byte[0];
-        try {
-            if(isValidSchematic(new FileInputStream(schematicFile))){
-                return IOUtils.toByteArray(new GZIPInputStream(new FileInputStream(schematicFile)));
+        File schematicFile = new File(schematicsFolder, name + ".schematic");
+        if (!schematicFile.exists()) return new byte[0];
+        try (FileInputStream fisForValidation = new FileInputStream(schematicFile)) {
+            if (isValidSchematic(fisForValidation)) {
+                try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(schematicFile))) {
+                    return IOUtils.toByteArray(gzipInputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -119,18 +122,18 @@ public class SchematicManager {
         return new byte[0];
     }
 
-    public File getSchematicFile(String name){
-        return new File(schematicsFolder,name+".schematic");
+    public File getSchematicFile(String name) {
+        return new File(schematicsFolder, name + ".schematic");
     }
 
-    public Clipboard loadSchematicInto(String name, UUID player){
+    public Clipboard loadSchematicInto(String name, UUID player) {
         checkFolder();
-        if(player == null)return null;
+        if (player == null) return null;
         byte[] data = loadSchematic(name);
-        if (data.length == 0){
+        if (data.length == 0) {
             return null;
         }
-        Clipboard clipboard = new Clipboard(player,data, Arrays.hashCode(data),"SCHEMATIC");
+        Clipboard clipboard = new Clipboard(player, data, Arrays.hashCode(data), "SCHEMATIC");
         return clipboard;
     }
 

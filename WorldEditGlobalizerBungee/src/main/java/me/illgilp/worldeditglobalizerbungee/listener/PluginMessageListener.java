@@ -1,9 +1,7 @@
 package me.illgilp.worldeditglobalizerbungee.listener;
 
-import com.flowpowered.nbt.stream.NBTOutputStream;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
-import me.illgilp.worldeditglobalizerbungee.util.ComponentUtils;
-import me.illgilp.worldeditglobalizerbungee.util.PacketDataSerializer;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -15,12 +13,12 @@ import java.util.Map;
 
 public class PluginMessageListener implements Listener {
 
-    private Map<String,PacketDataSerializer> unFinishedPackets = new HashMap<>();
+    private Map<String, PacketDataSerializer> unFinishedPackets = new HashMap<>();
 
 
     @EventHandler
-    public void onPluginMessage(PluginMessageEvent e){
-        if(!(e.getReceiver() instanceof ProxiedPlayer))return;
+    public void onPluginMessage(PluginMessageEvent e) {
+        if (!(e.getReceiver() instanceof ProxiedPlayer)) return;
         String channel = e.getTag();
         byte[] bytes = e.getData();
         ProxiedPlayer player = (ProxiedPlayer) e.getReceiver();
@@ -35,19 +33,19 @@ public class PluginMessageListener implements Listener {
 
                 PacketDataSerializer serializer = new PacketDataSerializer();
 
-                if(unFinishedPackets.containsKey(player.getName()+packetid+splitted+splitCount)){
-                    serializer = unFinishedPackets.get(player.getName()+packetid+splitted+splitCount);
+                if (unFinishedPackets.containsKey(player.getName() + packetid + splitted + splitCount)) {
+                    serializer = unFinishedPackets.get(player.getName() + packetid + splitted + splitCount);
                 }
                 serializer.writeFinalArray(data.readArray());
-                unFinishedPackets.put(player.getName()+packetid+splitted+splitCount,serializer);
+                unFinishedPackets.put(player.getName() + packetid + splitted + splitCount, serializer);
 
-                if(currentSplit == (splitCount-1)){
-                    WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player,packetid,unFinishedPackets.get(player.getName()+packetid+splitted+splitCount).toByteArray(), (ServerConnection) e.getSender());
-                    unFinishedPackets.remove(player.getName()+packetid+splitted+splitCount);
+                if (currentSplit == (splitCount - 1)) {
+                    WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player, packetid, unFinishedPackets.get(player.getName() + packetid + splitted + splitCount).toByteArray(), (ServerConnection) e.getSender());
+                    unFinishedPackets.remove(player.getName() + packetid + splitted + splitCount);
                 }
 
-            }else {
-                WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player,packetid,data.readArray(), (ServerConnection) e.getSender());
+            } else {
+                WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player, packetid, data.readArray(), (ServerConnection) e.getSender());
             }
             e.setCancelled(true);
         }

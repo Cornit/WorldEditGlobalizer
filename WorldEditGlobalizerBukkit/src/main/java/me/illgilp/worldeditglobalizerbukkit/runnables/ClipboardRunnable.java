@@ -7,13 +7,13 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSpongeSchematicWriter;
-import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
 import me.illgilp.worldeditglobalizerbukkit.manager.ConfigManager;
 import me.illgilp.worldeditglobalizerbukkit.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbukkit.manager.PermissionManager;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
-import me.illgilp.worldeditglobalizerbukkit.network.packets.ClipboardSendPacket;
-import me.illgilp.worldeditglobalizerbukkit.util.PacketDataSerializer;
+import me.illgilp.worldeditglobalizerbukkit.util.StringUtils;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class ClipboardRunnable extends BukkitRunnable {
 
-    private static Map<String,ClipboardRunnable> runnables = new HashMap<>();
+    private static Map<String, ClipboardRunnable> runnables = new HashMap<>();
 
     private Player p;
 
@@ -31,22 +31,35 @@ public class ClipboardRunnable extends BukkitRunnable {
 
     public ClipboardRunnable(Player p) {
         this.p = p;
-        runnables.put(p.getName(),this);
+        runnables.put(p.getName(), this);
+    }
+
+    public static void stop(String player) {
+        if (runnables.containsKey(player)) {
+            runnables.get(player).cancel();
+        }
+    }
+
+    public static void setClipboard(String playerName, int hascode) {
+        if (runnables.containsKey(playerName)) {
+            runnables.get(playerName).lastHashCode = hascode;
+        }
     }
 
     @Override
     public void run() {
         try {
-            if(p == null)cancel();
-            if(!p.isOnline())cancel();
+            if (p == null) cancel();
+            if (!p.isOnline()) cancel();
             LocalSession session = WorldEdit.getInstance().getSessionManager().findByName(p.getName());
-            if(session == null)return;
+            if (session == null) return;
             ClipboardHolder holder = session.getClipboard();
-            if(holder != null) {
+
+            if (holder != null) {
                 if (lastHashCode == -1) {
                     return;
                 }
-                if(lastHashCode == holder.hashCode()){
+                if (lastHashCode == holder.hashCode()) {
                     return;
                 }
                 if (PermissionManager.getInstance().hasPermission(p, "worldeditglobalizer.use.global.clipboard")) {
@@ -59,8 +72,8 @@ public class ClipboardRunnable extends BukkitRunnable {
                     writer.close();
 
                     long max = ConfigManager.getInstance().getPluginConfig(p).getMaxClipboardSize();
-                    if(max<serializer.toByteArray().length){
-                        MessageManager.sendMessage(p,"clipboard.tooBig", StringUtils.humanReadableByteCount(max,true),StringUtils.humanReadableByteCount(serializer.toByteArray().length,true));
+                    if (max < serializer.toByteArray().length) {
+                        MessageManager.sendMessage(p, "clipboard.tooBig", StringUtils.humanReadableByteCount(max, true), StringUtils.humanReadableByteCount(serializer.toByteArray().length, true));
                         return;
                     }
 
@@ -68,12 +81,12 @@ public class ClipboardRunnable extends BukkitRunnable {
                     packet.setClipboardhash(holder.hashCode());
                     packet.setData(serializer.toByteArray());
 
-                    MessageManager.sendMessage(p,"clipboard.start.uploading");
-                    PacketSender.sendPacket(p,packet);
+                    MessageManager.sendMessage(p, "clipboard.start.uploading");
+                    PacketSender.sendPacket(p, packet);
                 }
             }
         } catch (Exception e) {
-            if(e instanceof EmptyClipboardException)return;
+            if (e instanceof EmptyClipboardException) return;
             WorldEditGlobalizerBukkit.getInstance().getLogger().warning(ExceptionUtils.getFullStackTrace(e));
         }
     }
@@ -82,11 +95,5 @@ public class ClipboardRunnable extends BukkitRunnable {
     public synchronized void cancel() throws IllegalStateException {
         super.cancel();
         runnables.remove(p.getName());
-    }
-
-    public static void setClipboard(String playerName, int hascode) {
-        if(runnables.containsKey(playerName)){
-            runnables.get(playerName).lastHashCode = hascode;
-        }
     }
 }

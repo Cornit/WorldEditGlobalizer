@@ -1,11 +1,10 @@
 package me.illgilp.worldeditglobalizerbungee.events;
 
-import me.illgilp.worldeditglobalizerbungee.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.AsyncEvent;
-import net.md_5.bungee.api.plugin.Event;
 
 public class PacketReceivedEvent extends AsyncEvent<PacketReceivedEvent> {
 

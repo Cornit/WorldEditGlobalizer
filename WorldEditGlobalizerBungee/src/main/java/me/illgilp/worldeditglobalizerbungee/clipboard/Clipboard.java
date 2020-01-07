@@ -1,8 +1,5 @@
 package me.illgilp.worldeditglobalizerbungee.clipboard;
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import java.util.Arrays;
 import java.util.UUID;
 
 public final class Clipboard {

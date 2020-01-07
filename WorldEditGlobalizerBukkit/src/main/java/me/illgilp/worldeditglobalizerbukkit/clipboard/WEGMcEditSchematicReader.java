@@ -1,7 +1,5 @@
 package me.illgilp.worldeditglobalizerbukkit.clipboard;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.sk89q.jnbt.ByteArrayTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntTag;
@@ -11,15 +9,13 @@ import com.sk89q.jnbt.NamedTag;
 import com.sk89q.jnbt.ShortTag;
 import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.NBTSchematicReader;
 import com.sk89q.worldedit.extent.clipboard.io.legacycompat.NBTCompatibilityHandler;
 import com.sk89q.worldedit.extent.clipboard.io.legacycompat.SignCompatibilityHandler;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.Location;
@@ -37,7 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Reads schematic files that are compatible with MCEdit and other editors.
@@ -45,13 +42,13 @@ import java.util.zip.GZIPInputStream;
 public class WEGMcEditSchematicReader extends NBTSchematicReader {
 
     private static final List<NBTCompatibilityHandler> COMPATIBILITY_HANDLERS = new ArrayList<>();
+    private static final Logger log = Logger.getLogger(WEGMcEditSchematicReader.class.getCanonicalName());
 
     static {
         COMPATIBILITY_HANDLERS.add(new SignCompatibilityHandler());
         // TODO Add a handler for skulls, flower pots, note blocks, etc.
     }
 
-    private static final Logger log = Logger.getLogger(WEGMcEditSchematicReader.class.getCanonicalName());
     private final NBTInputStream inputStream;
 
     /**
@@ -62,6 +59,25 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
     public WEGMcEditSchematicReader(NBTInputStream inputStream) {
         checkNotNull(inputStream);
         this.inputStream = inputStream;
+    }
+
+    public static boolean isFormat(InputStream inputStream) {
+        try (NBTInputStream str = new NBTInputStream(inputStream)) {
+            NamedTag rootTag = str.readNamedTag();
+            if (!rootTag.getName().equals("Schematic")) {
+                return false;
+            }
+            CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
+            // Check
+            Map<String, Tag> schematic = schematicTag.getValue();
+            if (!schematic.containsKey("Materials")) {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -89,7 +105,7 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
         // Metadata
         // ====================================================================
 
-        Vector origin;
+        BlockVector3 origin;
         Region region;
 
         // Get information
@@ -101,18 +117,18 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
             int originX = requireTag(schematic, "WEOriginX", IntTag.class).getValue();
             int originY = requireTag(schematic, "WEOriginY", IntTag.class).getValue();
             int originZ = requireTag(schematic, "WEOriginZ", IntTag.class).getValue();
-            Vector min = new Vector(originX, originY, originZ);
+            BlockVector3 min = BlockVector3.at(originX, originY, originZ);
 
             int offsetX = requireTag(schematic, "WEOffsetX", IntTag.class).getValue();
             int offsetY = requireTag(schematic, "WEOffsetY", IntTag.class).getValue();
             int offsetZ = requireTag(schematic, "WEOffsetZ", IntTag.class).getValue();
-            Vector offset = new Vector(offsetX, offsetY, offsetZ);
+            BlockVector3 offset = BlockVector3.at(offsetX, offsetY, offsetZ);
 
             origin = min.subtract(offset);
-            region = new CuboidRegion(min, min.add(width, height, length).subtract(Vector.ONE));
+            region = new CuboidRegion(min, min.add(width, height, length).subtract(BlockVector3.ONE));
         } catch (IOException ignored) {
-            origin = new Vector(0, 0, 0);
-            region = new CuboidRegion(origin, origin.add(width, height, length).subtract(Vector.ONE));
+            origin = BlockVector3.at(0, 0, 0);
+            region = new CuboidRegion(origin, origin.add(width, height, length).subtract(BlockVector3.ONE));
         }
 
         // ====================================================================
@@ -146,7 +162,7 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
 
         // Need to pull out tile entities
         List<Tag> tileEntities = requireTag(schematic, "TileEntities", ListTag.class).getValue();
-        Map<BlockVector, Map<String, Tag>> tileEntitiesMap = new HashMap<>();
+        Map<BlockVector3, Map<String, Tag>> tileEntitiesMap = new HashMap<>();
 
         for (Tag tag : tileEntities) {
             if (!(tag instanceof CompoundTag)) continue;
@@ -190,7 +206,7 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
                 }
             }
 
-            BlockVector vec = new BlockVector(x, y, z);
+            BlockVector3 vec = BlockVector3.at(x, y, z);
             tileEntitiesMap.put(vec, values);
         }
 
@@ -204,7 +220,7 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
             for (int y = 0; y < height; ++y) {
                 for (int z = 0; z < length; ++z) {
                     int index = y * width * length + z * width + x;
-                    BlockVector pt = new BlockVector(x, y, z);
+                    BlockVector3 pt = BlockVector3.at(x, y, z);
                     BlockState state = LegacyMapper.getInstance().getBlockFromLegacy(blocks[index], blockData[index]);
 
                     try {
@@ -265,7 +281,7 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
     }
 
     private String convertEntityId(String id) {
-        switch(id) {
+        switch (id) {
             case "xp_orb":
                 return "experience_orb";
             case "xp_bottle":
@@ -297,24 +313,5 @@ public class WEGMcEditSchematicReader extends NBTSchematicReader {
     @Override
     public void close() throws IOException {
         inputStream.close();
-    }
-
-    public static boolean isFormat(InputStream inputStream){
-        try (NBTInputStream str = new NBTInputStream(inputStream)) {
-            NamedTag rootTag = str.readNamedTag();
-            if (!rootTag.getName().equals("Schematic")) {
-                return false;
-            }
-            CompoundTag schematicTag = (CompoundTag) rootTag.getTag();
-            // Check
-            Map<String, Tag> schematic = schematicTag.getValue();
-            if (!schematic.containsKey("Materials")) {
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 }

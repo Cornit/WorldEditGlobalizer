@@ -1,16 +1,13 @@
 package org.bukkit.configuration;
 
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-
 /**
  * Various settings for controlling the input and output of a {@link
  * Configuration}
  */
 public class ConfigurationOptions {
+    private final Configuration configuration;
     private char pathSeparator = '.';
     private boolean copyDefaults = false;
-    private final Configuration configuration;
 
     protected ConfigurationOptions(Configuration configuration) {
         this.configuration = configuration;

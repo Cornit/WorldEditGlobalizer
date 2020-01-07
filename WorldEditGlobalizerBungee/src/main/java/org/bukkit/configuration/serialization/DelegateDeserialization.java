@@ -1,7 +1,5 @@
 package org.bukkit.configuration.serialization;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -20,5 +18,5 @@ public @interface DelegateDeserialization {
      *
      * @return Delegate class
      */
-    public Class<? extends ConfigurationSerializable> value();
+    Class<? extends ConfigurationSerializable> value();
 }

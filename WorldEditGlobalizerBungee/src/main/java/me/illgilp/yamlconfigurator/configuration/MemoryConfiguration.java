@@ -16,7 +16,8 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     /**
      * Creates an empty {@link MemoryConfiguration} with no default values.
      */
-    public MemoryConfiguration() {}
+    public MemoryConfiguration() {
+    }
 
     /**
      * Creates an empty {@link MemoryConfiguration} using the specified {@link
@@ -54,14 +55,14 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
         addDefaults(defaults.getValues(true));
     }
 
+    public Configuration getDefaults() {
+        return defaults;
+    }
+
     public void setDefaults(Configuration defaults) {
         Validate.notNull(defaults, "Defaults may not be null");
 
         this.defaults = defaults;
-    }
-
-    public Configuration getDefaults() {
-        return defaults;
     }
 
     @Override
