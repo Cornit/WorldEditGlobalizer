@@ -1,6 +1,6 @@
 package me.illgilp.worldeditglobalizerbungee.intake.parametric.module;
 
-import com.sk89q.intake.parametric.AbstractModule;
+import me.illgilp.intake.parametric.AbstractModule;
 import me.illgilp.worldeditglobalizerbungee.intake.parametric.provider.CommandSenderProvider;
 import net.md_5.bungee.api.CommandSender;
 

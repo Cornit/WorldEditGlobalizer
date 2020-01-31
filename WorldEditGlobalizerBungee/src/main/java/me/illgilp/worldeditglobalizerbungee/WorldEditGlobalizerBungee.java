@@ -1,5 +1,6 @@
 package me.illgilp.worldeditglobalizerbungee;
 
+import java.io.File;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGCommand;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGSchematicCommands;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGSubCommands;
@@ -16,13 +17,20 @@ import me.illgilp.worldeditglobalizerbungee.message.template.CustomMessageFile;
 import me.illgilp.worldeditglobalizerbungee.metrics.Metrics;
 import me.illgilp.worldeditglobalizerbungee.network.PacketManager;
 import me.illgilp.worldeditglobalizerbungee.runnables.UpdateRunnable;
-import me.illgilp.worldeditglobalizercommon.network.packets.*;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
 import me.illgilp.yamlconfigurator.config.ConfigManager;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
-
-import java.io.File;
 
 public class WorldEditGlobalizerBungee extends Plugin {
 

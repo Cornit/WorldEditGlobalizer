@@ -1,9 +1,12 @@
 package me.illgilp.worldeditglobalizerbungee.commands;
 
-import com.sk89q.intake.Command;
-import com.sk89q.intake.CommandMapping;
-import com.sk89q.intake.Require;
-import com.sk89q.intake.parametric.annotation.Optional;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import me.illgilp.intake.Command;
+import me.illgilp.intake.CommandMapping;
+import me.illgilp.intake.Require;
+import me.illgilp.intake.parametric.annotation.Optional;
 import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
 import me.illgilp.worldeditglobalizerbungee.manager.ClipboardManager;
 import me.illgilp.worldeditglobalizerbungee.manager.CommandManager;
@@ -17,10 +20,6 @@ import me.illgilp.worldeditglobalizerbungee.util.StringUtils;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WEGSchematicCommands {
 
