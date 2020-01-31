@@ -1,6 +1,6 @@
 package me.illgilp.worldeditglobalizerbungee.commands;
 
-import com.sk89q.intake.CommandMapping;
+import me.illgilp.intake.CommandMapping;
 import me.illgilp.worldeditglobalizerbungee.manager.CommandManager;
 import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbungee.util.ComponentUtils;

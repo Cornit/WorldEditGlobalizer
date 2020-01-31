@@ -1,11 +1,10 @@
 package me.illgilp.jnbt;
 
-import javax.annotation.Nullable;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The {@code TAG_List} tag.
@@ -58,7 +57,6 @@ public final class ListTag extends Tag {
      * @param index the index
      * @return the tag or null
      */
-    @Nullable
     public Tag getIfExists(int index) {
         try {
             return value.get(index);

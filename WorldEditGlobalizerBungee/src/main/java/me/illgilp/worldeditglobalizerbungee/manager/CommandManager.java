@@ -1,20 +1,28 @@
 package me.illgilp.worldeditglobalizerbungee.manager;
 
-import com.sk89q.intake.*;
-import com.sk89q.intake.argument.Namespace;
-import com.sk89q.intake.dispatcher.Dispatcher;
-import com.sk89q.intake.fluent.CommandGraph;
-import com.sk89q.intake.fluent.DispatcherNode;
-import com.sk89q.intake.parametric.Injector;
-import com.sk89q.intake.parametric.ParametricBuilder;
-import com.sk89q.intake.parametric.provider.PrimitivesModule;
-import com.sk89q.intake.util.auth.AuthorizationException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import me.illgilp.intake.CommandCallable;
+import me.illgilp.intake.CommandException;
+import me.illgilp.intake.CommandMapping;
+import me.illgilp.intake.Intake;
+import me.illgilp.intake.InvalidUsageException;
+import me.illgilp.intake.InvocationCommandException;
+import me.illgilp.intake.argument.Namespace;
+import me.illgilp.intake.dispatcher.Dispatcher;
+import me.illgilp.intake.fluent.CommandGraph;
+import me.illgilp.intake.fluent.DispatcherNode;
+import me.illgilp.intake.parametric.Injector;
+import me.illgilp.intake.parametric.ParametricBuilder;
+import me.illgilp.intake.parametric.provider.PrimitivesModule;
+import me.illgilp.intake.util.auth.AuthorizationException;
 import me.illgilp.worldeditglobalizerbungee.intake.parametric.WEGAuthorizer;
 import me.illgilp.worldeditglobalizerbungee.intake.parametric.module.WEGModule;
 import me.illgilp.worldeditglobalizerbungee.util.ComponentUtils;
 import net.md_5.bungee.api.CommandSender;
-
-import java.util.*;
 
 public class CommandManager {
 

@@ -19,11 +19,11 @@
 
 package me.illgilp.worldeditglobalizerbungee.intake.parametric;
 
-import com.sk89q.intake.argument.Namespace;
-import com.sk89q.intake.util.auth.Authorizer;
-import net.md_5.bungee.api.CommandSender;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import me.illgilp.intake.argument.Namespace;
+import me.illgilp.intake.util.auth.Authorizer;
+import net.md_5.bungee.api.CommandSender;
 
 public class WEGAuthorizer implements Authorizer {
 
