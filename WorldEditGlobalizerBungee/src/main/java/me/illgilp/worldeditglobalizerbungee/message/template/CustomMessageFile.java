@@ -1,15 +1,14 @@
 package me.illgilp.worldeditglobalizerbungee.message.template;
 
-import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import me.illgilp.bukkit.configuration.InvalidConfigurationException;
+import me.illgilp.bukkit.configuration.file.YamlConfiguration;
+import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
+import net.md_5.bungee.api.ChatColor;
 
 public class CustomMessageFile implements MessageFile {
 
@@ -144,7 +143,7 @@ public class CustomMessageFile implements MessageFile {
         defaults.put("schematic.notFound", "&cA schematic file with this name doesn't exists!");
         defaults.put("command.schematic.load.success", "&aThe schematic file has been loaded to your clipboard! After the download has finished you can paste it with '//paste'!");
 
-        defaults.put("invalide.number", "&cPlease enter a valid number!");
+        defaults.put("invalid.number", "&cPlease enter a valid number!");
 
         defaults.put("incompatible.version", "&cIncompatible versions between BungeeCord-Plugin(&6{0}&c) and subserver: &8'{1}'&c(&6{2}&c)!");
 

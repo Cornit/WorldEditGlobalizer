@@ -1,18 +1,21 @@
-package org.bukkit.configuration.file;
+package me.illgilp.bukkit.configuration.file;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import me.illgilp.bukkit.configuration.Configuration;
+import me.illgilp.bukkit.configuration.ConfigurationSection;
+import me.illgilp.bukkit.configuration.InvalidConfigurationException;
 import org.apache.commons.lang3.Validate;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
-
-import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * An implementation of {@link Configuration} which saves all files in Yaml.
@@ -43,7 +46,7 @@ public class YamlConfiguration extends FileConfiguration {
     }
 
     /**
-     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given file.
+     * Creates a new {@link YamlConfiguration}, loading from the given file.
      * <p>
      * Any errors loading the Configuration will be logged and then ignored.
      * If the specified input is not a valid config, a blank config will be
@@ -55,10 +58,10 @@ public class YamlConfiguration extends FileConfiguration {
      * @return Resulting configuration
      * @throws IllegalArgumentException Thrown if file is null
      */
-    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(File file) {
+    public static YamlConfiguration loadConfiguration(File file) {
         Validate.notNull(file, "File cannot be null");
 
-        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
+        YamlConfiguration config = new YamlConfiguration();
 
         try {
             config.load(file);
@@ -73,7 +76,7 @@ public class YamlConfiguration extends FileConfiguration {
     }
 
     /**
-     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given stream.
+     * Creates a new {@link YamlConfiguration}, loading from the given stream.
      * <p>
      * Any errors loading the Configuration will be logged and then ignored.
      * If the specified input is not a valid config, a blank config will be
@@ -87,10 +90,10 @@ public class YamlConfiguration extends FileConfiguration {
      * @deprecated does not properly consider encoding
      */
     @Deprecated
-    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(InputStream stream) {
+    public static YamlConfiguration loadConfiguration(InputStream stream) {
         Validate.notNull(stream, "Stream cannot be null");
 
-        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
+        YamlConfiguration config = new YamlConfiguration();
 
         try {
             config.load(stream);
@@ -104,7 +107,7 @@ public class YamlConfiguration extends FileConfiguration {
     }
 
     /**
-     * Creates a new {@link org.bukkit.configuration.file.YamlConfiguration}, loading from the given reader.
+     * Creates a new {@link YamlConfiguration}, loading from the given reader.
      * <p>
      * Any errors loading the Configuration will be logged and then ignored.
      * If the specified input is not a valid config, a blank config will be
@@ -115,10 +118,10 @@ public class YamlConfiguration extends FileConfiguration {
      * @throws IllegalArgumentException Thrown if stream is null
      */
 
-    public static org.bukkit.configuration.file.YamlConfiguration loadConfiguration(Reader reader) {
+    public static YamlConfiguration loadConfiguration(Reader reader) {
         Validate.notNull(reader, "Stream cannot be null");
 
-        org.bukkit.configuration.file.YamlConfiguration config = new org.bukkit.configuration.file.YamlConfiguration();
+        YamlConfiguration config = new YamlConfiguration();
 
         try {
             config.load(reader);

@@ -6,6 +6,7 @@ import me.illgilp.worldeditglobalizerbungee.commands.WEGSchematicCommands;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGSubCommands;
 import me.illgilp.worldeditglobalizerbungee.config.MainConfig;
 import me.illgilp.worldeditglobalizerbungee.listener.PacketReceivedListener;
+import me.illgilp.worldeditglobalizerbungee.listener.PlayerJoinListener;
 import me.illgilp.worldeditglobalizerbungee.listener.PlayerQuitListener;
 import me.illgilp.worldeditglobalizerbungee.listener.PluginMessageListener;
 import me.illgilp.worldeditglobalizerbungee.listener.ServerConnectedListener;
@@ -16,7 +17,6 @@ import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
 import me.illgilp.worldeditglobalizerbungee.message.template.CustomMessageFile;
 import me.illgilp.worldeditglobalizerbungee.metrics.Metrics;
 import me.illgilp.worldeditglobalizerbungee.network.PacketManager;
-import me.illgilp.worldeditglobalizerbungee.runnables.UpdateRunnable;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
@@ -28,7 +28,6 @@ import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckRespo
 import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
 import me.illgilp.yamlconfigurator.config.ConfigManager;
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -78,6 +77,7 @@ public class WorldEditGlobalizerBungee extends Plugin {
         getProxy().getPluginManager().registerListener(this, new PacketReceivedListener());
         getProxy().getPluginManager().registerListener(this, new PlayerQuitListener());
         getProxy().getPluginManager().registerListener(this, new ServerConnectedListener());
+        getProxy().getPluginManager().registerListener(this, new PlayerJoinListener());
 
         String lang = WorldEditGlobalizerBungee.getInstance().getMainConfig().getLanguage();
         if (!MessageManager.getInstance().hasMessageFile(lang)) {
@@ -95,8 +95,6 @@ public class WorldEditGlobalizerBungee extends Plugin {
         if (!getMainConfig().isKeepClipboard()) {
             ClipboardManager.getInstance().removeAll();
         }
-
-        BungeeCord.getInstance().getScheduler().runAsync(this, new UpdateRunnable());
 
     }
 

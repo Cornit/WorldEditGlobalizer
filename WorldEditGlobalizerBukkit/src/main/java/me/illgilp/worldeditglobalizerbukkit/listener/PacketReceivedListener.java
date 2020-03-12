@@ -8,6 +8,10 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGBlockArrayClipboard;
 import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGClipboardHolder;
@@ -31,11 +35,6 @@ import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckRespo
 import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class PacketReceivedListener implements Listener {
 
@@ -65,14 +64,14 @@ public class PacketReceivedListener implements Listener {
                             MessageManager.sendMessage(getPlayer(), "clipboard.unknownFormat");
                             return;
                         }
-                        ((WEGBlockArrayClipboard) clipboard).setHashCode(packet.getClipboardhash());
+                        ((WEGBlockArrayClipboard) clipboard).setHashCode(packet.getClipboardHash());
                         LocalSession session = WorldEdit.getInstance().getSessionManager().get(new BukkitPlayer(WorldEditGlobalizerBukkit.getInstance().getWorldEditPlugin(), getPlayer()));
                         if (session == null) {
                             MessageManager.sendMessage(getPlayer(), "clipboard.error.downloading");
                             return;
                         }
                         ClipboardRunnable.setClipboard(getPlayer().getName(), -1);
-                        session.setClipboard(new WEGClipboardHolder(clipboard, packet.getClipboardhash()));
+                        session.setClipboard(new WEGClipboardHolder(clipboard, packet.getClipboardHash()));
                         ClipboardRunnable.setClipboard(getPlayer().getName(), clipboard.hashCode());
 
                         MessageManager.sendMessage(getPlayer(), "clipboard.finish.downloading", StringUtils.humanReadableByteCount(packet.getData().length, true));
@@ -109,7 +108,7 @@ public class PacketReceivedListener implements Listener {
                                 writer.close();
 
 
-                                res.setClipboardhash(holder.hashCode());
+                                res.setClipboardHash(holder.hashCode());
                                 res.setData(serializer.toByteArray());
 
                                 long max = ConfigManager.getInstance().getPluginConfig(p).getMaxClipboardSize();
@@ -117,7 +116,7 @@ public class PacketReceivedListener implements Listener {
                                     PacketDataSerializer ser = new PacketDataSerializer();
                                     ser.writeLong(serializer.toByteArray().length);
                                     res.setData(ser.toByteArray());
-                                    res.setClipboardhash(-3);
+                                    res.setClipboardHash(-3);
                                 }
                             }
                         } catch (EmptyClipboardException ex) {
@@ -128,15 +127,15 @@ public class PacketReceivedListener implements Listener {
                             ex.printStackTrace();
                         }
                     }
-                    if (res.getData() == null && res.getClipboardhash() == 0) {
+                    if (res.getData() == null && res.getClipboardHash() == 0) {
                         res.setData(new byte[0]);
-                        res.setClipboardhash(-1);
+                        res.setClipboardHash(-1);
                     }
                     PacketSender.sendPacket(p, res);
                 }
             }.runTaskAsynchronously(WorldEditGlobalizerBukkit.getInstance());
         } else if (e.getPacket() instanceof PluginConfigResponsePacket) {
-            ConfigManager.getInstance().callPLuginConfigResponse((PluginConfigResponsePacket) e.getPacket());
+            ConfigManager.getInstance().callPluginConfigResponse((PluginConfigResponsePacket) e.getPacket());
         } else if (e.getPacket() instanceof KeepAlivePacket) {
             KeepAlivePacket res = new KeepAlivePacket(WorldEditGlobalizerBukkit.getInstance().getDescription().getVersion());
             res.setIdentifier(((KeepAlivePacket) e.getPacket()).getIdentifier());

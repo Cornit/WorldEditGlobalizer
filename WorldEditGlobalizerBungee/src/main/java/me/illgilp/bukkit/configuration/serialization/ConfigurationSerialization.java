@@ -1,7 +1,4 @@
-package org.bukkit.configuration.serialization;
-
-import org.apache.commons.lang3.Validate;
-import org.bukkit.configuration.Configuration;
+package me.illgilp.bukkit.configuration.serialization;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.illgilp.bukkit.configuration.Configuration;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Utility class for storing and retrieving classes for {@link Configuration}.
@@ -45,7 +44,7 @@ public class ConfigurationSerialization {
      * @return New instance of the specified class
      */
     public static ConfigurationSerializable deserializeObject(Map<String, ?> args, Class<? extends ConfigurationSerializable> clazz) {
-        return new org.bukkit.configuration.serialization.ConfigurationSerialization(clazz).deserialize(args);
+        return new ConfigurationSerialization(clazz).deserialize(args);
     }
 
     /**
@@ -84,7 +83,7 @@ public class ConfigurationSerialization {
             throw new IllegalArgumentException("Args doesn't contain type key ('" + SERIALIZED_TYPE_KEY + "')");
         }
 
-        return new org.bukkit.configuration.serialization.ConfigurationSerialization(clazz).deserialize(args);
+        return new ConfigurationSerialization(clazz).deserialize(args);
     }
 
     /**
@@ -208,15 +207,15 @@ public class ConfigurationSerialization {
             ConfigurationSerializable result = (ConfigurationSerializable) method.invoke(null, args);
 
             if (result == null) {
-                Logger.getLogger(org.bukkit.configuration.serialization.ConfigurationSerialization.class.getName()).log(Level.SEVERE, "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization: method returned null");
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE, "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization: method returned null");
             } else {
                 return result;
             }
         } catch (Throwable ex) {
-            Logger.getLogger(org.bukkit.configuration.serialization.ConfigurationSerialization.class.getName()).log(
-                    Level.SEVERE,
-                    "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization",
-                    ex instanceof InvocationTargetException ? ex.getCause() : ex);
+            Logger.getLogger(ConfigurationSerialization.class.getName()).log(
+                Level.SEVERE,
+                "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization",
+                ex instanceof InvocationTargetException ? ex.getCause() : ex);
         }
 
         return null;
@@ -226,10 +225,10 @@ public class ConfigurationSerialization {
         try {
             return ctor.newInstance(args);
         } catch (Throwable ex) {
-            Logger.getLogger(org.bukkit.configuration.serialization.ConfigurationSerialization.class.getName()).log(
-                    Level.SEVERE,
-                    "Could not call constructor '" + ctor.toString() + "' of " + clazz + " for deserialization",
-                    ex instanceof InvocationTargetException ? ex.getCause() : ex);
+            Logger.getLogger(ConfigurationSerialization.class.getName()).log(
+                Level.SEVERE,
+                "Could not call constructor '" + ctor.toString() + "' of " + clazz + " for deserialization",
+                ex instanceof InvocationTargetException ? ex.getCause() : ex);
         }
 
         return null;

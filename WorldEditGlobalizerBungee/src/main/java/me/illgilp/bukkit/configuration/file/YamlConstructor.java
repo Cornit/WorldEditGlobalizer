@@ -1,13 +1,12 @@
-package org.bukkit.configuration.file;
+package me.illgilp.bukkit.configuration.file;
 
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import me.illgilp.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class YamlConstructor extends SafeConstructor {
 

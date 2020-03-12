@@ -42,6 +42,7 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
         if (worldEditPlugin == null) {
             getLogger().info("WorldEdit not found! Disable plugin!");
             Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "worldeditglobalizer:connection");
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "worldeditglobalizer:connection", new PluginMessageListener());

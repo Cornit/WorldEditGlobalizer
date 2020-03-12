@@ -1,7 +1,7 @@
 apply from: 'functions.gradle'
 
 group 'me.illgilp.worldeditglobalizer'
-version '1.3.7'
+version '1.3.8'
 
 apply plugin: 'java'
 
@@ -61,15 +61,6 @@ jar{
 //	}
 	archiveName = "WorldEditGlobalizer-"+project.version+".jar"
 
-	File file = new File("version.json")
-	PrintWriter p = new PrintWriter(file,"UTF-8")
-	p.println("{")
-	p.println("  \"latest\":\""+project.version+"\",")
-	p.println("  \"release\":"+new Date().getTime()+",")
-	p.println("  \"msg\":\"\"")
-	p.println("}")
-	p.flush()
-	p.close()
 
 }
 
@@ -82,4 +73,17 @@ processResources{
 
 apply from: 'project.gradle'
 
+build.dependsOn task("versionFile") {
+	doLast {
+		File file = new File("version.json")
+		PrintWriter p = new PrintWriter(file,"UTF-8")
+		p.println("{")
+		p.println("  \"latest\":\""+project.version+"\",")
+		p.println("  \"release\":"+new Date().getTime()+",")
+		p.println("  \"msg\":\"\"")
+		p.println("}")
+		p.flush()
+		p.close()
+	}
+}
 

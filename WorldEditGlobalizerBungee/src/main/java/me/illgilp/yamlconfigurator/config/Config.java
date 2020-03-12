@@ -1,5 +1,14 @@
 package me.illgilp.yamlconfigurator.config;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import me.illgilp.yamlconfigurator.config.annotations.ConfigClass;
 import me.illgilp.yamlconfigurator.config.annotations.ConfigEntry;
 import me.illgilp.yamlconfigurator.config.utils.StringUtils;
@@ -7,11 +16,6 @@ import me.illgilp.yamlconfigurator.configuration.ConfigurationSection;
 import me.illgilp.yamlconfigurator.configuration.InvalidConfigurationException;
 import me.illgilp.yamlconfigurator.configuration.file.YamlConfiguration;
 import me.illgilp.yamlconfigurator.configuration.serialization.YamlSerializer;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
 
 public abstract class Config implements YamlSerializer {
     private File configFile;
@@ -52,9 +56,9 @@ public abstract class Config implements YamlSerializer {
         }
     }
 
-    public void saveConfig() {
+    public void saveConfig(String... overrideFields) {
         try {
-            addFields();
+            addFields(Arrays.asList(overrideFields));
             String header = "";
             int i = 0;
             for (String str : config.getClass().getAnnotation(ConfigClass.class).header()) {
@@ -133,7 +137,7 @@ public abstract class Config implements YamlSerializer {
         }
     }
 
-    private void addFields() {
+    private void addFields(List<String> overrideFields) {
         boolean exists = false;
         try {
             Class cls = config.getClass();
@@ -147,8 +151,13 @@ public abstract class Config implements YamlSerializer {
                         if (f.get(config) == null) {
                             throw new NullPointerException("default fields cannot be null.");
                         } else {
-                            if (!yaml.get(entry.path()).equals(f.get(config))) {
-                                yaml.set(entry.path(), f.get(config));
+
+                            if (overrideFields.contains(entry.path())) {
+                                if (!yaml.get(entry.path()).equals(f.get(config))) {
+                                    yaml.set(entry.path(), f.get(config));
+                                }
+                            } else {
+                                yaml.addDefault(entry.path(), f.get(config));
                             }
 
                         }

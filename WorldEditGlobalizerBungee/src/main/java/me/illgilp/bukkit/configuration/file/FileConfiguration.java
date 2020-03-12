@@ -1,15 +1,25 @@
-package org.bukkit.configuration.file;
+package me.illgilp.bukkit.configuration.file;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import org.apache.commons.lang3.Validate;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.MemoryConfiguration;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import me.illgilp.bukkit.configuration.Configuration;
+import me.illgilp.bukkit.configuration.InvalidConfigurationException;
+import me.illgilp.bukkit.configuration.MemoryConfiguration;
+import org.apache.commons.lang3.Validate;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 /**
  * This is a base class for all File based implementations of {@link
@@ -47,20 +57,20 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         final Charset defaultCharset = Charset.defaultCharset();
         final String resultString = new String(testBytes, defaultCharset);
         final boolean trueUTF = defaultCharset.name().contains("UTF");
-        UTF8_OVERRIDE = !testString.equals(resultString) || defaultCharset.equals(Charset.forName("US-ASCII"));
+        UTF8_OVERRIDE = !testString.equals(resultString) || defaultCharset.equals(StandardCharsets.US_ASCII);
         SYSTEM_UTF = trueUTF || UTF8_OVERRIDE;
         UTF_BIG = trueUTF && UTF8_OVERRIDE;
     }
 
     /**
-     * Creates an empty {@link org.bukkit.configuration.file.FileConfiguration} with no default values.
+     * Creates an empty {@link FileConfiguration} with no default values.
      */
     public FileConfiguration() {
         super();
     }
 
     /**
-     * Creates an empty {@link org.bukkit.configuration.file.FileConfiguration} using the specified {@link
+     * Creates an empty {@link FileConfiguration} using the specified {@link
      * Configuration} as a source for all default values.
      *
      * @param defaults Default value provider
@@ -70,7 +80,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Saves this {@link org.bukkit.configuration.file.FileConfiguration} to the specified location.
+     * Saves this {@link FileConfiguration} to the specified location.
      * <p>
      * If the file does not exist, it will be created. If already exists, it
      * will be overwritten. If it cannot be overwritten or created, an
@@ -101,7 +111,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Saves this {@link org.bukkit.configuration.file.FileConfiguration} to the specified location.
+     * Saves this {@link FileConfiguration} to the specified location.
      * <p>
      * If the file does not exist, it will be created. If already exists, it
      * will be overwritten. If it cannot be overwritten or created, an
@@ -122,14 +132,14 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Saves this {@link org.bukkit.configuration.file.FileConfiguration} to a string, and returns it.
+     * Saves this {@link FileConfiguration} to a string, and returns it.
      *
      * @return String containing this configuration.
      */
     public abstract String saveToString();
 
     /**
-     * Loads this {@link org.bukkit.configuration.file.FileConfiguration} from the specified location.
+     * Loads this {@link FileConfiguration} from the specified location.
      * <p>
      * All the values contained within this configuration will be removed,
      * leaving only settings and defaults, and the new values will be loaded
@@ -159,7 +169,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Loads this {@link org.bukkit.configuration.file.FileConfiguration} from the specified stream.
+     * Loads this {@link FileConfiguration} from the specified stream.
      * <p>
      * All the values contained within this configuration will be removed,
      * leaving only settings and defaults, and the new values will be loaded
@@ -184,7 +194,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Loads this {@link org.bukkit.configuration.file.FileConfiguration} from the specified reader.
+     * Loads this {@link FileConfiguration} from the specified reader.
      * <p>
      * All the values contained within this configuration will be removed,
      * leaving only settings and defaults, and the new values will be loaded
@@ -216,7 +226,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Loads this {@link org.bukkit.configuration.file.FileConfiguration} from the specified location.
+     * Loads this {@link FileConfiguration} from the specified location.
      * <p>
      * All the values contained within this configuration will be removed,
      * leaving only settings and defaults, and the new values will be loaded
@@ -240,7 +250,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     }
 
     /**
-     * Loads this {@link org.bukkit.configuration.file.FileConfiguration} from the specified string, as
+     * Loads this {@link FileConfiguration} from the specified string, as
      * opposed to from file.
      * <p>
      * All the values contained within this configuration will be removed,
@@ -257,7 +267,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     public abstract void loadFromString(String contents) throws InvalidConfigurationException;
 
     /**
-     * Compiles the header for this {@link org.bukkit.configuration.file.FileConfiguration} and returns the
+     * Compiles the header for this {@link FileConfiguration} and returns the
      * result.
      * <p>
      * This will use the header from {@link #options()} -> {@link

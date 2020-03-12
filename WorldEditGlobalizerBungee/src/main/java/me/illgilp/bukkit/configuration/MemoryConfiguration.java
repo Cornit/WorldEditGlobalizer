@@ -1,8 +1,7 @@
-package org.bukkit.configuration;
-
-import org.apache.commons.lang3.Validate;
+package me.illgilp.bukkit.configuration;
 
 import java.util.Map;
+import org.apache.commons.lang3.Validate;
 
 /**
  * This is a {@link Configuration} implementation that does not save or load
@@ -14,13 +13,13 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     protected MemoryConfigurationOptions options;
 
     /**
-     * Creates an empty {@link org.bukkit.configuration.MemoryConfiguration} with no default values.
+     * Creates an empty {@link MemoryConfiguration} with no default values.
      */
     public MemoryConfiguration() {
     }
 
     /**
-     * Creates an empty {@link org.bukkit.configuration.MemoryConfiguration} using the specified {@link
+     * Creates an empty {@link MemoryConfiguration} using the specified {@link
      * Configuration} as a source for all default values.
      *
      * @param defaults Default value provider
@@ -35,7 +34,7 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
         Validate.notNull(path, "Path may not be null");
 
         if (defaults == null) {
-            defaults = new org.bukkit.configuration.MemoryConfiguration();
+            defaults = new MemoryConfiguration();
         }
 
         defaults.set(path, value);

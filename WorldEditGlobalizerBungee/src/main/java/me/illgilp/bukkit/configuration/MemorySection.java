@@ -1,8 +1,12 @@
-package org.bukkit.configuration;
+package me.illgilp.bukkit.configuration;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.Validate;
-
-import java.util.*;
 
 /**
  * A type of {@link ConfigurationSection} that is stored in memory.
@@ -62,7 +66,7 @@ public class MemorySection implements ConfigurationSection {
      * root {@link Configuration}.
      * <p>
      * You may use this method for any given {@link ConfigurationSection}, not
-     * only {@link org.bukkit.configuration.MemorySection}.
+     * only {@link MemorySection}.
      *
      * @param section Section to create a path for.
      * @param key     Name of the specified section.
@@ -77,7 +81,7 @@ public class MemorySection implements ConfigurationSection {
      * the given relative section.
      * <p>
      * You may use this method for any given {@link ConfigurationSection}, not
-     * only {@link org.bukkit.configuration.MemorySection}.
+     * only {@link MemorySection}.
      *
      * @param section    Section to create a path for.
      * @param key        Name of the specified section.
@@ -300,7 +304,7 @@ public class MemorySection implements ConfigurationSection {
 
         String key = path.substring(i2);
         if (section == this) {
-            ConfigurationSection result = new org.bukkit.configuration.MemorySection(this, key);
+            ConfigurationSection result = new MemorySection(this, key);
             map.put(key, result);
             return result;
         }
@@ -703,8 +707,8 @@ public class MemorySection implements ConfigurationSection {
     }
 
     protected void mapChildrenKeys(Set<String> output, ConfigurationSection section, boolean deep) {
-        if (section instanceof org.bukkit.configuration.MemorySection) {
-            org.bukkit.configuration.MemorySection sec = (org.bukkit.configuration.MemorySection) section;
+        if (section instanceof MemorySection) {
+            MemorySection sec = (MemorySection) section;
 
             for (Map.Entry<String, Object> entry : sec.map.entrySet()) {
                 output.add(createPath(section, entry.getKey(), this));
@@ -724,8 +728,8 @@ public class MemorySection implements ConfigurationSection {
     }
 
     protected void mapChildrenValues(Map<String, Object> output, ConfigurationSection section, boolean deep) {
-        if (section instanceof org.bukkit.configuration.MemorySection) {
-            org.bukkit.configuration.MemorySection sec = (org.bukkit.configuration.MemorySection) section;
+        if (section instanceof MemorySection) {
+            MemorySection sec = (MemorySection) section;
 
             for (Map.Entry<String, Object> entry : sec.map.entrySet()) {
                 output.put(createPath(section, entry.getKey(), this), entry.getValue());

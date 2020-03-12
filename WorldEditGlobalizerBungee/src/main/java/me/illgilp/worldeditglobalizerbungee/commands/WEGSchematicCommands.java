@@ -140,7 +140,7 @@ public class WEGSchematicCommands {
             if (Player.getPlayer(player).hasClipboard()) {
                 MessageManager.sendMessage(player, "clipboard.start.downloading");
                 ClipboardSendPacket packet = new ClipboardSendPacket();
-                packet.setClipboardhash(Player.getPlayer(player).getClipboard().getHash());
+                packet.setClipboardHash(Player.getPlayer(player).getClipboard().getHash());
                 packet.setData(Player.getPlayer(player).getClipboard().getData());
                 PacketSender.sendPacket(player, packet);
             } else {

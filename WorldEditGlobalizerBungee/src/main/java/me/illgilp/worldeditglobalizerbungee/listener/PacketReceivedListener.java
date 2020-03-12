@@ -1,5 +1,7 @@
 package me.illgilp.worldeditglobalizerbungee.listener;
 
+import java.util.HashMap;
+import java.util.Map;
 import me.illgilp.worldeditglobalizerbungee.Callback;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
 import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
@@ -8,14 +10,19 @@ import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbungee.network.PacketSender;
 import me.illgilp.worldeditglobalizerbungee.player.Player;
 import me.illgilp.worldeditglobalizerbungee.util.StringUtils;
-import me.illgilp.worldeditglobalizercommon.network.packets.*;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PacketReceivedListener implements Listener {
 
@@ -25,7 +32,7 @@ public class PacketReceivedListener implements Listener {
             if (Callback.callback(((ClipboardSendPacket) e.getPacket()).getIdentifier(), e.getPacket()) != null) {
                 return;
             }
-            Clipboard clipboard = new Clipboard(e.getPlayer().getUniqueId(), ((ClipboardSendPacket) e.getPacket()).getData(), ((ClipboardSendPacket) e.getPacket()).getClipboardhash(), e.getServer().getInfo().getName());
+            Clipboard clipboard = new Clipboard(e.getPlayer().getUniqueId(), ((ClipboardSendPacket) e.getPacket()).getData(), ((ClipboardSendPacket) e.getPacket()).getClipboardHash(), e.getServer().getInfo().getName());
             Player.getPlayer(e.getPlayer()).setClipboard(clipboard);
             MessageManager.sendMessage(e.getPlayer(), "clipboard.finish.uploading", StringUtils.humanReadableByteCount(clipboard.getData().length, true));
         } else if (e.getPacket() instanceof PermissionCheckRequestPacket) {
@@ -62,7 +69,7 @@ public class PacketReceivedListener implements Listener {
             ClipboardRequestPacket req = (ClipboardRequestPacket) e.getPacket();
             ClipboardSendPacket packet = new ClipboardSendPacket();
             packet.setIdentifier(req.getIdentifier());
-            packet.setClipboardhash(Player.getPlayer(e.getPlayer()).getClipboard().getHash());
+            packet.setClipboardHash(Player.getPlayer(e.getPlayer()).getClipboard().getHash());
             packet.setData(Player.getPlayer(e.getPlayer()).getClipboard().getData());
             PacketSender.sendPacket(e.getPlayer(), packet);
         } else if (e.getPacket() instanceof PluginConfigRequestPacket) {
@@ -73,6 +80,8 @@ public class PacketReceivedListener implements Listener {
             res.setMaxClipboardSize(WorldEditGlobalizerBungee.getInstance().getMainConfig().getMaxClipboardBytes());
             res.setKeepClipboard(WorldEditGlobalizerBungee.getInstance().getMainConfig().isKeepClipboard());
             res.setPrefix(WorldEditGlobalizerBungee.getInstance().getMainConfig().getPrefix());
+            res.setEnableClipboardAutoDownload(WorldEditGlobalizerBungee.getInstance().getMainConfig().isEnableClipboardAutoDownload());
+            res.setEnableClipboardAutoUpload(WorldEditGlobalizerBungee.getInstance().getMainConfig().isEnableClipboardAutoUpload());
             PacketSender.sendPacket(e.getPlayer(), res);
         } else if (e.getPacket() instanceof KeepAlivePacket) {
             Callback.callback(((KeepAlivePacket) e.getPacket()).getIdentifier(), e.getPacket());
