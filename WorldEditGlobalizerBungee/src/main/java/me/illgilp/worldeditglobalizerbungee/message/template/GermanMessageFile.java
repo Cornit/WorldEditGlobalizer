@@ -1,15 +1,14 @@
 package me.illgilp.worldeditglobalizerbungee.message.template;
 
-import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import me.illgilp.bukkit.configuration.InvalidConfigurationException;
+import me.illgilp.bukkit.configuration.file.YamlConfiguration;
+import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
+import net.md_5.bungee.api.ChatColor;
 
 public class GermanMessageFile implements MessageFile {
 
@@ -142,7 +141,7 @@ public class GermanMessageFile implements MessageFile {
         defaults.put("schematic.notFound", "&cEine Schematic-Datei mit diesem Namen existiert nicht!");
         defaults.put("command.schematic.load.success", "&aDie Schematic-Datei wurde in deine Zwischenablage geladen! Wenn der Download fertig ist, kannst du die Schematic mit '//paste' einfügen!");
 
-        defaults.put("invalide.number", "&cBitte gib eine gültige Nummer an!");
+        defaults.put("invalid.number", "&cBitte gib eine gültige Nummer an!");
 
         defaults.put("incompatible.version", "&cDie Version von dem BungeeCord-Plugin(&6{0}&c) ist nicht kompatibel mit der Version des Unterservers: &8'{1}'&c(&6{2}&c)!");
 

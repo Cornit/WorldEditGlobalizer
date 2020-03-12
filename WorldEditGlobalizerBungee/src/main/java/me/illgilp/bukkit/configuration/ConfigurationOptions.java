@@ -1,4 +1,4 @@
-package org.bukkit.configuration;
+package me.illgilp.bukkit.configuration;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -45,7 +45,7 @@ public class ConfigurationOptions {
      * @param value Path separator
      * @return This object, for chaining
      */
-    public org.bukkit.configuration.ConfigurationOptions pathSeparator(char value) {
+    public ConfigurationOptions pathSeparator(char value) {
         this.pathSeparator = value;
         return this;
     }
@@ -83,7 +83,7 @@ public class ConfigurationOptions {
      * @param value Whether or not defaults are directly copied
      * @return This object, for chaining
      */
-    public org.bukkit.configuration.ConfigurationOptions copyDefaults(boolean value) {
+    public ConfigurationOptions copyDefaults(boolean value) {
         this.copyDefaults = value;
         return this;
     }

@@ -1,13 +1,12 @@
-package org.bukkit.configuration.file;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.representer.Representer;
+package me.illgilp.bukkit.configuration.file;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import me.illgilp.bukkit.configuration.ConfigurationSection;
+import me.illgilp.bukkit.configuration.serialization.ConfigurationSerializable;
+import me.illgilp.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.representer.Representer;
 
 public class YamlRepresenter extends Representer {
 

@@ -1,8 +1,7 @@
 package me.illgilp.worldeditglobalizercommon.network.packets;
 
-import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
-
 import java.util.UUID;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 
 public class PluginConfigResponsePacket extends Packet {
 
@@ -11,6 +10,11 @@ public class PluginConfigResponsePacket extends Packet {
     private long maxClipboardSize;
     private boolean keepClipboard;
     private String prefix;
+    private boolean enableClipboardAutoDownload;
+    private boolean enableClipboardAutoUpload;
+
+    public PluginConfigResponsePacket() {
+    }
 
     @Override
     public void read(PacketDataSerializer buf) {
@@ -19,6 +23,8 @@ public class PluginConfigResponsePacket extends Packet {
         maxClipboardSize = buf.readLong();
         keepClipboard = buf.readBoolean();
         prefix = buf.readString();
+        enableClipboardAutoDownload = buf.readBoolean();
+        enableClipboardAutoUpload = buf.readBoolean();
     }
 
     @Override
@@ -28,41 +34,65 @@ public class PluginConfigResponsePacket extends Packet {
         buf.writeLong(maxClipboardSize);
         buf.writeBoolean(keepClipboard);
         buf.writeString(prefix);
+        buf.writeBoolean(enableClipboardAutoDownload);
+        buf.writeBoolean(enableClipboardAutoUpload);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PluginConfigResponsePacket)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PluginConfigResponsePacket that = (PluginConfigResponsePacket) o;
 
-        if (getMaxClipboardSize() != that.getMaxClipboardSize()) return false;
-        if (isKeepClipboard() != that.isKeepClipboard()) return false;
-        if (!identifier.equals(that.identifier)) return false;
-        if (!getLanguage().equals(that.getLanguage())) return false;
-        return getPrefix().equals(that.getPrefix());
+        if (maxClipboardSize != that.maxClipboardSize) {
+            return false;
+        }
+        if (keepClipboard != that.keepClipboard) {
+            return false;
+        }
+        if (enableClipboardAutoDownload != that.enableClipboardAutoDownload) {
+            return false;
+        }
+        if (enableClipboardAutoUpload != that.enableClipboardAutoUpload) {
+            return false;
+        }
+        if (identifier != null ? !identifier.equals(that.identifier) : that.identifier != null) {
+            return false;
+        }
+        if (language != null ? !language.equals(that.language) : that.language != null) {
+            return false;
+        }
+        return prefix != null ? prefix.equals(that.prefix) : that.prefix == null;
     }
 
     @Override
     public int hashCode() {
-        int result = identifier.hashCode();
-        result = 31 * result + getLanguage().hashCode();
-        result = 31 * result + (int) (getMaxClipboardSize() ^ (getMaxClipboardSize() >>> 32));
-        result = 31 * result + (isKeepClipboard() ? 1 : 0);
-        result = 31 * result + getPrefix().hashCode();
+        int result = identifier != null ? identifier.hashCode() : 0;
+        result = 31 * result + (language != null ? language.hashCode() : 0);
+        result = 31 * result + (int) (maxClipboardSize ^ (maxClipboardSize >>> 32));
+        result = 31 * result + (keepClipboard ? 1 : 0);
+        result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
+        result = 31 * result + (enableClipboardAutoDownload ? 1 : 0);
+        result = 31 * result + (enableClipboardAutoUpload ? 1 : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "PluginConfigResponsePacket{" +
-                "identifier=" + identifier +
-                ", language='" + language + '\'' +
-                ", maxClipboardSize=" + maxClipboardSize +
-                ", keepClipboard=" + keepClipboard +
-                ", prefix='" + prefix + '\'' +
-                '}';
+            "identifier=" + identifier +
+            ", language='" + language + '\'' +
+            ", maxClipboardSize=" + maxClipboardSize +
+            ", keepClipboard=" + keepClipboard +
+            ", prefix='" + prefix + '\'' +
+            ", enableClipboardAutoDownload=" + enableClipboardAutoDownload +
+            ", enableClipboardAutoUpload=" + enableClipboardAutoUpload +
+            "} ";
     }
 
     public UUID getIdentifier() {
@@ -103,5 +133,21 @@ public class PluginConfigResponsePacket extends Packet {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    public boolean isEnableClipboardAutoDownload() {
+        return enableClipboardAutoDownload;
+    }
+
+    public void setEnableClipboardAutoDownload(boolean enableClipboardAutoDownload) {
+        this.enableClipboardAutoDownload = enableClipboardAutoDownload;
+    }
+
+    public boolean isEnableClipboardAutoUpload() {
+        return enableClipboardAutoUpload;
+    }
+
+    public void setEnableClipboardAutoUpload(boolean enableClipboardAutoUpload) {
+        this.enableClipboardAutoUpload = enableClipboardAutoUpload;
     }
 }

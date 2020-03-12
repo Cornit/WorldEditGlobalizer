@@ -1,8 +1,8 @@
-package org.bukkit.configuration.file;
+package me.illgilp.bukkit.configuration.file;
 
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.configuration.MemoryConfigurationOptions;
+import me.illgilp.bukkit.configuration.Configuration;
+import me.illgilp.bukkit.configuration.MemoryConfiguration;
+import me.illgilp.bukkit.configuration.MemoryConfigurationOptions;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -22,13 +22,13 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     }
 
     @Override
-    public org.bukkit.configuration.file.FileConfigurationOptions copyDefaults(boolean value) {
+    public FileConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
 
     @Override
-    public org.bukkit.configuration.file.FileConfigurationOptions pathSeparator(char value) {
+    public FileConfigurationOptions pathSeparator(char value) {
         super.pathSeparator(value);
         return this;
     }
@@ -66,7 +66,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * @param value New header
      * @return This object, for chaining
      */
-    public org.bukkit.configuration.file.FileConfigurationOptions header(String value) {
+    public FileConfigurationOptions header(String value) {
         this.header = value;
         return this;
     }
@@ -112,7 +112,7 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      * @param value Whether or not to copy the header
      * @return This object, for chaining
      */
-    public org.bukkit.configuration.file.FileConfigurationOptions copyHeader(boolean value) {
+    public FileConfigurationOptions copyHeader(boolean value) {
         copyHeader = value;
 
         return this;

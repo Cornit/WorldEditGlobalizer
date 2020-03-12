@@ -1,4 +1,4 @@
-package org.bukkit.configuration;
+package me.illgilp.bukkit.configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ public interface ConfigurationSection {
      * Gets a set containing all keys in this section.
      * <p>
      * If deep is set to true, then this will contain all the keys within any
-     * child {@link org.bukkit.configuration.ConfigurationSection}s (and their children, etc). These
+     * child {@link ConfigurationSection}s (and their children, etc). These
      * will be in a valid path notation for you to use.
      * <p>
      * If deep is set to false, then this will contain only the keys of any
@@ -29,7 +29,7 @@ public interface ConfigurationSection {
      * Gets a Map containing all keys and their values for this section.
      * <p>
      * If deep is set to true, then this will contain all the keys and values
-     * within any child {@link org.bukkit.configuration.ConfigurationSection}s (and their children,
+     * within any child {@link ConfigurationSection}s (and their children,
      * etc). These keys will be in a valid path notation for you to use.
      * <p>
      * If deep is set to false, then this will contain only the keys and
@@ -42,7 +42,7 @@ public interface ConfigurationSection {
     Map<String, Object> getValues(boolean deep);
 
     /**
-     * Checks if this {@link org.bukkit.configuration.ConfigurationSection} contains the given path.
+     * Checks if this {@link ConfigurationSection} contains the given path.
      * <p>
      * If the value for the requested path does not exist but a default value
      * has been specified, this will return true.
@@ -55,7 +55,7 @@ public interface ConfigurationSection {
     boolean contains(String path);
 
     /**
-     * Checks if this {@link org.bukkit.configuration.ConfigurationSection} has a value set for the
+     * Checks if this {@link ConfigurationSection} has a value set for the
      * given path.
      * <p>
      * If the value for the requested path does not exist but a default value
@@ -69,7 +69,7 @@ public interface ConfigurationSection {
     boolean isSet(String path);
 
     /**
-     * Gets the path of this {@link org.bukkit.configuration.ConfigurationSection} from its root {@link
+     * Gets the path of this {@link ConfigurationSection} from its root {@link
      * Configuration}
      * <p>
      * For any {@link Configuration} themselves, this will return an empty
@@ -86,7 +86,7 @@ public interface ConfigurationSection {
     String getCurrentPath();
 
     /**
-     * Gets the name of this individual {@link org.bukkit.configuration.ConfigurationSection}, in the
+     * Gets the name of this individual {@link ConfigurationSection}, in the
      * path.
      * <p>
      * This will always be the final part of {@link #getCurrentPath()}, unless
@@ -98,7 +98,7 @@ public interface ConfigurationSection {
 
     /**
      * Gets the root {@link Configuration} that contains this {@link
-     * org.bukkit.configuration.ConfigurationSection}
+     * ConfigurationSection}
      * <p>
      * For any {@link Configuration} themselves, this will return its own
      * object.
@@ -111,8 +111,8 @@ public interface ConfigurationSection {
     Configuration getRoot();
 
     /**
-     * Gets the parent {@link org.bukkit.configuration.ConfigurationSection} that directly contains
-     * this {@link org.bukkit.configuration.ConfigurationSection}.
+     * Gets the parent {@link ConfigurationSection} that directly contains
+     * this {@link ConfigurationSection}.
      * <p>
      * For any {@link Configuration} themselves, this will return null.
      * <p>
@@ -121,7 +121,7 @@ public interface ConfigurationSection {
      *
      * @return Parent section containing this section.
      */
-    org.bukkit.configuration.ConfigurationSection getParent();
+    ConfigurationSection getParent();
 
     /**
      * Gets the requested Object by path.
@@ -157,7 +157,7 @@ public interface ConfigurationSection {
      * <p>
      * Some implementations may have limitations on what you may store. See
      * their individual javadocs for details. No implementations should allow
-     * you to store {@link Configuration}s or {@link org.bukkit.configuration.ConfigurationSection}s,
+     * you to store {@link Configuration}s or {@link ConfigurationSection}s,
      * please use {@link #createSection(String)} for that.
      *
      * @param path  Path of the object to set.
@@ -166,30 +166,30 @@ public interface ConfigurationSection {
     void set(String path, Object value);
 
     /**
-     * Creates an empty {@link org.bukkit.configuration.ConfigurationSection} at the specified path.
+     * Creates an empty {@link ConfigurationSection} at the specified path.
      * <p>
      * Any value that was previously set at this path will be overwritten. If
-     * the previous value was itself a {@link org.bukkit.configuration.ConfigurationSection}, it will
+     * the previous value was itself a {@link ConfigurationSection}, it will
      * be orphaned.
      *
      * @param path Path to create the section at.
      * @return Newly created section
      */
-    org.bukkit.configuration.ConfigurationSection createSection(String path);
+    ConfigurationSection createSection(String path);
 
     /**
-     * Creates a {@link org.bukkit.configuration.ConfigurationSection} at the specified path, with
+     * Creates a {@link ConfigurationSection} at the specified path, with
      * specified values.
      * <p>
      * Any value that was previously set at this path will be overwritten. If
-     * the previous value was itself a {@link org.bukkit.configuration.ConfigurationSection}, it will
+     * the previous value was itself a {@link ConfigurationSection}, it will
      * be orphaned.
      *
      * @param path Path to create the section at.
      * @param map  The values to used.
      * @return Newly created section
      */
-    org.bukkit.configuration.ConfigurationSection createSection(String path, Map<?, ?> map);
+    ConfigurationSection createSection(String path, Map<?, ?> map);
 
     // Primitives
 
@@ -596,7 +596,7 @@ public interface ConfigurationSection {
      * @param path Path of the ConfigurationSection to get.
      * @return Requested ConfigurationSection.
      */
-    org.bukkit.configuration.ConfigurationSection getConfigurationSection(String path);
+    ConfigurationSection getConfigurationSection(String path);
 
     /**
      * Checks if the specified path is a ConfigurationSection.
@@ -613,16 +613,16 @@ public interface ConfigurationSection {
     boolean isConfigurationSection(String path);
 
     /**
-     * Gets the equivalent {@link org.bukkit.configuration.ConfigurationSection} from the default
+     * Gets the equivalent {@link ConfigurationSection} from the default
      * {@link Configuration} defined in {@link #getRoot()}.
      * <p>
      * If the root contains no defaults, or the defaults doesn't contain a
      * value for this path, or the value at this path is not a {@link
-     * org.bukkit.configuration.ConfigurationSection} then this will return null.
+     * ConfigurationSection} then this will return null.
      *
      * @return Equivalent section in root configuration
      */
-    org.bukkit.configuration.ConfigurationSection getDefaultSection();
+    ConfigurationSection getDefaultSection();
 
     /**
      * Sets the default value in the root at the given path as provided.

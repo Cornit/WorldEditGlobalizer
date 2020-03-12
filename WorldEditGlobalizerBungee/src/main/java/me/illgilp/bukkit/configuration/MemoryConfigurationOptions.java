@@ -1,4 +1,4 @@
-package org.bukkit.configuration;
+package me.illgilp.bukkit.configuration;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -15,13 +15,13 @@ public class MemoryConfigurationOptions extends ConfigurationOptions {
     }
 
     @Override
-    public org.bukkit.configuration.MemoryConfigurationOptions copyDefaults(boolean value) {
+    public MemoryConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
 
     @Override
-    public org.bukkit.configuration.MemoryConfigurationOptions pathSeparator(char value) {
+    public MemoryConfigurationOptions pathSeparator(char value) {
         super.pathSeparator(value);
         return this;
     }

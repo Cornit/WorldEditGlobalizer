@@ -1,4 +1,4 @@
-package org.bukkit.configuration.serialization;
+package me.illgilp.bukkit.configuration.serialization;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

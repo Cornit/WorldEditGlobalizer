@@ -1,4 +1,4 @@
-package org.bukkit.configuration;
+package me.illgilp.bukkit.configuration;
 
 /**
  * Exception thrown when attempting to load an invalid {@link Configuration}

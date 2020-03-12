@@ -74,7 +74,7 @@ public class WEGSubCommands {
             if (Player.getPlayer(player).hasClipboard()) {
                 MessageManager.sendMessage(player, "clipboard.start.downloading");
                 ClipboardSendPacket packet = new ClipboardSendPacket();
-                packet.setClipboardhash(Player.getPlayer(player).getClipboard().getHash());
+                packet.setClipboardHash(Player.getPlayer(player).getClipboard().getHash());
                 packet.setData(Player.getPlayer(player).getClipboard().getData());
                 PacketSender.sendPacket(player, packet);
             } else {
@@ -115,19 +115,19 @@ public class WEGSubCommands {
                     if (response instanceof ClipboardSendPacket) {
                         ClipboardSendPacket packet = (ClipboardSendPacket) response;
                         ProxiedPlayer player = (ProxiedPlayer) getUserData();
-                        if (packet.getClipboardhash() > 0) {
-                            Clipboard clipboard = new Clipboard(player.getUniqueId(), packet.getData(), packet.getClipboardhash(), player.getServer().getInfo().getName());
+                        if (packet.getClipboardHash() > 0) {
+                            Clipboard clipboard = new Clipboard(player.getUniqueId(), packet.getData(), packet.getClipboardHash(), player.getServer().getInfo().getName());
                             Player.getPlayer(player).setClipboard(clipboard);
                             MessageManager.sendMessage(player, "clipboard.finish.uploading", StringUtils.humanReadableByteCount(clipboard.getData().length, true));
                         } else {
-                            if (packet.getClipboardhash() == -1) {
+                            if (packet.getClipboardHash() == -1) {
                                 ClipboardManager.getInstance().removeClipboard(player.getUniqueId());
                                 MessageManager.sendMessage(player, "clipboard.clear");
-                            } else if (packet.getClipboardhash() == -3) {
+                            } else if (packet.getClipboardHash() == -3) {
                                 PacketDataSerializer ser = new PacketDataSerializer(packet.getData());
                                 MessageManager.sendMessage(player, "clipboard.tooBig",
-                                        StringUtils.humanReadableByteCount(WorldEditGlobalizerBungee.getInstance().getMainConfig().getMaxClipboardBytes(), true),
-                                        StringUtils.humanReadableByteCount(ser.readLong(), true));
+                                    StringUtils.humanReadableByteCount(WorldEditGlobalizerBungee.getInstance().getMainConfig().getMaxClipboardBytes(), true),
+                                    StringUtils.humanReadableByteCount(ser.readLong(), true));
                             }
                         }
                     } else {

@@ -5,6 +5,9 @@ import com.sk89q.worldedit.EmptyClipboardException;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGSpongeSchematicWriter;
 import me.illgilp.worldeditglobalizerbukkit.manager.ConfigManager;
@@ -21,10 +24,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.primesoft.asyncworldedit.api.IAsyncWorldEdit;
 import org.primesoft.asyncworldedit.api.blockPlacer.IBlockPlacerPlayer;
 import org.primesoft.asyncworldedit.api.playerManager.IPlayerEntry;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AWEClipboardRunnable extends BukkitRunnable {
 
@@ -93,6 +92,9 @@ public class AWEClipboardRunnable extends BukkitRunnable {
     }
 
     private void sendClipboard(ClipboardHolder holder) throws IOException {
+        if (!ConfigManager.getInstance().getPluginConfig(p).isEnableClipboardAutoUpload()) {
+            return;
+        }
         if (PermissionManager.getInstance().hasPermission(p, "worldeditglobalizer.use.global.clipboard")) {
             lastHashCode = holder.hashCode();
 
@@ -109,7 +111,7 @@ public class AWEClipboardRunnable extends BukkitRunnable {
             }
 
             ClipboardSendPacket packet = new ClipboardSendPacket();
-            packet.setClipboardhash(holder.hashCode());
+            packet.setClipboardHash(holder.hashCode());
             packet.setData(serializer.toByteArray());
 
             MessageManager.sendMessage(p, "clipboard.start.uploading");

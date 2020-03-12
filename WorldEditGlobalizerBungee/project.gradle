@@ -1,7 +1,7 @@
 depend 'org.apache.commons:commons-lang3:3.6',true
 depend 'org.apache.commons:commons-io:1.3.2',true
 
-depend name: 'BungeeCord - 1.13.1',false
+depend name: 'BungeeCord-1.15.x',false
 depend project(":Common"),true
 
 

@@ -1,5 +1,6 @@
 package me.illgilp.worldeditglobalizerbungee.listener;
 
+import java.util.concurrent.TimeUnit;
 import me.illgilp.worldeditglobalizerbungee.Callback;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
 import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;
@@ -13,8 +14,6 @@ import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-
-import java.util.concurrent.TimeUnit;
 
 public class ServerConnectedListener implements Listener {
 
@@ -48,11 +47,13 @@ public class ServerConnectedListener implements Listener {
                         }
                         Player.getPlayer(e.getPlayer()).setPluginOnCurrentServerInstalled(true);
                         if (Player.getPlayer(e.getPlayer()).hasClipboard()) {
-                            MessageManager.sendMessage(e.getPlayer(), "clipboard.start.downloading");
-                            ClipboardSendPacket packet = new ClipboardSendPacket();
-                            packet.setClipboardhash(Player.getPlayer(e.getPlayer()).getClipboard().getHash());
-                            packet.setData(Player.getPlayer(e.getPlayer()).getClipboard().getData());
-                            PacketSender.sendPacket(e.getPlayer(), packet);
+                            if (WorldEditGlobalizerBungee.getInstance().getMainConfig().isEnableClipboardAutoDownload()) {
+                                MessageManager.sendMessage(e.getPlayer(), "clipboard.start.downloading");
+                                ClipboardSendPacket packet = new ClipboardSendPacket();
+                                packet.setClipboardHash(Player.getPlayer(e.getPlayer()).getClipboard().getHash());
+                                packet.setData(Player.getPlayer(e.getPlayer()).getClipboard().getData());
+                                PacketSender.sendPacket(e.getPlayer(), packet);
+                            }
                         }
                         KeepAliveRunnable.start(e.getServer(), e.getPlayer());
                     }
