@@ -109,9 +109,18 @@ public class GermanMessageFile implements MessageFile {
 
         defaults.put("clipboard.tooBig", "&cDeine Zwischenablage ist zu groß! (Max: {0} Zwischenablage: {1})");
 
-        defaults.put("command.usage-message", "&7Falscher Syntax! Verwende: {0}");
+        defaults.put("command.usage-message", "&cFalscher Syntax! Verwende: {0}");
 
-        defaults.put("command.cannotUse", "&cDu kannst diesen Befehl auf diesem Server nicht ausführen!");
+        defaults.put("command.server.cannotUse.secretKeyNotSet", "&cDer Sicherheitsschlüssel in der Config von diesem Unterserver ist nicht gesetzt!");
+        defaults.put("command.server.cannotUse.pluginNotInstalled", "&cDas Plugin ist nicht auf diesem Unterserver installiert!");
+        defaults.put("command.server.cannotUse.incompatibleVersion", "&cDie Version von dem BungeeCord-Plugin(&6{0}&c) ist nicht kompatibel mit der Version dieses Unterservers: &8'{1}'&c(&6{2}&c)!\n" +
+            "&cPlease use /weg syncVersions to sync the versions between BungeeCord and Bukkit/Spigot.");
+        defaults.put("command.server.cannotUse.incorrectSecretKey", "&cDer Sicherheitsschlüssel in der Config von diesem Unterserver ist nicht korrekt!");
+
+        defaults.put("command.start.syncversions", "&dDas Plugin wird auf den Unterserver heruntergeladen...");
+        defaults.put("command.finish.syncversions", "&dDie Versionen wurden synchronisiert! Bitte starte den Unterserver neu, damit die Änderungen übernommen werden.");
+        defaults.put("command.error.syncversions.tryAgain", "&cDas Plugin konnte nicht korrekt heruntergeladen werden! Versuche es erneut...");
+        defaults.put("command.error.syncversions.failed", "&cDas Plugin konnte nicht korrekt heruntergeladen werden! Bitte versuche es später noch einmal!");
 
         defaults.put("command.permissionDenied", "&cDu hast keinen Zugriff auf diesen Befehl!");
 
@@ -123,6 +132,8 @@ public class GermanMessageFile implements MessageFile {
         defaults.put("command.finish.reload", "&aAlle Configs und alle Nachrichten-Datein wurden neugeladen!");
 
         defaults.put("command.playerNotFound", "&cDer Spieler '&6{0}&c' existiert nicht!");
+
+        defaults.put("command.clear.success", "&aDie Zwischenablage von '&6{0}&c' wurde geleert!");
 
         defaults.put("command.info.format", "&3Info's über &6{0}&3:\n" +
                 "&6&l>> &r&aName &7= &f{1}\n" +
@@ -137,15 +148,18 @@ public class GermanMessageFile implements MessageFile {
 
         defaults.put("command.schematic.list", "&7Verfügbare Schematics [{0}/{1}]:\n&2{2}");
         defaults.put("command.schematic.save", "&aDeine Zwischenablage wurde in eine Schematic-Datei gespeichert!");
+        defaults.put("command.schematic.delete.success", "&aDie Schematic-Datei wurde gelöscht!");
+        defaults.put("command.schematic.delete.error", "&cDie Schematic-Datei konnte nicht gelöscht werden! Tipp: Starte den BungeeCord-Server neu und probiere es erneut!");
         defaults.put("command.schematic.delete", "&aDie Schematic-Datei wurde gelöscht!");
-        defaults.put("schematic.notFound", "&cEine Schematic-Datei mit diesem Namen existiert nicht!");
+        defaults.put("command.schematic.load.notFound", "&cEine Schematic-Datei mit diesem Namen existiert nicht!");
         defaults.put("command.schematic.load.success", "&aDie Schematic-Datei wurde in deine Zwischenablage geladen! Wenn der Download fertig ist, kannst du die Schematic mit '//paste' einfügen!");
 
         defaults.put("invalid.number", "&cBitte gib eine gültige Nummer an!");
 
         defaults.put("incompatible.version", "&cDie Version von dem BungeeCord-Plugin(&6{0}&c) ist nicht kompatibel mit der Version des Unterservers: &8'{1}'&c(&6{2}&c)!");
 
-        defaults.put("clipboard.unknownFormat", "&cDie heruntergeladene Zwischenablage/Schematic ist in einem falschen Format, lösche diese um den Fehler zu beheben.");
+        defaults.put("clipboard.unknownFormat", "&cDie heruntergeladene Zwischenablage/Schematic ist in einem falschen Format, leere diese um den Fehler zu beheben.");
+        defaults.put("clipboard.tooNew", "&cDie heruntergeladene Zwischenablage/Schematic wurde in einer neueren Version von Minecraft erstellt und kann somit hier nicht verwendet werden!");
 
         defaults.put("update.notify", "&3Es gibt eine neue Version von diesem Plugin!\n" +
                 "&6&l>> &r&aAktuelle Version &7= &f{1}\n" +
@@ -153,6 +167,33 @@ public class GermanMessageFile implements MessageFile {
                 "&6&l>> &r&aUpdate Nachricht &7= &f{3}\n" +
                 "&6&l>> &r&aDownload Link &7= &f{4}");
 
-        defaults.put("command.help.discord", "§7Du brauchst Hilfe? Joine einfach unserem Discord Server. §7https://discord.gg/B8BEaNV");
+        defaults.put("command.help.discord", "&7Du brauchst Hilfe? Joine einfach unserem Discord Server. &7https://discord.gg/B8BEaNV");
+
+        defaults.put("actionbar.progress.upload", "Lade hoch... |||||||||||||||||||||||||||||||||||||||||||||||||| {0}%");
+        defaults.put("actionbar.progress.download", "Lade herunter... |||||||||||||||||||||||||||||||||||||||||||||||||| {0}%");
+        defaults.put("actionbar.progress.setClipboard", "&3Setze Zwischenablage...");
+
+        defaults.put("chat.function.notAvailable", "&cDiese Funktion ist nicht mehr verfügbar!");
+        defaults.put("chat.function.error", "&cEin Fehler ist während der Ausführung dieser Funktion aufgetreten!");
+
+
+        defaults.put("chat.box.page.number", "&3Seite &6{0} &3von &6{1}");
+        defaults.put("chat.box.page.next.tooltip", "Nächste Seite");
+        defaults.put("chat.box.page.previous.tooltip", "Vorherige Seite");
+
+
+        defaults.put("chat.box.schematic.list.title", "&7Verfügbare Schematics");
+
+        defaults.put("chat.box.schematic.list.button.load.title", "Laden");
+        defaults.put("chat.box.schematic.list.button.load.tooltip", "Klicke um die Schematic '{0}' zu laden");
+
+        defaults.put("chat.box.schematic.list.button.delete.title", "Löschen");
+        defaults.put("chat.box.schematic.list.button.delete.tooltip", "Klicke um die Schematic '{0}' zu löschen");
+
+        defaults.put("chat.box.schematic.delete.title", "Wirklich?");
+        defaults.put("chat.box.schematic.delete.message", "Möchtest du wirklich die Schematic '{0}' löschen?");
+        defaults.put("chat.box.schematic.delete.button.confirm.title", "Bestätigen");
+        defaults.put("chat.box.schematic.delete.button.confirm.tooltip", "Klicke um zu bestätigen");
+
     }
 }

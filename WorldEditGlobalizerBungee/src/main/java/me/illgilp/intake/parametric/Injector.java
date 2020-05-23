@@ -23,6 +23,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import me.illgilp.intake.argument.ArgumentException;
 import me.illgilp.intake.argument.CommandArgs;
+import me.illgilp.intake.argument.CommandCancelException;
 
 /**
  * An injector knows a list of "bindings" that map types to a provider.
@@ -92,7 +93,7 @@ public interface Injector {
      * @throws ArgumentException  If there is a problem with the argument
      * @throws ProvisionException If there is a problem with the provider
      */
-    <T> T getInstance(Key<T> key, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException;
+    <T> T getInstance(Key<T> key, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException, CommandCancelException;
 
     /**
      * Attempt to provide a value for the given class using the given
@@ -106,6 +107,6 @@ public interface Injector {
      * @throws ArgumentException  If there is a problem with the argument
      * @throws ProvisionException If there is a problem with the provider
      */
-    <T> T getInstance(Class<T> type, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException;
+    <T> T getInstance(Class<T> type, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException, CommandCancelException;
 
 }

@@ -1,16 +1,15 @@
 package me.illgilp.worldeditglobalizercommon.network.packets;
 
 
-import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
-
 import java.util.UUID;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 
 public class MessageResponsePacket extends Packet {
 
     private UUID identifier = UUID.randomUUID();
     private String path;
     private String language = "default";
-    private String message = "none";
+    private String json = "none";
 
 
     @Override
@@ -18,7 +17,7 @@ public class MessageResponsePacket extends Packet {
         identifier = UUID.fromString(buf.readString());
         path = buf.readString();
         language = buf.readString();
-        message = buf.readString();
+        json = buf.readString();
     }
 
     @Override
@@ -26,7 +25,7 @@ public class MessageResponsePacket extends Packet {
         buf.writeString(identifier.toString());
         buf.writeString(path);
         buf.writeString(language);
-        buf.writeString(message);
+        buf.writeString(json);
     }
 
     public UUID getIdentifier() {
@@ -53,12 +52,12 @@ public class MessageResponsePacket extends Packet {
         this.language = language;
     }
 
-    public String getMessage() {
-        return message;
+    public String getJson() {
+        return json;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setJson(String json) {
+        this.json = json;
     }
 
     @Override
@@ -71,7 +70,7 @@ public class MessageResponsePacket extends Packet {
         if (!getIdentifier().equals(that.getIdentifier())) return false;
         if (!getPath().equals(that.getPath())) return false;
         if (!getLanguage().equals(that.getLanguage())) return false;
-        return getMessage().equals(that.getMessage());
+        return getJson().equals(that.getJson());
     }
 
     @Override
@@ -79,7 +78,7 @@ public class MessageResponsePacket extends Packet {
         int result = getIdentifier().hashCode();
         result = 31 * result + getPath().hashCode();
         result = 31 * result + getLanguage().hashCode();
-        result = 31 * result + getMessage().hashCode();
+        result = 31 * result + getJson().hashCode();
         return result;
     }
 
@@ -89,7 +88,7 @@ public class MessageResponsePacket extends Packet {
                 "identifier=" + identifier +
                 ", path='" + path + '\'' +
                 ", language='" + language + '\'' +
-                ", message='" + message + '\'' +
+                ", json='" + json + '\'' +
                 '}';
     }
 }

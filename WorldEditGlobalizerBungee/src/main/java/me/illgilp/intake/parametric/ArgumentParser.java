@@ -28,6 +28,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import me.illgilp.intake.argument.ArgumentException;
 import me.illgilp.intake.argument.ArgumentParseException;
 import me.illgilp.intake.argument.Arguments;
 import me.illgilp.intake.argument.CommandArgs;
+import me.illgilp.intake.argument.CommandCancelException;
 import me.illgilp.intake.argument.MissingArgumentException;
 import me.illgilp.intake.argument.UnusedArgumentException;
 import me.illgilp.intake.parametric.annotation.Classifier;
@@ -120,6 +122,11 @@ public final class ArgumentParser {
                 }
 
                 parsedObjects[i] = getDefaultValue(entry, args);
+            } catch (CommandCancelException e) {
+                if (e.equals(CommandCancelException.INSTANCE)) {
+                    return null;
+                }
+                e.printStackTrace();
             }
         }
 
@@ -127,6 +134,23 @@ public final class ArgumentParser {
         checkUnconsumed(args, ignoreUnusedFlags, unusedFlags);
 
         return parsedObjects;
+    }
+
+    /**
+     * Get suggestions from provider.
+     *
+     * @param args              The tokenized arguments
+     * @return The list of Java objects
+     * @throws ArgumentException  If there is a problem with the provided arguments
+     * @throws ProvisionException If there is a problem with the binding itself
+     */
+    public List<String> getSuggestions(String[] args) {
+        String arg = args[args.length - 1];
+        if (parameters.size() > (args.length)) {
+            ParameterEntry entry = parameters.get(args.length);
+            return entry.getBinding().getProvider().getSuggestions(arg);
+        }
+        return new ArrayList<>();
     }
 
     private Object getDefaultValue(ParameterEntry entry, CommandArgs arguments) {
@@ -144,6 +168,8 @@ public final class ArgumentParser {
             } catch (ProvisionException e) {
                 throw new IllegalParameterException("No value was specified for the '" + entry.getParameter().getName() + "' parameter " +
                     "so the default value '" + Joiner.on(" ").join(defaultValue) + "' was used, but this value doesn't work due to an error: " + e.getMessage());
+            } catch (CommandCancelException e) {
+                return null;
             }
         }
     }

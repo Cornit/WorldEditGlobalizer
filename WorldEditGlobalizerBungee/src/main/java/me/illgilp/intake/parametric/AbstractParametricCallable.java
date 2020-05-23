@@ -191,7 +191,9 @@ public abstract class AbstractParametricCallable implements CommandCallable {
             }
 
             final Object[] args = parser.parseArguments(commandArgs, ignoreUnusedFlags, unusedFlags);
-
+            if (args == null) {
+                return false;
+            }
             // preInvoke
             for (InvokeHandler handler : handlers) {
                 if (!handler.preInvoke(commandAnnotations, parser, args, commandArgs)) {
@@ -272,8 +274,21 @@ public abstract class AbstractParametricCallable implements CommandCallable {
     protected abstract void call(Object[] args) throws Exception;
 
     @Override
-    public List<String> getSuggestions(String arguments, Namespace locals) throws CommandException {
-        return builder.getDefaultCompleter().getSuggestions(arguments, locals);
+    public List<String> getSuggestions(String arguments, Namespace namespace) {
+
+        if (!testPermission(namespace)) {
+            return new ArrayList<>();
+        }
+
+        String[] split = CommandContext.split(arguments);
+        try {
+            return parser.getSuggestions(split);
+        } catch (Throwable e) {
+
+        }
+
+        return new ArrayList<>();
+
     }
 
 }

@@ -1,16 +1,17 @@
 package me.illgilp.worldeditglobalizerbungee.network;
 
 
-import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
-import me.illgilp.worldeditglobalizerbungee.events.PacketReceivedEvent;
-import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
-import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
-import net.md_5.bungee.ServerConnection;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
+import me.illgilp.worldeditglobalizerbungee.events.PacketReceivedEvent;
+import me.illgilp.worldeditglobalizerbungee.manager.PlayerManager;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
+import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.ServerConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class PacketManager {
 
@@ -47,23 +48,19 @@ public class PacketManager {
     }
 
     public void callPacket(ProxiedPlayer player, int packetId, byte[] data, ServerConnection server) {
-        //System.out.println(0);
         try {
             if (registeredPackets
                     .get(Packet.Direction.TO_BUNGEE)
                     .containsKey(packetId)) {
-                //System.out.println(1);
                 Packet packet = null;
                 try {
-                    //System.out.println(2);
                     packet = (Packet) registeredPackets.get(Packet.Direction.TO_BUNGEE).get(packetId).newInstance();
-                    //System.out.println(3);
                     packet.read(new PacketDataSerializer(data));
                 } catch (Exception e) {
                     WorldEditGlobalizerBungee.getInstance().getLogger().log(Level.SEVERE, "Error while reading packet: " + packet.getClass().getSimpleName(), e);
                 }
-                PacketReceivedEvent event = new PacketReceivedEvent(player, packet, packetId, server);
-                WorldEditGlobalizerBungee.getInstance().getProxy().getPluginManager().callEvent(event);
+                PacketReceivedEvent event = new PacketReceivedEvent(PlayerManager.getInstance().getPlayer(player.getUniqueId()), packet, packetId, server);
+                BungeeCord.getInstance().getScheduler().runAsync(WorldEditGlobalizerBungee.getInstance(), () -> WorldEditGlobalizerBungee.getInstance().getProxy().getPluginManager().callEvent(event));
             }
         } catch (Exception e) {
             e.printStackTrace();

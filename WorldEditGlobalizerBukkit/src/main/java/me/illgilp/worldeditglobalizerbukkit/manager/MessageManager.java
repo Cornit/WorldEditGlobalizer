@@ -1,13 +1,14 @@
 package me.illgilp.worldeditglobalizerbukkit.manager;
 
-import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
-import me.illgilp.worldeditglobalizercommon.network.packets.MessageRequestPacket;
-import me.illgilp.worldeditglobalizercommon.network.packets.MessageResponsePacket;
-import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageRequestPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.MessageResponsePacket;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.entity.Player;
 
 public class MessageManager {
 
@@ -18,12 +19,12 @@ public class MessageManager {
     private MessageManager() {
     }
 
-    public static String sendMessage(Player player, String path, Object... placeholders) {
-        String msg = getInstance().getMessage(player, path, placeholders);
-        if (!msg.equalsIgnoreCase("none")) {
-            player.sendMessage(msg);
+    public static TextComponent sendMessage(Player player, String path, Object... placeholders) {
+        TextComponent textComponent = getInstance().getMessage(player, path, placeholders);
+        if (textComponent != null) {
+            player.spigot().sendMessage(textComponent);
         }
-        return msg;
+        return textComponent;
     }
 
     public static MessageManager getInstance() {
@@ -33,8 +34,8 @@ public class MessageManager {
         return instance;
     }
 
-    public String getMessage(Player player, String path, Object... placeholder) {
-        if (player == null || path == null) return "none";
+    public TextComponent getMessage(Player player, String path, Object... placeholder) {
+        if (player == null || path == null) return null;
         MessageRequestPacket req = new MessageRequestPacket();
         req.setLanguage("default");
         req.setPath(path);
@@ -53,11 +54,11 @@ public class MessageManager {
             MessageResponsePacket res = tmpResponse.get(req.getIdentifier());
             tmpPath.remove(res.getIdentifier());
             tmpResponse.remove(res.getIdentifier());
-            return res.getMessage();
+            return res.getJson().equalsIgnoreCase("none") ? null : new TextComponent(ComponentSerializer.parse(res.getJson()));
         } else {
             tmpPath.remove(req.getIdentifier());
             tmpResponse.remove(req.getIdentifier());
-            return "none";
+            return null;
         }
 
     }

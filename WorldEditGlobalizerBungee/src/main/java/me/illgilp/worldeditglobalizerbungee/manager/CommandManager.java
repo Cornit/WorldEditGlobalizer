@@ -23,6 +23,7 @@ import me.illgilp.worldeditglobalizerbungee.intake.parametric.WEGAuthorizer;
 import me.illgilp.worldeditglobalizerbungee.intake.parametric.module.WEGModule;
 import me.illgilp.worldeditglobalizerbungee.util.ComponentUtils;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class CommandManager {
 
@@ -128,7 +129,7 @@ public class CommandManager {
     public void handleCommand(String command, CommandSender sender) {
         try {
             Namespace namespace = new Namespace();
-            namespace.put(CommandSender.class, sender);
+            namespace.put(CommandSender.class, sender instanceof ProxiedPlayer ? PlayerManager.getInstance().getPlayer(((ProxiedPlayer) sender).getUniqueId()) : sender);
             this.dispatcher.call(command, namespace, Collections.emptyList());
         } catch (InvalidUsageException e) {
             if (!e.getCommand().getDescription().getUsage().isEmpty()) {
@@ -151,7 +152,7 @@ public class CommandManager {
         if (commandline == null) commandline = "help";
         try {
             Namespace namespace = new Namespace();
-            namespace.put(CommandSender.class, sender);
+            namespace.put(CommandSender.class, sender instanceof ProxiedPlayer ? PlayerManager.getInstance().getPlayer(((ProxiedPlayer) sender).getUniqueId()) : sender);
             dispatcher.call(commandline, namespace, Collections.emptyList());
         } catch (InvalidUsageException e) {
             if (!e.getCommand().getDescription().getUsage().isEmpty()) {
@@ -181,6 +182,37 @@ public class CommandManager {
 
     public Dispatcher getDispatcher() {
         return this.dispatcher;
+    }
+
+    public List<String> getSuggestions(String command, CommandSender sender) {
+        try {
+            Namespace namespace = new Namespace();
+            namespace.put(CommandSender.class, sender instanceof ProxiedPlayer ? PlayerManager.getInstance().getPlayer(((ProxiedPlayer) sender).getUniqueId()) : sender);
+            return this.dispatcher.getSuggestions(command, namespace);
+        } catch (InvalidUsageException e) {
+            return new ArrayList<>();
+
+        } catch (CommandException e) {
+            sender.sendMessage(ComponentUtils.addText(null, MessageManager.getInstance().getPrefix() + "§cAn error occurred while processing this command! Please inform an admin!"));
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<String> getSubSuggestions(String command, String commandline, CommandSender sender) {
+        Dispatcher dispatcher = subCommandDispatchers.get(command);
+        try {
+            Namespace namespace = new Namespace();
+            namespace.put(CommandSender.class, sender instanceof ProxiedPlayer ? PlayerManager.getInstance().getPlayer(((ProxiedPlayer) sender).getUniqueId()) : sender);
+            return dispatcher.getSuggestions(commandline, namespace);
+        } catch (InvalidUsageException e) {
+            return new ArrayList<>();
+        } catch (CommandException e) {
+            sender.sendMessage(ComponentUtils.addText(null, MessageManager.getInstance().getPrefix() + "§cAn error occurred while processing this command! Please inform an admin!"));
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+
     }
 
     public void setDispatcher(Dispatcher dispatcher) {

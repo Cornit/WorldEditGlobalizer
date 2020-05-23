@@ -10,12 +10,14 @@ public class ClipboardSendPacket extends Packet {
     private UUID identifier = UUID.randomUUID();
     private int clipboardHash;
     private byte[] data;
+    private Action action = Action.SEND;
 
     @Override
     public void read(PacketDataSerializer buf) {
         identifier = UUID.fromString(buf.readString());
         clipboardHash = buf.readInt();
         data = buf.readArray();
+        action = Action.values()[buf.readVarInt()];
     }
 
     @Override
@@ -23,30 +25,39 @@ public class ClipboardSendPacket extends Packet {
         buf.writeString(identifier.toString());
         buf.writeInt(clipboardHash);
         buf.writeArray(data);
+        buf.writeVarInt(action.ordinal());
     }
 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ClipboardSendPacket)) return false;
-
-        ClipboardSendPacket packet = (ClipboardSendPacket) o;
-
-        if (getClipboardHash() != packet.getClipboardHash()) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!identifier.equals(packet.identifier)) {
+
+        ClipboardSendPacket that = (ClipboardSendPacket) o;
+
+        if (clipboardHash != that.clipboardHash) {
             return false;
         }
-        return Arrays.equals(getData(), packet.getData());
+        if (identifier != null ? !identifier.equals(that.identifier) : that.identifier != null) {
+            return false;
+        }
+        if (!Arrays.equals(data, that.data)) {
+            return false;
+        }
+        return action == that.action;
     }
 
     @Override
     public int hashCode() {
-        int result = identifier.hashCode();
-        result = 31 * result + getClipboardHash();
-        result = 31 * result + Arrays.hashCode(getData());
+        int result = identifier != null ? identifier.hashCode() : 0;
+        result = 31 * result + clipboardHash;
+        result = 31 * result + Arrays.hashCode(data);
+        result = 31 * result + (action != null ? action.hashCode() : 0);
         return result;
     }
 
@@ -55,7 +66,7 @@ public class ClipboardSendPacket extends Packet {
         return "ClipboardSendPacket{" +
             "identifier=" + identifier +
             ", clipboardHash=" + clipboardHash +
-            ", data=" + Arrays.toString(data) +
+            ", action=" + action +
             '}';
     }
 
@@ -81,5 +92,19 @@ public class ClipboardSendPacket extends Packet {
 
     public void setIdentifier(UUID identifier) {
         this.identifier = identifier;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public enum Action {
+        SEND,
+        CLEAR,
+        TOO_BIG
     }
 }

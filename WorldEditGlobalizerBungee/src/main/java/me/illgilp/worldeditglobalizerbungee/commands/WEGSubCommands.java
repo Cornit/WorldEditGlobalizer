@@ -1,6 +1,11 @@
 package me.illgilp.worldeditglobalizerbungee.commands;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,8 +16,8 @@ import me.illgilp.intake.CommandMapping;
 import me.illgilp.intake.Require;
 import me.illgilp.intake.parametric.annotation.Optional;
 import me.illgilp.intake.parametric.annotation.Text;
-import me.illgilp.worldeditglobalizerbungee.Callback;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
+import me.illgilp.worldeditglobalizerbungee.callback.Callback;
 import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
 import me.illgilp.worldeditglobalizerbungee.manager.ClipboardManager;
 import me.illgilp.worldeditglobalizerbungee.manager.CommandManager;
@@ -20,17 +25,17 @@ import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
 import me.illgilp.worldeditglobalizerbungee.message.template.CustomMessageFile;
 import me.illgilp.worldeditglobalizerbungee.network.PacketSender;
+import me.illgilp.worldeditglobalizerbungee.player.OfflinePlayer;
 import me.illgilp.worldeditglobalizerbungee.player.Player;
 import me.illgilp.worldeditglobalizerbungee.util.ComponentUtils;
-import me.illgilp.worldeditglobalizerbungee.util.StringUtils;
-import me.illgilp.worldeditglobalizerbungee.util.UUIDFetcher;
+import me.illgilp.worldeditglobalizerbungee.util.StringUtil;
 import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
-import net.md_5.bungee.BungeeCord;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginSendPacket;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.apache.commons.io.IOUtils;
 
 public class WEGSubCommands {
 
@@ -64,24 +69,18 @@ public class WEGSubCommands {
     @Require(
             value = "worldeditglobalizer.command.download"
     )
-    public void download(CommandSender sender) {
-        if (sender instanceof ProxiedPlayer) {
-            ProxiedPlayer player = (ProxiedPlayer) sender;
-            if (!Player.getPlayer(player).isPluginOnCurrentServerInstalled()) {
-                MessageManager.sendMessage(player, "command.cannotUse");
-                return;
-            }
-            if (Player.getPlayer(player).hasClipboard()) {
-                MessageManager.sendMessage(player, "clipboard.start.downloading");
-                ClipboardSendPacket packet = new ClipboardSendPacket();
-                packet.setClipboardHash(Player.getPlayer(player).getClipboard().getHash());
-                packet.setData(Player.getPlayer(player).getClipboard().getData());
-                PacketSender.sendPacket(player, packet);
-            } else {
-                MessageManager.sendMessage(sender, "clipboard.empty.own");
-            }
+    public void download(Player player) {
+        if (player.sendIncompatibleMessage(player.getServerUsability())) {
+            return;
+        }
+        if (player.hasClipboard()) {
+            MessageManager.sendMessage(player, "clipboard.start.downloading");
+            ClipboardSendPacket packet = new ClipboardSendPacket();
+            packet.setClipboardHash(player.getClipboard().getHash());
+            packet.setData(player.getClipboard().getData());
+            PacketSender.sendPacket(player, packet);
         } else {
-            MessageManager.sendMessage(sender, "command.console");
+            MessageManager.sendMessage(player, "clipboard.empty.own");
         }
     }
 
@@ -95,52 +94,46 @@ public class WEGSubCommands {
     @Require(
             value = "worldeditglobalizer.command.upload"
     )
-    public void upload(CommandSender sender) {
-        if (sender instanceof ProxiedPlayer) {
-            ProxiedPlayer player = (ProxiedPlayer) sender;
-            if (!Player.getPlayer(player).isPluginOnCurrentServerInstalled()) {
-                MessageManager.sendMessage(player, "command.cannotUse");
-                return;
-            }
-            ClipboardRequestPacket req = new ClipboardRequestPacket();
-            Callback callback = new Callback(15000, req.getIdentifier()) {
-                @Override
-                public void onTimeOut(Callback callback) {
-                    ProxiedPlayer player = (ProxiedPlayer) getUserData();
-                    MessageManager.sendMessage(player, "timedOut", getTimeOut());
-                }
-
-                @Override
-                public void onCallback(Callback callback, Object response) {
-                    if (response instanceof ClipboardSendPacket) {
-                        ClipboardSendPacket packet = (ClipboardSendPacket) response;
-                        ProxiedPlayer player = (ProxiedPlayer) getUserData();
-                        if (packet.getClipboardHash() > 0) {
-                            Clipboard clipboard = new Clipboard(player.getUniqueId(), packet.getData(), packet.getClipboardHash(), player.getServer().getInfo().getName());
-                            Player.getPlayer(player).setClipboard(clipboard);
-                            MessageManager.sendMessage(player, "clipboard.finish.uploading", StringUtils.humanReadableByteCount(clipboard.getData().length, true));
-                        } else {
-                            if (packet.getClipboardHash() == -1) {
-                                ClipboardManager.getInstance().removeClipboard(player.getUniqueId());
-                                MessageManager.sendMessage(player, "clipboard.clear");
-                            } else if (packet.getClipboardHash() == -3) {
-                                PacketDataSerializer ser = new PacketDataSerializer(packet.getData());
-                                MessageManager.sendMessage(player, "clipboard.tooBig",
-                                    StringUtils.humanReadableByteCount(WorldEditGlobalizerBungee.getInstance().getMainConfig().getMaxClipboardBytes(), true),
-                                    StringUtils.humanReadableByteCount(ser.readLong(), true));
-                            }
-                        }
-                    } else {
-                    }
-                }
-            };
-            PacketSender.sendPacket(player, req);
-            callback.setUserData(player);
-            MessageManager.sendMessage(player, "clipboard.start.uploading");
-            callback.start();
-        } else {
-            MessageManager.sendMessage(sender, "command.console");
+    public void upload(Player player) {
+        if (player.sendIncompatibleMessage(player.getServerUsability())) {
+            return;
         }
+        ClipboardRequestPacket req = new ClipboardRequestPacket();
+        Callback callback = new Callback(15000, req.getIdentifier()) {
+            @Override
+            public void onTimeOut(Callback callback) {
+                Player player = (Player) getUserData();
+                MessageManager.sendMessage(player, "timedOut", getTimeOut());
+            }
+
+            @Override
+            public void onCallback(Callback callback, Object response) {
+                if (response instanceof ClipboardSendPacket) {
+                    ClipboardSendPacket packet = (ClipboardSendPacket) response;
+                    Player player = (Player) getUserData();
+                    if (packet.getAction() == ClipboardSendPacket.Action.SEND) {
+                        Clipboard clipboard = new Clipboard(player.getUniqueId(), packet.getData(), packet.getClipboardHash(), player.getProxiedPlayer().getServer().getInfo().getName());
+                        player.setClipboard(clipboard);
+                        MessageManager.sendMessage(player, "clipboard.finish.uploading", StringUtil.humanReadableByteCount(clipboard.getData().length, true));
+                    } else {
+                        if (packet.getAction() == ClipboardSendPacket.Action.CLEAR) {
+                            player.removeClipboard();
+                            MessageManager.sendMessage(player, "clipboard.clear");
+                        } else if (packet.getAction() == ClipboardSendPacket.Action.TOO_BIG) {
+                            PacketDataSerializer ser = new PacketDataSerializer(packet.getData());
+                            MessageManager.sendMessage(player, "clipboard.tooBig",
+                                StringUtil.humanReadableByteCount(WorldEditGlobalizerBungee.getInstance().getMainConfig().getMaxClipboardBytes(), true),
+                                StringUtil.humanReadableByteCount(ser.readLong(), true));
+                        }
+                    }
+                } else {
+                }
+            }
+        };
+        PacketSender.sendPacket(player, req);
+        callback.setUserData(player);
+        MessageManager.sendMessage(player, "clipboard.start.uploading");
+        callback.start();
     }
 
 
@@ -179,45 +172,37 @@ public class WEGSubCommands {
     @Require(
             value = "worldeditglobalizer.command.info"
     )
-    public void info(CommandSender sender, @Optional String playerName) {
+    public void info(CommandSender sender, @Optional OfflinePlayer offlinePlayer) {
 
         String time = "";
-        UUIDFetcher.PlayerData pd;
         String clipboardSize = "";
 
-        if (playerName != null) {
+        if (offlinePlayer != null) {
             if (!sender.hasPermission("worldeditglobalizer.command.info.other")) {
                 MessageManager.sendMessage(sender, "command.permissionDenied");
                 return;
             }
 
-            ProxiedPlayer player = BungeeCord.getInstance().getPlayer(playerName);
-            if (player == null) {
-                pd = UUIDFetcher.getPlayerData(playerName);
-            } else {
-                pd = new UUIDFetcher.PlayerData(player.getUniqueId(), player.getName());
-            }
-
-            if (pd == null) {
-                MessageManager.sendMessage(sender, "command.playerNotFound", playerName);
+            if (!offlinePlayer.isExisting()) {
+                MessageManager.sendMessage(sender, "command.playerNotFound", offlinePlayer.getName());
                 return;
             }
-            if (!ClipboardManager.getInstance().hasClipboard(pd.getUUID())) {
-                MessageManager.sendMessage(sender, "clipboard.empty.other", pd.getName());
+            if (!offlinePlayer.hasClipboard()) {
+                MessageManager.sendMessage(sender, "clipboard.empty.other", offlinePlayer.getName());
                 return;
             }
-            time = new SimpleDateFormat(MessageManager.getInstance().getRawMessage("timeFormat")).format(new Date(ClipboardManager.getInstance().getClipboardFile(pd.getUUID()).lastModified()));
-            clipboardSize = StringUtils.humanReadableByteCount(ClipboardManager.getInstance().getClipboardFile(pd.getUUID()).length(), true);
-            MessageManager.sendMessage(sender, "command.info.format", pd.getName(), pd.getName(), pd.getUUID().toString(), time, clipboardSize);
+            time = new SimpleDateFormat(MessageManager.getInstance().getRawMessage("timeFormat")).format(new Date(ClipboardManager.getInstance().getClipboardFile(offlinePlayer.getUniqueId()).lastModified()));
+            clipboardSize = StringUtil.humanReadableByteCount(ClipboardManager.getInstance().getClipboardFile(offlinePlayer.getUniqueId()).length(), true);
+            MessageManager.sendMessage(sender, "command.info.format", offlinePlayer.getName(), offlinePlayer.getName(), offlinePlayer.getUniqueId().toString(), time, clipboardSize);
         } else {
-            if (sender instanceof ProxiedPlayer) {
-                ProxiedPlayer player = (ProxiedPlayer) sender;
-                if (!ClipboardManager.getInstance().hasClipboard(player.getUniqueId())) {
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                if (!player.hasClipboard()) {
                     MessageManager.sendMessage(sender, "clipboard.empty.own");
                     return;
                 }
                 time = new SimpleDateFormat(MessageManager.getInstance().getRawMessage("timeFormat")).format(new Date(ClipboardManager.getInstance().getClipboardFile(player.getUniqueId()).lastModified()));
-                clipboardSize = StringUtils.humanReadableByteCount(ClipboardManager.getInstance().getClipboardFile(player.getUniqueId()).length(), true);
+                clipboardSize = StringUtil.humanReadableByteCount(ClipboardManager.getInstance().getClipboardFile(player.getUniqueId()).length(), true);
                 MessageManager.sendMessage(sender, "command.info.format", player.getName(), player.getName(), player.getUniqueId().toString(), time, clipboardSize);
             } else {
                 MessageManager.sendMessage(sender, "command.console");
@@ -253,9 +238,84 @@ public class WEGSubCommands {
         }
 
 
-        MessageManager.sendMessage(sender, "command.stats.format", sizes.size(), StringUtils.humanReadableByteCount(full, true), StringUtils.humanReadableByteCount(average, true));
+        MessageManager.sendMessage(sender, "command.stats.format", sizes.size(), StringUtil.humanReadableByteCount(full, true), StringUtil.humanReadableByteCount(average, true));
     }
 
+    @Command(
+        aliases = {"clear", "clearSchematic"},
+        min = 0,
+        max = 1,
+        help = "clear [player]",
+        desc = "clears your or the given players clipboard"
+    )
+    @Require(
+        value = "worldeditglobalizer.command.clear"
+    )
+    public void clear(CommandSender sender, @Optional OfflinePlayer offlinePlayer) {
+
+        if (offlinePlayer != null) {
+            if (!sender.hasPermission("worldeditglobalizer.command.clear.other")) {
+                MessageManager.sendMessage(sender, "command.permissionDenied");
+                return;
+            }
+
+            if (!offlinePlayer.isExisting()) {
+                MessageManager.sendMessage(sender, "command.playerNotFound", offlinePlayer.getName());
+                return;
+            }
+            if (!offlinePlayer.hasClipboard()) {
+                MessageManager.sendMessage(sender, "clipboard.empty.other", offlinePlayer.getName());
+                return;
+            }
+            offlinePlayer.removeClipboard();
+            MessageManager.sendMessage(sender, "command.clear.success", offlinePlayer.getName());
+        } else {
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                if (!player.hasClipboard()) {
+                    MessageManager.sendMessage(sender, "clipboard.empty.own");
+                    return;
+                }
+                player.removeClipboard();
+                MessageManager.sendMessage(sender, "command.clear.success", player.getName());
+            } else {
+                MessageManager.sendMessage(sender, "command.console");
+            }
+        }
+    }
+
+    @Command(
+        aliases = {"syncVersions"},
+        min = 0,
+        max = 0,
+        help = "syncVersions",
+        desc = "syncs the plugin-versions between BungeeCord and the current subserver"
+    )
+    @Require(
+        value = "worldeditglobalizer.command.syncversions"
+    )
+    public void syncVersions(Player player) {
+
+        try {
+            PluginSendPacket pluginSendPacket = new PluginSendPacket();
+            FileInputStream fileInputStream = new FileInputStream(WorldEditGlobalizerBungee.getInstance().getFile());
+            byte[] data = IOUtils.toByteArray(fileInputStream);
+            fileInputStream.close();
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(data);
+            pluginSendPacket.setData(data);
+            pluginSendPacket.setHash(hash);
+            pluginSendPacket.setTryNum(0);
+            MessageManager.sendMessage(player, "command.start.syncversions");
+            PacketSender.sendPacket(player, pluginSendPacket);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Command(
             aliases = {"schematic"},

@@ -1,69 +1,18 @@
 package me.illgilp.worldeditglobalizerbungee.player;
 
-import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
-import me.illgilp.worldeditglobalizerbungee.manager.ClipboardManager;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.CommandSender;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+public interface Player extends OfflinePlayer, CommandSender {
 
-public final class Player {
+    ServerUsability getServerUsability();
+    void setServerUsability(ServerUsability serverUsability);
 
-    private static Map<UUID, Player> players = new HashMap<>();
-    private ProxiedPlayer proxiedPlayer;
-    private boolean pluginOnCurrentServerInstalled = false;
+    boolean sendIncompatibleMessage(ServerUsability serverUsability);
 
-    private Player(ProxiedPlayer proxiedPlayer) {
-        this.proxiedPlayer = proxiedPlayer;
-    }
+    void setServerVersion(String version);
+    String getServerVersion();
 
-    public static Player getPlayer(ProxiedPlayer player) {
-        if (players.containsKey(player.getUniqueId())) return players.get(player.getUniqueId());
-        Player p = new Player(player);
-        players.put(player.getUniqueId(), p);
-        return p;
-    }
 
-    public static Player getPlayer(String name) {
-        if (ProxyServer.getInstance().getPlayer(name) == null) return null;
-        if (players.containsKey(ProxyServer.getInstance().getPlayer(name).getUniqueId()))
-            return players.get(ProxyServer.getInstance().getPlayer(name).getUniqueId());
-        Player p = new Player(ProxyServer.getInstance().getPlayer(name));
-        players.put(p.proxiedPlayer.getUniqueId(), p);
-        return p;
-    }
 
-    public static Player getPlayer(UUID uuid) {
-        if (ProxyServer.getInstance().getPlayer(uuid) == null) return null;
-        if (players.containsKey(uuid)) return players.get(uuid);
-        Player p = new Player(ProxyServer.getInstance().getPlayer(uuid));
-        players.put(p.proxiedPlayer.getUniqueId(), p);
-        return p;
-    }
 
-    public ProxiedPlayer getProxiedPlayer() {
-        return proxiedPlayer;
-    }
-
-    public Clipboard getClipboard() {
-        return ClipboardManager.getInstance().getClipboard(proxiedPlayer.getUniqueId());
-    }
-
-    public void setClipboard(Clipboard clipboard) {
-        ClipboardManager.getInstance().saveClipboard(clipboard);
-    }
-
-    public boolean hasClipboard() {
-        return ClipboardManager.getInstance().hasClipboard(proxiedPlayer.getUniqueId());
-    }
-
-    public boolean isPluginOnCurrentServerInstalled() {
-        return pluginOnCurrentServerInstalled;
-    }
-
-    public void setPluginOnCurrentServerInstalled(boolean pluginonCurrentServerInstalled) {
-        this.pluginOnCurrentServerInstalled = pluginonCurrentServerInstalled;
-    }
 }

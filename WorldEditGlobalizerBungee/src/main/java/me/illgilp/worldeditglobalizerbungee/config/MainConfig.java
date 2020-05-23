@@ -1,5 +1,6 @@
 package me.illgilp.worldeditglobalizerbungee.config;
 
+import java.util.UUID;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
 import me.illgilp.worldeditglobalizerbungee.util.StringMathParser;
 import me.illgilp.yamlconfigurator.config.Config;
@@ -48,6 +49,11 @@ public class MainConfig extends Config {
         "With this you can enable/disable the automatic upload of the clipboard."
     })
     private boolean enableClipboardAutoUpload = true;
+
+    @ConfigEntry(path = "secretKey", shouldDefault = true, comments = {
+        "This key makes sure that the connection between BungeeCord and Bukkit is safe, so this key must be identical to the key in every config of all subservers that have WEG installed."
+    })
+    private String secretKey = UUID.randomUUID().toString().replace("-","") + UUID.randomUUID().toString().replace("-","");
 
     @Override
     public void onFileCreation() {
@@ -116,6 +122,10 @@ public class MainConfig extends Config {
 
     public String getPrefix() {
         return prefix;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
     }
 
     public void setPrefix(String prefix) {

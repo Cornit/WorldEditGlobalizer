@@ -1,7 +1,10 @@
 repo 'https://raw.githubusercontent.com/SBPrime/AsyncWorldEdit/maven-artifact'
 
 depend name: 'spigot-1.13.1-R0.1-SNAPSHOT-b1940', false
-depend name: 'worldedit-bukkit-7.0.0-SNAPSHOT-dist-3937',false
+//depend name: 'FastAsyncWorldEdit-1.15-174',false
+//depend name: 'worldedit-bukkit-7.1.0',false
+//depend name: 'FastAsyncWorldEdit-bukkit-19.11.13-5505943-1282-22.3.5',false
+depend name: 'worldedit', false
 depend project(":Common"), true
 
 depend 'org.primesoft.asyncworldedit:AsyncWorldEdit-API:2.2.0-rc-05',false

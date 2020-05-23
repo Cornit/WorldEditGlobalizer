@@ -1,17 +1,17 @@
 package me.illgilp.worldeditglobalizerbungee.manager;
 
-import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
-import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
-import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
+import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
+import org.apache.commons.io.IOUtils;
 
 public class ClipboardManager {
 
@@ -62,7 +62,9 @@ public class ClipboardManager {
         if (!hasClipboard(uuid)) return null;
         File cb = new File(folder, uuid.toString() + ".clipboard");
         try {
-            PacketDataSerializer serializer = new PacketDataSerializer(Files.readAllBytes(cb.toPath()));
+            FileInputStream fileInputStream = new FileInputStream(cb);
+            PacketDataSerializer serializer = new PacketDataSerializer(IOUtils.toByteArray(fileInputStream));
+            fileInputStream.close();
             int hash = serializer.readInt();
             String fromServer = serializer.readString();
             Clipboard clipboard = new Clipboard(uuid, serializer.readArray(), hash, fromServer);
@@ -76,10 +78,10 @@ public class ClipboardManager {
         return null;
     }
 
-    public void removeClipboard(UUID uuid) {
-        if (!hasClipboard(uuid)) return;
+    public boolean removeClipboard(UUID uuid) {
+        if (!hasClipboard(uuid)) return false;
         File cb = new File(folder, uuid.toString() + ".clipboard");
-        cb.delete();
+        return cb.delete();
     }
 
     public void removeAll() {
