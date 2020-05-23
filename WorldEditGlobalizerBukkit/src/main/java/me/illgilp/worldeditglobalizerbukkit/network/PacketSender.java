@@ -1,16 +1,18 @@
 package me.illgilp.worldeditglobalizerbukkit.network;
 
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.runnables.PacketRunnable;
 import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 import me.illgilp.worldeditglobalizercommon.network.packets.Packet;
+import me.illgilp.worldeditglobalizercommon.util.Signature;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class PacketSender {
 
@@ -22,7 +24,7 @@ public class PacketSender {
             public void run() {
                 PacketDataSerializer serializer = new PacketDataSerializer();
                 getPacket().write(serializer);
-                int maxPacketSize = 32750;
+                int maxPacketSize = 32710;
                 int packetSize = serializer.toByteArray().length;
                 if (packetSize > maxPacketSize) {
                     byte[] data = serializer.toByteArray();
@@ -44,11 +46,24 @@ public class PacketSender {
                         PacketDataSerializer ser = new PacketDataSerializer();
                         ser.writeVarInt(WorldEditGlobalizerBukkit.getInstance().getPacketManager().getPacketId(Packet.Direction.TO_BUNGEE, getPacket().getClass()));
                         ser.writeBoolean(true);
+                        ser.writeVarLong(packetSize);
                         ser.writeInt(Math.toIntExact(maxPos));
                         ser.writeInt(Math.toIntExact(pos));
                         ser.writeArray(datas);
                         if (getPlayer().isOnline()) {
-                            getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(), "worldeditglobalizer:connection", ser.toByteArray());
+                            PacketDataSerializer pp = new PacketDataSerializer();
+                            Signature signature = new Signature();
+                            String key = WorldEditGlobalizerBukkit.getInstance().getMainConfig().getSecretKey();
+                            if (key.equals("PUT KEY IN HERE")) {
+                                key = UUID.randomUUID().toString().replace("-","");
+                            }
+                            signature.setKey(key.getBytes(StandardCharsets.UTF_8));
+                            signature.setData(ser.toByteArray());
+                            pp.writeByteArray(signature.sign());
+                            pp.writeByteArray(signature.getData());
+                            getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(), "weg:connection", pp.toByteArray());
+                        } else {
+                            return;
                         }
 
                         pos++;
@@ -59,7 +74,17 @@ public class PacketSender {
                     ser.writeBoolean(false);
                     ser.writeArray(serializer.toByteArray());
                     if (getPlayer().isOnline()) {
-                        getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(), "worldeditglobalizer:connection", ser.toByteArray());
+                        PacketDataSerializer pp = new PacketDataSerializer();
+                        Signature signature = new Signature();
+                        String key = WorldEditGlobalizerBukkit.getInstance().getMainConfig().getSecretKey();
+                        if (key.equals("PUT KEY IN HERE")) {
+                            key = UUID.randomUUID().toString().replace("-","");
+                        }
+                        signature.setKey(key.getBytes(StandardCharsets.UTF_8));
+                        signature.setData(ser.toByteArray());
+                        pp.writeByteArray(signature.sign());
+                        pp.writeByteArray(signature.getData());
+                        getPlayer().sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(), "weg:connection", pp.toByteArray());
                     }
                 }
                 tasks.remove(getPlayer().getName());

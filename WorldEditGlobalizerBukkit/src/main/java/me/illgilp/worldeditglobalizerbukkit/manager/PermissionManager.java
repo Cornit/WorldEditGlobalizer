@@ -1,13 +1,12 @@
 package me.illgilp.worldeditglobalizerbukkit.manager;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketSender;
 import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckResponsePacket;
 import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class PermissionManager {
 

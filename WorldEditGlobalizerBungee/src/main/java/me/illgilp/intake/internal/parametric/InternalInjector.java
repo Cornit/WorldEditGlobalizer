@@ -25,6 +25,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import me.illgilp.intake.argument.ArgumentException;
 import me.illgilp.intake.argument.CommandArgs;
+import me.illgilp.intake.argument.CommandCancelException;
 import me.illgilp.intake.parametric.Binding;
 import me.illgilp.intake.parametric.Injector;
 import me.illgilp.intake.parametric.Key;
@@ -73,7 +74,7 @@ public class InternalInjector implements Injector {
     }
 
     @Override
-    public <T> T getInstance(Key<T> key, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException {
+    public <T> T getInstance(Key<T> key, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException, CommandCancelException {
         Provider<T> provider = getProvider(key);
         if (provider != null) {
             return provider.get(arguments, modifiers);
@@ -83,7 +84,7 @@ public class InternalInjector implements Injector {
     }
 
     @Override
-    public <T> T getInstance(Class<T> type, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException {
+    public <T> T getInstance(Class<T> type, CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException, CommandCancelException {
         return getInstance(Key.get(type), arguments, modifiers);
     }
 

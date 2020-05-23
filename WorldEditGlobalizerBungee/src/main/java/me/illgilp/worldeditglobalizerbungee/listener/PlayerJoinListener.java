@@ -9,6 +9,11 @@ import java.net.URL;
 import java.util.Map;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
 import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;
+import me.illgilp.worldeditglobalizerbungee.manager.PlayerManager;
+import me.illgilp.worldeditglobalizerbungee.player.OfflinePlayer;
+import me.illgilp.worldeditglobalizerbungee.runnables.UserDataRunnable;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -17,27 +22,36 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onJoin(PostLoginEvent e) {
+        BungeeCord.getInstance().getScheduler().runAsync(WorldEditGlobalizerBungee.getInstance(), new UserDataRunnable(e.getPlayer()) {
+            @Override
+            public void run() {
+                ProxiedPlayer p = (ProxiedPlayer) getUserData();
+                OfflinePlayer player = PlayerManager.getInstance().getPlayer(p.getUniqueId());
+                PlayerManager.getInstance().saveOfflinePlayer(player);
 
-        final String USER_AGENT = "WorldEditGlobalizer-UpdateCheck-User-Agent";
-        final String REQUEST_URL = "https://raw.githubusercontent.com/IllgiLP/WorldEditGlobalizer/1.13/version.json";
-        try {
-            URL url = new URL(REQUEST_URL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.addRequestProperty("User-Agent", USER_AGENT);
-            InputStream inputStream = connection.getInputStream();
-            InputStreamReader reader = new InputStreamReader(inputStream);
-            Map<String, Object> map = new Gson().fromJson(reader, Map.class);
+                if (p.hasPermission("weg.update.notify")) {
+                    final String USER_AGENT = "WorldEditGlobalizer-UpdateCheck-User-Agent";
+                    final String REQUEST_URL = "https://raw.githubusercontent.com/IllgiLP/WorldEditGlobalizer/master/version.json";
+                    try {
+                        URL url = new URL(REQUEST_URL);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.addRequestProperty("User-Agent", USER_AGENT);
+                        InputStream inputStream = connection.getInputStream();
+                        InputStreamReader reader = new InputStreamReader(inputStream);
+                        Map<String, Object> map = new Gson().fromJson(reader, Map.class);
 
-            if (isNewerVersion(WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest") + "")) {
-                if (e.getPlayer().hasPermission("weg.update.notify")) {
-                    MessageManager.sendMessage(e.getPlayer(), "update.notify", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest"), map.get("msg"), "https://www.spigotmc.org/resources/worldeditglobalizer.51527/");
+                        if (isNewerVersion(WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest") + "")) {
+                            MessageManager.sendMessage(p, "update.notify", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest"), map.get("msg"), "https://www.spigotmc.org/resources/worldeditglobalizer.51527/");
+                        }
+
+
+                    } catch (IOException ex) {
+
+                    }
                 }
             }
+        });
 
-
-        } catch (IOException ex) {
-
-        }
 
     }
 

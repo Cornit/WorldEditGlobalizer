@@ -14,6 +14,14 @@ public class ComponentUtils {
         return textComponent;
     }
 
+    public static TextComponent newLine() {
+        return new TextComponent(TextComponent.fromLegacyText("\n"));
+    }
+
+    public static TextComponent of(String legacyText) {
+        return new TextComponent(TextComponent.fromLegacyText(legacyText));
+    }
+
     public static TextComponent addText(TextComponent comp, String text) {
         if (comp == null) {
             comp = new TextComponent(TextComponent.fromLegacyText(""));

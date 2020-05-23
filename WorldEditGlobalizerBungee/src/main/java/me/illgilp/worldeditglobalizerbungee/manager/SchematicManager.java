@@ -1,11 +1,13 @@
 package me.illgilp.worldeditglobalizerbungee.manager;
 
-import me.illgilp.jnbt.*;
-import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
-import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
-import org.apache.commons.io.IOUtils;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,14 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipException;
+import me.illgilp.jnbt.ByteArrayTag;
+import me.illgilp.jnbt.CompoundTag;
+import me.illgilp.jnbt.NBTInputStream;
+import me.illgilp.jnbt.NamedTag;
+import me.illgilp.jnbt.StringTag;
+import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
+import me.illgilp.worldeditglobalizerbungee.clipboard.Clipboard;
+import org.apache.commons.io.IOUtils;
 
 public class SchematicManager {
 
@@ -70,17 +80,27 @@ public class SchematicManager {
                 if (rootTag.containsKey("Blocks") && rootTag.getTag("Blocks") instanceof ByteArrayTag &&
                         rootTag.containsKey("Materials") && rootTag.getTag("Materials") instanceof StringTag) {
                     if (rootTag.getString("Materials").equals("Alpha")) {
+                        inputStream.close();
                         return true;
                     }
                 } else if (rootTag.containsKey("Version")) {
+                    inputStream.close();
                     return true;
                 }
             }
         } catch (Exception e) {
             if (e instanceof ZipException) {
+                try {
+                    inputStream.close();
+                } catch (IOException ex) {
+                }
                 return false;
             }
             e.printStackTrace();
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
         }
         return false;
     }
@@ -90,13 +110,7 @@ public class SchematicManager {
         List<String> list = new ArrayList<>();
         for (File file : schematicsFolder.listFiles()) {
             if (file.getName().endsWith(".schematic")) {
-                try {
-                    if (isValidSchematic(new FileInputStream(file))) {
-                        list.add(file.getName().replace(".schematic", ""));
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                list.add(file.getName().replace(".schematic", ""));
             }
         }
         return list;
@@ -109,7 +123,9 @@ public class SchematicManager {
         try (FileInputStream fisForValidation = new FileInputStream(schematicFile)) {
             if (isValidSchematic(fisForValidation)) {
                 try (GZIPInputStream gzipInputStream = new GZIPInputStream(new FileInputStream(schematicFile))) {
-                    return IOUtils.toByteArray(gzipInputStream);
+                    byte[] data = IOUtils.toByteArray(gzipInputStream);
+                    gzipInputStream.close();
+                    return data;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

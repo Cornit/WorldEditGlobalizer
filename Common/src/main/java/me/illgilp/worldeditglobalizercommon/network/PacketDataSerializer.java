@@ -1,13 +1,17 @@
 package me.illgilp.worldeditglobalizercommon.network;
 
-import me.illgilp.worldeditglobalizercommon.exception.OverflowPacketException;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import me.illgilp.worldeditglobalizercommon.exception.OverflowPacketException;
 
 public class PacketDataSerializer {
 
@@ -87,7 +91,7 @@ public class PacketDataSerializer {
     }
 
 
-    public void writeFinalArray(byte[] b) {
+    public void writeByteArray(byte[] b) {
 
         try {
             bufOut.write(b);
@@ -119,6 +123,16 @@ public class PacketDataSerializer {
             e.printStackTrace();
         }
 
+        return ret;
+    }
+
+    public byte[] readByteArray(int length) {
+        byte[] ret = new byte[length];
+        try {
+            bufIn.read(ret);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ret;
     }
 
@@ -183,7 +197,11 @@ public class PacketDataSerializer {
             out |= (in & 0x7F) << (bytes++ * 7);
 
             if (bytes > maxBytes) {
-                throw new RuntimeException("VarInt too big");
+                try {
+                    throw new OverflowPacketException("VarInt too big");
+                } catch (OverflowPacketException e) {
+                    e.printStackTrace();
+                }
             }
 
             if ((in & 0x80) != 0x80) {
@@ -365,6 +383,65 @@ public class PacketDataSerializer {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public long readVarLong() {
+        int numRead = 0;
+        long result = 0;
+        byte read = 0;
+        do {
+            try {
+                read = bufIn.readByte();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int value = (read & 0b01111111);
+            result |= (value << (7 * numRead));
+
+            numRead++;
+            if (numRead > 10) {
+                try {
+                    throw new OverflowPacketException("VarLong is too big");
+                } catch (OverflowPacketException e) {
+                    e.printStackTrace();
+                }
+            }
+        } while ((read & 0b10000000) != 0);
+
+        return result;
+    }
+
+    public void writeVarLong(long value) {
+        do {
+            byte temp = (byte)(value & 0b01111111);
+            // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+            value >>>= 7;
+            if (value != 0) {
+                temp |= 0b10000000;
+            }
+            try {
+                bufOut.writeByte(temp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } while (value != 0);
+    }
+
+    public double readDouble() {
+        try {
+            return bufIn.readDouble();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void writeDouble(double doubl) {
+        try {
+            bufOut.writeDouble(doubl);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

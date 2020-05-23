@@ -23,6 +23,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import me.illgilp.intake.argument.ArgumentException;
 import me.illgilp.intake.argument.CommandArgs;
+import me.illgilp.intake.argument.CommandCancelException;
 
 /**
  * An object that provides instances given a key and some arguments.
@@ -50,7 +51,7 @@ public interface Provider<T> {
      * @throws ProvisionException If there is a problem with the provider
      */
 
-    T get(CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException;
+    T get(CommandArgs arguments, List<? extends Annotation> modifiers) throws ArgumentException, ProvisionException, CommandCancelException;
 
     /**
      * Get a list of suggestions for the given parameter and user arguments.

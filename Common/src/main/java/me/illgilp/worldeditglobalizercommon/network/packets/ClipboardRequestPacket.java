@@ -1,9 +1,8 @@
 package me.illgilp.worldeditglobalizercommon.network.packets;
 
 
-import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
-
 import java.util.UUID;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 
 public class ClipboardRequestPacket extends Packet {
 

@@ -54,6 +54,17 @@ jar {
     from(zipTree("../WorldEditGlobalizerBungee/build/libs/WorldEditGlobalizer-Bungee-" + rootProject.version + ".jar")) {
         include("**/*.*")
     }
+    if (new File("WorldEditGlobalizerBukkit_1_8/build/libs/WorldEditGlobalizer-Bukkit-1.8-" + rootProject.version + ".jar").exists()) {
+        from(zipTree("../WorldEditGlobalizerBukkit_1_8/build/libs/WorldEditGlobalizer-Bukkit-1.8-" + rootProject.version + ".jar")) {
+            include("**/*.*")
+        }
+    }
+    if (new File("WorldEditGlobalizerBukkit_1_13/build/libs/WorldEditGlobalizer-Bukkit-1.13-" + rootProject.version + ".jar").exists()) {
+        from(zipTree("../WorldEditGlobalizerBukkit_1_13/build/libs/WorldEditGlobalizer-Bukkit-1.13-" + rootProject.version + ".jar")) {
+            include("**/*.*")
+        }
+    }
+
     archiveName = "WorldEditGlobalizer-Bukkit-" + rootProject.version + ".jar"
 }
 processResources {

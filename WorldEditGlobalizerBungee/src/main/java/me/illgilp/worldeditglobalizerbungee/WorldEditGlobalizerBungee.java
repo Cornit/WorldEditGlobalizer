@@ -1,9 +1,10 @@
 package me.illgilp.worldeditglobalizerbungee;
 
+import com.j256.ormlite.logger.LocalLog;
 import java.io.File;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGCommand;
-import me.illgilp.worldeditglobalizerbungee.commands.WEGSchematicCommands;
 import me.illgilp.worldeditglobalizerbungee.commands.WEGSubCommands;
+import me.illgilp.worldeditglobalizerbungee.commands.schematic.WEGSchematicCommands;
 import me.illgilp.worldeditglobalizerbungee.config.MainConfig;
 import me.illgilp.worldeditglobalizerbungee.listener.PacketReceivedListener;
 import me.illgilp.worldeditglobalizerbungee.listener.PlayerJoinListener;
@@ -17,6 +18,8 @@ import me.illgilp.worldeditglobalizerbungee.message.MessageFile;
 import me.illgilp.worldeditglobalizerbungee.message.template.CustomMessageFile;
 import me.illgilp.worldeditglobalizerbungee.metrics.Metrics;
 import me.illgilp.worldeditglobalizerbungee.network.PacketManager;
+import me.illgilp.worldeditglobalizerbungee.storage.Database;
+import me.illgilp.worldeditglobalizerbungee.storage.table.UserCacheTable;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
@@ -27,6 +30,8 @@ import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckReque
 import me.illgilp.worldeditglobalizercommon.network.packets.PermissionCheckResponsePacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.PluginConfigResponsePacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginSendPacket;
+import me.illgilp.worldeditglobalizercommon.network.packets.PluginSendResultPacket;
 import me.illgilp.yamlconfigurator.config.ConfigManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -37,6 +42,7 @@ public class WorldEditGlobalizerBungee extends Plugin {
 
     private PacketManager packetManager;
     private ConfigManager configManager;
+    private Database database;
 
     public static WorldEditGlobalizerBungee getInstance() {
         return instance;
@@ -44,6 +50,7 @@ public class WorldEditGlobalizerBungee extends Plugin {
 
     @Override
     public void onLoad() {
+        System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
         instance = this;
         if ((!getDataFolder().exists()) && new File("plugins/WorldEditGlobalizerBungee").exists()) {
             new File("plugins/WorldEditGlobalizerBungee").renameTo(getDataFolder());
@@ -71,8 +78,12 @@ public class WorldEditGlobalizerBungee extends Plugin {
         packetManager.registerPacket(Packet.Direction.TO_BUKKIT, PluginConfigResponsePacket.class, 0x9);
         packetManager.registerPacket(Packet.Direction.TO_BUNGEE, KeepAlivePacket.class, 0x10);
         packetManager.registerPacket(Packet.Direction.TO_BUKKIT, KeepAlivePacket.class, 0x10);
+        packetManager.registerPacket(Packet.Direction.TO_BUKKIT, PluginSendPacket.class, 0x11);
+        packetManager.registerPacket(Packet.Direction.TO_BUNGEE, PluginSendResultPacket.class, 0x11);
 
-        getProxy().registerChannel("worldeditglobalizer:connection");
+
+        getProxy().registerChannel("weg:connection");
+        getProxy().registerChannel("weg:ping");
         getProxy().getPluginManager().registerListener(this, new PluginMessageListener());
         getProxy().getPluginManager().registerListener(this, new PacketReceivedListener());
         getProxy().getPluginManager().registerListener(this, new PlayerQuitListener());
@@ -86,6 +97,14 @@ public class WorldEditGlobalizerBungee extends Plugin {
         }
         MessageManager.getInstance().setLanguage(lang);
         MessageManager.getInstance().setPrefix(ChatColor.translateAlternateColorCodes('&', WorldEditGlobalizerBungee.getInstance().getMainConfig().getPrefix()));
+
+        database = new Database(new File(getDataFolder(), "worldeditglobalizer.sqlite"));
+        database.registerTable(new UserCacheTable());
+        try {
+            database.initDatabase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         getProxy().getPluginManager().registerCommand(this, new WEGCommand());
@@ -113,5 +132,9 @@ public class WorldEditGlobalizerBungee extends Plugin {
 
     public MainConfig getMainConfig() {
         return (MainConfig) configManager.getConfig("MainConfig");
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 }
