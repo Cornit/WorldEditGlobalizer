@@ -44,6 +44,9 @@ public class ServerConnectedListener implements Listener {
                         ServerConnectedEvent e = (ServerConnectedEvent) getUserData();
                         if (!response) {
                             PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()).setServerUsability(ServerUsability.KEY_NOT_SET);
+                            if (e.getPlayer().hasPermission("weg.admin.messages")) {
+                                MessageManager.sendMessage(e.getPlayer(), "command.server.cannotUse.secretKeyNotSet");
+                            }
                             PingRunnable.start(e.getServer(), PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()));
                             return;
                         }
@@ -55,6 +58,9 @@ public class ServerConnectedListener implements Listener {
                                 ServerConnectedEvent e = getUserData();
                                 if (PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()) == null) return;
                                 PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()).setServerUsability(ServerUsability.KEY_NOT_CORRECT);
+                                if (e.getPlayer().hasPermission("weg.admin.messages")) {
+                                    MessageManager.sendMessage(e.getPlayer(), "command.server.cannotUse.incorrectSecretKey");
+                                }
                                 KeepAliveRunnable.start(e.getServer(), PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()));
                             }
 
@@ -65,7 +71,9 @@ public class ServerConnectedListener implements Listener {
                                     if (!response.getVersion().equals(WorldEditGlobalizerBungee.getInstance().getDescription().getVersion())) {
                                         PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()).setServerVersion(((KeepAlivePacket) response).getVersion());
                                         PlayerManager.getInstance().getPlayer(e.getPlayer().getUniqueId()).setServerUsability(ServerUsability.INCOMPATIBLE_VERSION);
-                                        MessageManager.sendMessage(e.getPlayer(), "incompatible.version", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), e.getServer().getInfo().getName(), ((KeepAlivePacket) response).getVersion());
+                                        if (e.getPlayer().hasPermission("weg.admin.messages")) {
+                                            MessageManager.sendMessage(e.getPlayer(), "incompatible.version", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), e.getServer().getInfo().getName(), ((KeepAlivePacket) response).getVersion());
+                                        }
                                         MessageManager.sendMessage(BungeeCord.getInstance().getConsole(), "incompatible.version", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), e.getServer().getInfo().getName(), ((KeepAlivePacket) response).getVersion());
                                         return;
                                     }
