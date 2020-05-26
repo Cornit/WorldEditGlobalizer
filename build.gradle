@@ -1,7 +1,8 @@
 apply from: 'functions.gradle'
 
 group 'me.illgilp.worldeditglobalizer'
-version '2.0.0'
+version '2.0.1'
+
 
 apply plugin: 'java'
 
@@ -19,7 +20,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
 		classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
 		classpath 'com.netflix.nebula:gradle-info-plugin:1.9.+'
 	}
