@@ -51,56 +51,58 @@ public class PluginMessageListener implements Listener {
             return;
         }
         if (channel.equals("weg:connection")) {
-            PacketDataSerializer sig = new PacketDataSerializer(bytes);
-            byte[] sign = sig.readByteArray(32);
-            byte[] dataB = sig.readByteArray(bytes.length - 32);
-            Signature signature = new Signature();
-            signature.setData(dataB);
-            signature.setKey(WorldEditGlobalizerBungee.getInstance().getMainConfig().getSecretKey().getBytes(StandardCharsets.UTF_8));
-            if(!signature.verify(sign)) return;
+            WorldEditGlobalizerBungee.getInstance().getAsyncScheduler().runAsync(() -> {
+                PacketDataSerializer sig = new PacketDataSerializer(bytes);
+                byte[] sign = sig.readByteArray(32);
+                byte[] dataB = sig.readByteArray(bytes.length - 32);
+                Signature signature = new Signature();
+                signature.setData(dataB);
+                signature.setKey(WorldEditGlobalizerBungee.getInstance().getMainConfig().getSecretKey().getBytes(StandardCharsets.UTF_8));
+                if(!signature.verify(sign)) return;
 
-            PacketDataSerializer data = new PacketDataSerializer(dataB);
+                PacketDataSerializer data = new PacketDataSerializer(dataB);
 
-            int packetid = data.readVarInt();
-            boolean splitted = data.readBoolean();
-            if (splitted) {
-                long packetSize = data.readVarLong();
-                int splitCount = data.readInt();
-                int currentSplit = data.readInt();
+                int packetid = data.readVarInt();
+                boolean splitted = data.readBoolean();
+                if (splitted) {
+                    long packetSize = data.readVarLong();
+                    int splitCount = data.readInt();
+                    int currentSplit = data.readInt();
 
 
-                PacketDataSerializer serializer = new PacketDataSerializer();
+                    PacketDataSerializer serializer = new PacketDataSerializer();
 
-                if (unFinishedPackets.containsKey(player.getName() + packetid + splitted + splitCount)) {
-                    serializer = unFinishedPackets.get(player.getName() + packetid + splitted + splitCount);
-                }
-                serializer.writeByteArray(data.readArray());
-                unFinishedPackets.put(player.getName() + packetid + splitted + splitCount, serializer);
+                    if (unFinishedPackets.containsKey(player.getName() + packetid + splitted + splitCount)) {
+                        serializer = unFinishedPackets.get(player.getName() + packetid + splitted + splitCount);
+                    }
+                    serializer.writeByteArray(data.readArray());
+                    unFinishedPackets.put(player.getName() + packetid + splitted + splitCount, serializer);
 
-                if (currentSplit == (splitCount - 1)) {
-                    WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player, packetid, unFinishedPackets.get(player.getName() + packetid + splitted + splitCount).toByteArray(), (ServerConnection) e.getSender());
-                    unFinishedPackets.remove(player.getName() + packetid + splitted + splitCount);
-                }
+                    if (currentSplit == (splitCount - 1)) {
+                        WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player, packetid, unFinishedPackets.get(player.getName() + packetid + splitted + splitCount).toByteArray(), (ServerConnection) e.getSender());
+                        unFinishedPackets.remove(player.getName() + packetid + splitted + splitCount);
+                    }
 
-                int perc = (int) Math.round((double)serializer.toByteArray().length / (double) packetSize * 100.0);
-                double decPerc = (double)serializer.toByteArray().length / (double) packetSize;
-                String msg = MessageManager.getRawMessageOrEmpty("actionbar.progress.upload", StringUtil.intToLengthedString(perc, 3));
-                msg = ChatColor.stripColor(msg);
-                int po = (int) Math.round((double) msg.length() * decPerc);
-                String fin = "§a";
-                if (po < msg.length()) {
-                    fin += msg.substring(0, po);
-                    fin += "§r";
-                    fin += msg.substring(po);
+                    int perc = (int) Math.round((double)serializer.toByteArray().length / (double) packetSize * 100.0);
+                    double decPerc = (double)serializer.toByteArray().length / (double) packetSize;
+                    String msg = MessageManager.getRawMessageOrEmpty("actionbar.progress.upload", StringUtil.intToLengthedString(perc, 3));
+                    msg = ChatColor.stripColor(msg);
+                    int po = (int) Math.round((double) msg.length() * decPerc);
+                    String fin = "§a";
+                    if (po < msg.length()) {
+                        fin += msg.substring(0, po);
+                        fin += "§r";
+                        fin += msg.substring(po);
+                    } else {
+                        fin += msg;
+                    }
+
+                    player.sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(fin));
+
                 } else {
-                    fin += msg;
+                    WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player, packetid, data.readArray(), (ServerConnection) e.getSender());
                 }
-
-                player.sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(fin));
-
-            } else {
-                WorldEditGlobalizerBungee.getInstance().getPacketManager().callPacket(player, packetid, data.readArray(), (ServerConnection) e.getSender());
-            }
+            });
             e.setCancelled(true);
         }
     }

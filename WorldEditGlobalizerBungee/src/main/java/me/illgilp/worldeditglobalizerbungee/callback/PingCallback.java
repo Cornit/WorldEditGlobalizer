@@ -1,6 +1,7 @@
 package me.illgilp.worldeditglobalizerbungee.callback;
 
 import java.util.UUID;
+import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
 import me.illgilp.worldeditglobalizerbungee.player.Player;
 import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 

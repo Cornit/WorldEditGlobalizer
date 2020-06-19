@@ -128,8 +128,8 @@ public class GermanMessageFile implements MessageFile {
 
         defaults.put("timedOut", "&cDie aktuelle Aufgabe braucht länger als {0} Millisekunden und wird nun beendet!");
 
-        defaults.put("command.start.reload", "&7Alle Configs und alle Nachrichten-Datein werden neugeladen...");
-        defaults.put("command.finish.reload", "&aAlle Configs und alle Nachrichten-Datein wurden neugeladen!");
+        defaults.put("command.start.reload", "&7Alle Configs und alle Nachrichten-Dateien werden neugeladen...");
+        defaults.put("command.finish.reload", "&aAlle Configs und alle Nachrichten-Dateien wurden neugeladen!");
 
         defaults.put("command.playerNotFound", "&cDer Spieler '&6{0}&c' existiert nicht!");
 

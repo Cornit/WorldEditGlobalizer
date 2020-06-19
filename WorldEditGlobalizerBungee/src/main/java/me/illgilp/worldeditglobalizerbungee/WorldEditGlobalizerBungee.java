@@ -31,6 +31,7 @@ import me.illgilp.worldeditglobalizerbungee.metrics.Metrics;
 import me.illgilp.worldeditglobalizerbungee.network.PacketManager;
 import me.illgilp.worldeditglobalizerbungee.storage.Database;
 import me.illgilp.worldeditglobalizerbungee.storage.table.UserCacheTable;
+import me.illgilp.worldeditglobalizercommon.async.AsyncScheduler;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
@@ -57,6 +58,8 @@ public class WorldEditGlobalizerBungee extends Plugin {
     private ConfigManager configManager;
     private Database database;
     private boolean disabled = false;
+
+    private AsyncScheduler asyncScheduler;
 
     public static WorldEditGlobalizerBungee getInstance() {
         return instance;
@@ -134,6 +137,8 @@ public class WorldEditGlobalizerBungee extends Plugin {
         metrics.addCustomChart(new Metrics.SingleLineChart("clipboards", () -> ClipboardManager.getInstance().getSavedClipboards().size()));
         metrics.addCustomChart(new Metrics.SingleLineChart("schematics", () -> SchematicManager.getInstance().getSchematics().size()));
 
+        asyncScheduler = new AsyncScheduler(getLogger());
+        BungeeCord.getInstance().getScheduler().runAsync(this, asyncScheduler::start);
 
         packetManager.registerPacket(Packet.Direction.TO_BUNGEE, ClipboardSendPacket.class, 0x0);
         packetManager.registerPacket(Packet.Direction.TO_BUKKIT, ClipboardSendPacket.class, 0x1);
@@ -205,6 +210,10 @@ public class WorldEditGlobalizerBungee extends Plugin {
 
     public Database getDatabase() {
         return database;
+    }
+
+    public AsyncScheduler getAsyncScheduler() {
+        return asyncScheduler;
     }
 
     private final void addURLToClassPath(URL url) throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException, InvocationTargetException {

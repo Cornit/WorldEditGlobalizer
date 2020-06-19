@@ -26,52 +26,54 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             return;
         }
         if (channel.equals("weg:connection")) {
-            PacketDataSerializer sig = new PacketDataSerializer(bytes);
-            byte[] sign = sig.readByteArray(32);
-            byte[] dataB = sig.readByteArray(bytes.length - 32);
-            Signature signature = new Signature();
-            signature.setData(dataB);
-            String key = WorldEditGlobalizerBukkit.getInstance().getMainConfig().getSecretKey();
-            boolean keySet = true;
-            if (key.equals("PUT KEY IN HERE")) {
-                key = UUID.randomUUID().toString().replace("-","");
-                keySet = false;
-            }
-            signature.setKey(key.getBytes(StandardCharsets.UTF_8));
-            if(!signature.verify(sign)) {
-                if (keySet) {
-                    PacketDataSerializer packetDataSerializer = new PacketDataSerializer();
-                    packetDataSerializer.writeByte((byte) 2);
-                    player.sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(), "weg:ping", packetDataSerializer.toByteArray());
+            WorldEditGlobalizerBukkit.getInstance().getAsyncScheduler().runAsync(() -> {
+                PacketDataSerializer sig = new PacketDataSerializer(bytes);
+                byte[] sign = sig.readByteArray(32);
+                byte[] dataB = sig.readByteArray(bytes.length - 32);
+                Signature signature = new Signature();
+                signature.setData(dataB);
+                String key = WorldEditGlobalizerBukkit.getInstance().getMainConfig().getSecretKey();
+                boolean keySet = true;
+                if (key.equals("PUT KEY IN HERE")) {
+                    key = UUID.randomUUID().toString().replace("-","");
+                    keySet = false;
                 }
-                return;
-            };
+                signature.setKey(key.getBytes(StandardCharsets.UTF_8));
+                if(!signature.verify(sign)) {
+                    if (keySet) {
+                        PacketDataSerializer packetDataSerializer = new PacketDataSerializer();
+                        packetDataSerializer.writeByte((byte) 2);
+                        player.sendPluginMessage(WorldEditGlobalizerBukkit.getInstance(), "weg:ping", packetDataSerializer.toByteArray());
+                    }
+                    return;
+                };
 
-            PacketDataSerializer data = new PacketDataSerializer(dataB);
-            int packetid = data.readVarInt();
-            boolean splitted = data.readBoolean();
-            if (splitted) {
-                long packetSize = data.readVarLong();
-                int splitCount = data.readInt();
-                int currentSplit = data.readInt();
+                PacketDataSerializer data = new PacketDataSerializer(dataB);
+                int packetid = data.readVarInt();
+                boolean splitted = data.readBoolean();
+                if (splitted) {
+                    long packetSize = data.readVarLong();
+                    int splitCount = data.readInt();
+                    int currentSplit = data.readInt();
 
 
-                PacketDataSerializer serializer = new PacketDataSerializer();
+                    PacketDataSerializer serializer = new PacketDataSerializer();
 
-                if (unFinishedPackets.containsKey(player.getName() + packetid + splitted + splitCount)) {
-                    serializer = unFinishedPackets.get(player.getName() + packetid + splitted + splitCount);
+                    if (unFinishedPackets.containsKey(player.getName() + packetid + splitted + splitCount)) {
+                        serializer = unFinishedPackets.get(player.getName() + packetid + splitted + splitCount);
+                    }
+                    serializer.writeByteArray(data.readArray());
+                    unFinishedPackets.put(player.getName() + packetid + splitted + splitCount, serializer);
+
+                    if (currentSplit == (splitCount - 1)) {
+                        WorldEditGlobalizerBukkit.getInstance().getPacketManager().callPacket(player, packetid, unFinishedPackets.get(player.getName() + packetid + splitted + splitCount).toByteArray());
+                        unFinishedPackets.remove(player.getName() + packetid + splitted + splitCount);
+                    }
+
+                } else {
+                    WorldEditGlobalizerBukkit.getInstance().getPacketManager().callPacket(player, packetid, data.readArray());
                 }
-                serializer.writeByteArray(data.readArray());
-                unFinishedPackets.put(player.getName() + packetid + splitted + splitCount, serializer);
-
-                if (currentSplit == (splitCount - 1)) {
-                    WorldEditGlobalizerBukkit.getInstance().getPacketManager().callPacket(player, packetid, unFinishedPackets.get(player.getName() + packetid + splitted + splitCount).toByteArray());
-                    unFinishedPackets.remove(player.getName() + packetid + splitted + splitCount);
-                }
-
-            } else {
-                WorldEditGlobalizerBukkit.getInstance().getPacketManager().callPacket(player, packetid, data.readArray());
-            }
+            });
         }
     }
 }
