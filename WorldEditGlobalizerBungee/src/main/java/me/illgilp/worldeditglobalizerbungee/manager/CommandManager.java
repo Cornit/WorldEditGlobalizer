@@ -135,7 +135,15 @@ public class CommandManager {
             if (!e.getCommand().getDescription().getUsage().isEmpty()) {
                 handleCommand("help", sender);
             } else {
-                MessageManager.sendMessage(sender, "command.usage-message", "/weg " + e.getCommand().getDescription().getHelp());
+                boolean hasPerm = false;
+                for (String permission : e.getCommand().getDescription().getPermissions()) {
+                    if (sender.hasPermission(permission)) hasPerm = true;
+                }
+                if (hasPerm) {
+                    MessageManager.sendMessage(sender, "command.usage-message", "/weg " + e.getCommand().getDescription().getHelp());
+                } else {
+                    MessageManager.sendMessage(sender, "command.permissionDenied");
+                }
             }
 
         } catch (CommandException | InvocationCommandException e) {

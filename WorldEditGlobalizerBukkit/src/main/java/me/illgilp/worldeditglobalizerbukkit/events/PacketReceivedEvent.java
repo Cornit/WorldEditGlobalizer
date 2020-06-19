@@ -15,6 +15,7 @@ public class PacketReceivedEvent extends Event {
     private int packetid;
 
     public PacketReceivedEvent(Player player, Packet packet, int packetid) {
+        super(true);
         this.player = player;
         this.packet = packet;
         this.packetid = packetid;

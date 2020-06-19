@@ -8,6 +8,7 @@ import me.illgilp.worldeditglobalizerbukkit.listener.PlayerConnectionListener;
 import me.illgilp.worldeditglobalizerbukkit.listener.PluginMessageListener;
 import me.illgilp.worldeditglobalizerbukkit.manager.VersionManager;
 import me.illgilp.worldeditglobalizerbukkit.network.PacketManager;
+import me.illgilp.worldeditglobalizercommon.async.AsyncScheduler;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.ClipboardSendPacket;
 import me.illgilp.worldeditglobalizercommon.network.packets.KeepAlivePacket;
@@ -31,6 +32,8 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
     private PacketManager packetManager;
     private WorldEditPlugin worldEditPlugin;
 
+    private AsyncScheduler asyncScheduler;
+
     private ConfigManager configManager;
 
     private boolean usable = true;
@@ -49,6 +52,8 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
         configManager = new ConfigManager();
         configManager.addPlaceholder("{DATAFOLDER}", getDataFolder().getPath());
         configManager.registerConfig(new MainConfig());
+        asyncScheduler = new AsyncScheduler(getLogger());
+        Bukkit.getScheduler().runTaskAsynchronously(this, asyncScheduler::start);
         VersionManager versionManager = VersionManager.getInstance();
         if (versionManager.getMinecraftVersion() == null) {
             getLogger().severe("Cannot detect minecraft version! Found: '" + Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] +  "' Disable plugin!");
@@ -132,6 +137,10 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
 
     public MainConfig getMainConfig() {
         return (MainConfig) configManager.getConfig("MainConfig");
+    }
+
+    public AsyncScheduler getAsyncScheduler() {
+        return asyncScheduler;
     }
 
     public boolean isAsyncWorldEdit() {

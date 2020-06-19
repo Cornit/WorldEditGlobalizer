@@ -31,7 +31,13 @@ public class WEGSchematicCommands {
     public void help(CommandSender sender) {
         sender.sendMessage(ComponentUtils.addText(null, MessageManager.getInstance().getPrefix() + "§7Help: "));
         for (CommandMapping map : CommandManager.getInstance().getSubCommands("schematic")) {
-            sender.sendMessage(ComponentUtils.addText(null, "§6§l>> §r§f§o/weg schematic " + map.getDescription().getHelp() + " §r§6= §a" + map.getDescription().getShortDescription()));
+            boolean hasPerm = false;
+            for (String permission : map.getDescription().getPermissions()) {
+                if (sender.hasPermission(permission)) hasPerm = true;
+            }
+            if (hasPerm) {
+                sender.sendMessage(ComponentUtils.addText(null, "§6§l>> §r§f§o/weg schematic " + map.getDescription().getHelp() + " §r§6= §a" + map.getDescription().getShortDescription()));
+            }
         }
     }
 

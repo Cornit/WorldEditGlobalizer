@@ -53,7 +53,13 @@ public class WEGSubCommands {
     public void help(CommandSender sender) {
         sender.sendMessage(ComponentUtils.addText(null, MessageManager.getInstance().getPrefix() + "§7Help: "));
         for (CommandMapping map : CommandManager.getInstance().getCommands()) {
-            sender.sendMessage(ComponentUtils.addText(null, "§6§l>> §r§f§o/weg " + map.getDescription().getHelp() + " §r§6= §a" + map.getDescription().getShortDescription()));
+            boolean hasPerm = false;
+            for (String permission : map.getDescription().getPermissions()) {
+                if (sender.hasPermission(permission)) hasPerm = true;
+            }
+            if (hasPerm) {
+                sender.sendMessage(ComponentUtils.addText(null, "§6§l>> §r§f§o/weg " + map.getDescription().getHelp() + " §r§6= §a" + map.getDescription().getShortDescription()));
+            }
         }
         sender.sendMessage(ComponentUtils.addText(null, "\n"));
         MessageManager.sendMessage(sender, "command.help.discord");
