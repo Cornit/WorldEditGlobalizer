@@ -60,6 +60,7 @@ jar {
 
 }
 processResources{
+
     filter{
         String line -> line.replace("{VERSION}",rootProject.version)
     }

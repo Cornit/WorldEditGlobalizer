@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
+import me.illgilp.worldeditglobalizerbungee.chat.chatevent.ChatEventBuilder;
 import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;
 import me.illgilp.worldeditglobalizerbungee.manager.PlayerManager;
 import me.illgilp.worldeditglobalizerbungee.player.OfflinePlayer;
@@ -41,7 +42,13 @@ public class PlayerJoinListener implements Listener {
                         Map<String, Object> map = new Gson().fromJson(reader, Map.class);
 
                         if (isNewerVersion(WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest") + "")) {
-                            MessageManager.sendMessage(p, "update.notify", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest"), map.get("msg"), "https://www.spigotmc.org/resources/worldeditglobalizer.51527/");
+                            MessageManager.sendMessage(p, "update.notify", WorldEditGlobalizerBungee.getInstance().getDescription().getVersion(), map.get("latest"), map.get("msg"),
+                                new ChatEventBuilder()
+                                    .setText("https://www.spigotmc.org/resources/worldeditglobalizer.51527/")
+                                    .setLink("https://www.spigotmc.org/resources/worldeditglobalizer.51527/")
+                                    .setHover("Click to open URL")
+                                    .create()
+                            );
                         }
 
 
