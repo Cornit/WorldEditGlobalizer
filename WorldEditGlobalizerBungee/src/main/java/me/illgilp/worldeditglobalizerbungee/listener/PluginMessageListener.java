@@ -48,6 +48,7 @@ public class PluginMessageListener implements Listener {
                     }
                 }
             }
+            e.setCancelled(true);
             return;
         }
         if (channel.equals("weg:connection")) {

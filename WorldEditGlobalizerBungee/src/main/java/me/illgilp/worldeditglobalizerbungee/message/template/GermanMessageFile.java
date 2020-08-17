@@ -162,10 +162,10 @@ public class GermanMessageFile implements MessageFile {
         defaults.put("clipboard.tooNew", "&cDie heruntergeladene Zwischenablage/Schematic wurde in einer neueren Version von Minecraft erstellt und kann somit hier nicht verwendet werden!");
 
         defaults.put("update.notify", "&3Es gibt eine neue Version von diesem Plugin!\n" +
-                "&6&l>> &r&aAktuelle Version &7= &f{1}\n" +
-                "&6&l>> &r&aNeuste Version &7= &f{2}\n" +
-                "&6&l>> &r&aUpdate Nachricht &7= &f{3}\n" +
-                "&6&l>> &r&aDownload Link &7= &f{4}");
+                "&6&l>> &r&aAktuelle Version &7= &f{0}\n" +
+                "&6&l>> &r&aNeuste Version &7= &f{1}\n" +
+                "&6&l>> &r&aUpdate Nachricht &7= &f{2}\n" +
+                "&6&l>> &r&aDownload Link &7= &f{3}");
 
         defaults.put("command.help.discord", "&7Du brauchst Hilfe? Joine einfach unserem Discord Server. &7https://discord.gg/B8BEaNV");
 

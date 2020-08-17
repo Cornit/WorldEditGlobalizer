@@ -2,6 +2,7 @@ package me.illgilp.worldeditglobalizerbungee.commands;
 
 import me.illgilp.intake.CommandMapping;
 import me.illgilp.worldeditglobalizerbungee.chat.chatevent.ChatEvent;
+import me.illgilp.worldeditglobalizerbungee.chat.chatevent.ChatEventBuilder;
 import me.illgilp.worldeditglobalizerbungee.manager.ChatEventManager;
 import me.illgilp.worldeditglobalizerbungee.manager.CommandManager;
 import me.illgilp.worldeditglobalizerbungee.manager.MessageManager;

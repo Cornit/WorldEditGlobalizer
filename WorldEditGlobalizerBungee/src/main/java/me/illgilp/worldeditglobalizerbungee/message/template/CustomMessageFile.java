@@ -163,10 +163,10 @@ public class CustomMessageFile implements MessageFile {
         defaults.put("clipboard.tooNew", "&cThe downloaded clipboard/schematic was made in a newer version of minecraft and cannot be used here.");
 
         defaults.put("update.notify", "&3There is a new Version for this Plugin!\n" +
-                "&6&l>> &r&aCurrent &7= &f{1}\n" +
-                "&6&l>> &r&aLatest &7= &f{2}\n" +
-                "&6&l>> &r&aUpdate Message &7= &f{3}\n" +
-                "&6&l>> &r&aDownload Link &7= &f{4}");
+                "&6&l>> &r&aCurrent &7= &f{0}\n" +
+                "&6&l>> &r&aLatest &7= &f{1}\n" +
+                "&6&l>> &r&aUpdate Message &7= &f{2}\n" +
+                "&6&l>> &r&aDownload Link &7= &f{3}");
 
         defaults.put("command.help.discord", "&7You need help? Simply join our Discord Server. &7https://discord.gg/B8BEaNV");
 
