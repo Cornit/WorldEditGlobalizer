@@ -19,7 +19,13 @@ public abstract class PingCallback<U> extends Callback<U,Boolean> {
     public void start() {
         PacketDataSerializer packetDataSerializer = new PacketDataSerializer();
         packetDataSerializer.writeUUID(this.getIdentifier());
-        player.getProxiedPlayer().getServer().sendData("weg:ping", packetDataSerializer.toByteArray());
-        super.start();
+        if (player != null) {
+            if (player.getProxiedPlayer() != null) {
+                if (player.getProxiedPlayer().getServer() != null) {
+                    player.getProxiedPlayer().getServer().sendData("weg:ping", packetDataSerializer.toByteArray());
+                    super.start();
+                }
+            }
+        }
     }
 }
