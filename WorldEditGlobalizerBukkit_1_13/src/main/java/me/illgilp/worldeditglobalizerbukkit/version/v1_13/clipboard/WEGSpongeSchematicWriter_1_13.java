@@ -134,8 +134,7 @@ public class WEGSpongeSchematicWriter_1_13 implements ClipboardWriter {
                         CompoundTag compoundTag = entity.getState().getNbtData();
                         Map<String, Tag> values = new HashMap<>(compoundTag.getValue());
                         values.put("WEGTypeId", new StringTag(entity.getState().getType().getId()));
-                        compoundTag = compoundTag.setValue(values);
-                        entities.add(compoundTag);
+                        entities.add(new CompoundTag(values));
                     }
                 }
             }
