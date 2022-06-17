@@ -1,39 +1,21 @@
-package me.illgilp.worldeditglobalizerbungee.storage.model;
+package me.illgilp.worldeditglobalizerbungee.storage.cache;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 import me.illgilp.worldeditglobalizerbungee.WorldEditGlobalizerBungee;
 import me.illgilp.worldeditglobalizerbungee.json.data.Data;
 import me.illgilp.worldeditglobalizerbungee.json.data.DataLoader;
-import me.illgilp.worldeditglobalizerbungee.storage.table.UserCacheTable;
-import org.apache.commons.codec.digest.DigestUtils;
+import me.illgilp.worldeditglobalizercommon.network.PacketDataSerializer;
 
-@DatabaseTable(tableName = "usercache")
 public class UserCacheModel {
 
-    @DatabaseField(columnName = "uuid", id=true)
     private UUID uuid;
-
-    @DatabaseField(columnName = "name")
     private String name;
-
-    @DatabaseField(columnName = "displayName")
     private String displayName;
-
-    @DatabaseField(columnName = "last_update")
-    private Date lastUpdate;
-
-    @DatabaseField(columnName = "data", dataType = DataType.LONG_STRING)
-    private String data;
-
-    @DatabaseField(columnName = "hash")
-    private String hash;
+    private Date lastLogin;
+    private JsonObject data;
 
     public UserCacheModel() {
     }
@@ -57,12 +39,8 @@ public class UserCacheModel {
         return displayName;
     }
 
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public String getHash() {
-        return hash;
+    public Date getLastLogin() {
+        return lastLogin == null ? this.lastLogin = new Date() : lastLogin;
     }
 
     public void setUUID(UUID uuid) {
@@ -77,37 +55,59 @@ public class UserCacheModel {
         this.displayName = displayName;
     }
 
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     public JsonObject getData() {
-        if (this.data == null) this.data = "{}";
-        return new Gson().fromJson(this.data, JsonObject.class);
+        if (this.data == null) {
+            this.data = new JsonObject();
+        }
+        return this.data;
     }
 
     public void addDataValue(String key, Data data) {
-        if (this.data == null) this.data = "{}";
-        JsonObject jsonObject = new Gson().fromJson(this.data, JsonObject.class);
+        JsonObject jsonObject = getData();
         jsonObject.add(key, data.write());
-        this.data = new Gson().toJson(jsonObject);
     }
 
     public void removeDataValue(String key) {
-        if (this.data == null) this.data = "{}";
-        JsonObject jsonObject = new Gson().fromJson(this.data, JsonObject.class);
+        JsonObject jsonObject = getData();
         jsonObject.remove(key);
-        this.data = new Gson().toJson(jsonObject);
     }
 
     public <T extends Data> T getDataValue(String key, Class<T> type) {
-        if (this.data == null) this.data = "{}";
-        JsonObject jsonObject = new Gson().fromJson(this.data, JsonObject.class);
+        JsonObject jsonObject = getData();
         if (!jsonObject.has(key)) {
             return null;
         }
-
         if (!jsonObject.get(key).isJsonObject()) {
             return null;
         }
         return DataLoader.loadData(jsonObject.getAsJsonObject(key), type);
     }
+
+    public boolean read(PacketDataSerializer serializer) {
+        this.uuid = serializer.readUUID();
+        this.name = serializer.readString();
+        this.displayName = serializer.readString();
+        this.lastLogin = new Date(serializer.readVarLong());
+        try {
+            this.data = new Gson().fromJson(serializer.readString(), JsonObject.class);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public void write(PacketDataSerializer serializer) {
+        serializer.writeUUID(this.uuid);
+        serializer.writeString(this.name);
+        serializer.writeString(this.displayName);
+        serializer.writeVarLong(this.lastLogin.getTime());
+        serializer.writeString(new Gson().toJson(this.data == null ? this.data = new JsonObject() : this.data));
+    }
+
 
     @Override
     public String toString() {
@@ -119,19 +119,8 @@ public class UserCacheModel {
             '}';
     }
 
-    private String createHash(String str) {
-
-        return DigestUtils.shaHex(str.getBytes(StandardCharsets.UTF_8));
-    }
-
     public void save() {
-        String newHash = createHash(this.toString());
-        if (!newHash.equals(this.hash)) {
-            this.hash = newHash;
-            this.lastUpdate = new Date();
-            WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class).createOrUpdate(this);
-        }
+        WorldEditGlobalizerBungee.getInstance().getUserCache().addToCache(this);
+        WorldEditGlobalizerBungee.getInstance().getUserCache().save();
     }
 }
-
-

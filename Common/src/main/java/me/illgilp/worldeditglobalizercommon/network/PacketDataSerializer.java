@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -15,28 +16,42 @@ import me.illgilp.worldeditglobalizercommon.exception.OverflowPacketException;
 
 public class PacketDataSerializer {
 
-    private ByteArrayOutputStream baos;
+    private OutputStream outputStream;
     private DataOutputStream bufOut;
-    private ByteArrayInputStream bais;
+    private InputStream inputStream;
     private DataInputStream bufIn;
 
     public PacketDataSerializer(byte[] data) {
-        baos = new ByteArrayOutputStream();
+        outputStream = new ByteArrayOutputStream();
         try {
-            baos.write(data);
+            outputStream.write(data);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        bufOut = new DataOutputStream(baos);
-        bais = new ByteArrayInputStream(data);
-        bufIn = new DataInputStream(bais);
+        bufOut = new DataOutputStream(outputStream);
+        inputStream = new ByteArrayInputStream(data);
+        bufIn = new DataInputStream(inputStream);
     }
 
     public PacketDataSerializer() {
-        baos = new ByteArrayOutputStream();
-        bufOut = new DataOutputStream(baos);
-        bais = new ByteArrayInputStream(new byte[0]);
-        bufIn = new DataInputStream(bais);
+        outputStream = new ByteArrayOutputStream();
+        bufOut = new DataOutputStream(outputStream);
+        inputStream = new ByteArrayInputStream(new byte[0]);
+        bufIn = new DataInputStream(inputStream);
+    }
+
+    public PacketDataSerializer(InputStream inputStream) {
+        outputStream = new ByteArrayOutputStream();
+        bufOut = new DataOutputStream(outputStream);
+        this.inputStream = inputStream;
+        bufIn = new DataInputStream(inputStream);
+    }
+
+    public PacketDataSerializer(OutputStream outputStream) {
+        this.outputStream = outputStream;
+        bufOut = new DataOutputStream(outputStream);
+        this.inputStream = new ByteArrayInputStream(new byte[0]);
+        bufIn = new DataInputStream(inputStream);
     }
 
     public void writeFinalString(String string) {
@@ -314,7 +329,10 @@ public class PacketDataSerializer {
     }
 
     public byte[] toByteArray() {
-        return baos.toByteArray();
+        if (outputStream instanceof ByteArrayOutputStream) {
+            return ((ByteArrayOutputStream) outputStream).toByteArray();
+        }
+        return new byte[0];
     }
 
     public void writeLong(long v) {

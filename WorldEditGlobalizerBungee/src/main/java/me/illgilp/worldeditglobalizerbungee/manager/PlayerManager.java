@@ -3,6 +3,7 @@ package me.illgilp.worldeditglobalizerbungee.manager;
 import com.google.common.base.Charsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,9 +16,7 @@ import me.illgilp.worldeditglobalizerbungee.player.OfflinePlayer;
 import me.illgilp.worldeditglobalizerbungee.player.Player;
 import me.illgilp.worldeditglobalizerbungee.player.WEGOfflinePlayer;
 import me.illgilp.worldeditglobalizerbungee.player.WEGOnlinePlayer;
-import me.illgilp.worldeditglobalizerbungee.storage.model.UserCacheModel;
-import me.illgilp.worldeditglobalizerbungee.storage.model.UserCacheModelBuilder;
-import me.illgilp.worldeditglobalizerbungee.storage.table.UserCacheTable;
+import me.illgilp.worldeditglobalizerbungee.storage.cache.UserCacheModel;
 import me.illgilp.worldeditglobalizerbungee.util.UUIDFetcher;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -103,8 +102,7 @@ public class PlayerManager {
             lastUse.put(uuid, System.currentTimeMillis());
             return offlinePlayersUUID.get(uuid);
         }
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
-        UserCacheModel userCacheModel = table.getExact(new UserCacheModelBuilder().setUUID(uuid).createUserCacheModel());
+        UserCacheModel userCacheModel = WorldEditGlobalizerBungee.getInstance().getUserCache().getByUUID(uuid);
         if (userCacheModel == null) {
             return null;
         }
@@ -127,13 +125,11 @@ public class PlayerManager {
             lastUse.put(p.getUniqueId(), System.currentTimeMillis());
             return p;
         }
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
-        UserCacheModel userCacheModel = table.getExact(new UserCacheModelBuilder().setName(name.toLowerCase()).createUserCacheModel());
+        UserCacheModel userCacheModel = WorldEditGlobalizerBungee.getInstance().getUserCache().getByName(name);
         if (userCacheModel == null) {
             UUIDFetcher.PlayerData data = UUIDFetcher.getPlayerData(name);
             if (data != null) {
                 userCacheModel = new UserCacheModel(data.getUUID(), data.getName().toLowerCase(), data.getName());
-
                 this.saveOfflinePlayer(new WEGOfflinePlayer(data.getUUID(), data.getName()));
             } else {
                 OfflinePlayer offlinePlayer = new WEGOfflinePlayer(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name, false);
@@ -155,8 +151,7 @@ public class PlayerManager {
 
 
     public OfflinePlayer getSavedOfflinePlayer(UUID uuid) {
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
-        UserCacheModel userCacheModel = table.getExact(new UserCacheModelBuilder().setUUID(uuid).createUserCacheModel());
+        UserCacheModel userCacheModel = WorldEditGlobalizerBungee.getInstance().getUserCache().getByUUID(uuid);
         if (userCacheModel == null) {
             return null;
         }
@@ -165,8 +160,7 @@ public class PlayerManager {
     }
 
     public OfflinePlayer getSavedOfflinePlayer(String name) {
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
-        UserCacheModel userCacheModel = table.getExact(new UserCacheModelBuilder().setName(name.toLowerCase()).createUserCacheModel());
+        UserCacheModel userCacheModel = WorldEditGlobalizerBungee.getInstance().getUserCache().getByName(name);
         if (userCacheModel == null) {
             return null;
         }
@@ -175,8 +169,7 @@ public class PlayerManager {
     }
 
     public void saveOfflinePlayer(OfflinePlayer offlinePlayer) {
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
-        UserCacheModel userCacheModel = table.getExact(new UserCacheModelBuilder().setUUID(offlinePlayer.getUniqueId()).createUserCacheModel());
+        UserCacheModel userCacheModel = WorldEditGlobalizerBungee.getInstance().getUserCache().getByUUID(offlinePlayer.getUniqueId());
         if (userCacheModel == null) {
             userCacheModel = new UserCacheModel(offlinePlayer.getUniqueId(), offlinePlayer.getName().toLowerCase(), offlinePlayer.getName());
         }
@@ -188,21 +181,8 @@ public class PlayerManager {
     }
 
     public List<OfflinePlayer> getOfflinePlayers(String startWith) {
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
         List<OfflinePlayer> offlinePlayers = new ArrayList<>();
-        List<UserCacheModel> models = new ArrayList<>();
-
-        if (startWith.length() == 0) {
-            models = table.getAll();
-        } else {
-            try {
-                models = table.getDao().queryBuilder().where().raw(" name LIKE '" + startWith.toLowerCase() + "%'").query();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (UserCacheModel model : models) {
+        for (UserCacheModel model : WorldEditGlobalizerBungee.getInstance().getUserCache().getByNameStartingWith(startWith)) {
             OfflinePlayer player = getPlayer(model.getUUID());
             if (player == null) {
                 player = new WEGOfflinePlayer(model.getUUID(), model.getDisplayName());
@@ -215,21 +195,8 @@ public class PlayerManager {
     }
 
     public List<String> getOfflinePlayersNames(String startWith) {
-        UserCacheTable table = WorldEditGlobalizerBungee.getInstance().getDatabase().getTable(UserCacheTable.class);
         HashSet<String> offlinePlayers = new HashSet<>();
-        List<UserCacheModel> models = new ArrayList<>();
-
-        if (startWith.length() == 0) {
-            models = table.getAll();
-        } else {
-            try {
-                models = table.getDao().queryBuilder().where().raw(" name LIKE '" + startWith.toLowerCase() + "%'").query();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (UserCacheModel model : models) {
+        for (UserCacheModel model : WorldEditGlobalizerBungee.getInstance().getUserCache().getByNameStartingWith(startWith)) {
             offlinePlayers.add(model.getDisplayName());
         }
 

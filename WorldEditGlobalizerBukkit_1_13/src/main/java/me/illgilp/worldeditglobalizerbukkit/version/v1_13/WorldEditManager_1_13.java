@@ -8,12 +8,17 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 import me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit;
 import me.illgilp.worldeditglobalizerbukkit.clipboard.WEGBlockArrayClipboard;
@@ -124,6 +129,34 @@ public class WorldEditManager_1_13 extends WorldEditManager {
             e.printStackTrace();
         }
         return serializer.toByteArray();
+    }
+
+    public static boolean setClipboardBiome(BlockArrayClipboard clipboard, BlockVector3 v3, BiomeType type) {
+        try {
+            Method method = clipboard.getClass().getDeclaredMethod("setBiome", int.class, int.class, int.class, BiomeType.class);
+            return (boolean) method.invoke(clipboard, v3.getBlockX(), v3.getBlockY(), v3.getBlockZ(), type);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {}
+        try {
+            Method method = clipboard.getClass().getDeclaredMethod("setBiome", BlockVector3.class, BiomeType.class);
+            return (boolean) method.invoke(clipboard, v3, type);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static BiomeType getClipboardBiome(Clipboard clipboard, BlockVector3 v3) {
+        try {
+            Method method = clipboard.getClass().getDeclaredMethod("getBiomeType", int.class, int.class, int.class);
+            return (BiomeType) method.invoke(clipboard, v3.getBlockX(), v3.getBlockY(), v3.getBlockZ());
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {}
+        try {
+            Method method = clipboard.getClass().getDeclaredMethod("getBiome", BlockVector3.class);
+            return (BiomeType) method.invoke(clipboard, v3);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

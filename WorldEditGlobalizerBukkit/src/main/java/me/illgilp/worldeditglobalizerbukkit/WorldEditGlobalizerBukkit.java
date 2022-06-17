@@ -38,6 +38,8 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
 
     private boolean usable = true;
 
+    private MainConfig mainConfig;
+
     public static WorldEditGlobalizerBukkit getInstance() {
         return instance;
     }
@@ -51,7 +53,8 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
     public void onEnable() {
         configManager = new ConfigManager();
         configManager.addPlaceholder("{DATAFOLDER}", getDataFolder().getPath());
-        configManager.registerConfig(new MainConfig());
+        mainConfig = new MainConfig();
+        configManager.registerConfig(mainConfig);
         asyncScheduler = new AsyncScheduler(getLogger());
         Bukkit.getScheduler().runTaskAsynchronously(this, asyncScheduler::start);
         VersionManager versionManager = VersionManager.getInstance();
@@ -136,7 +139,7 @@ public class WorldEditGlobalizerBukkit extends JavaPlugin {
     }
 
     public MainConfig getMainConfig() {
-        return (MainConfig) configManager.getConfig("MainConfig");
+        return this.mainConfig;
     }
 
     public AsyncScheduler getAsyncScheduler() {

@@ -20,16 +20,10 @@ buildscript {
 
 	dependencies {
 		classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
-		classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
-		classpath 'com.netflix.nebula:gradle-info-plugin:1.9.+'
 	}
 }
 repositories {
 	mavenCentral()
-
-	maven {
-		url "http://nexus.hc.to/content/repositories/pub_releases"
-	}
 
 	flatDir {
 		dirs 'libs'
@@ -39,7 +33,6 @@ repositories {
 }
 
 configurations {
-	// configuration that holds jars to include in the jar
 	extraLibs
 }
 

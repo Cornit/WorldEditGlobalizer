@@ -72,9 +72,7 @@ public class ConfigManager {
             } else {
                 throw new IllegalArgumentException(config.getClass().getName() + " doesn't contains ConfigClass annotation!");
             }
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -88,10 +86,8 @@ public class ConfigManager {
     }
 
     public void unregisterConfig(String configName) {
-        List<Config> confs = new ArrayList();
-        confs.addAll(this.registeredConfigs);
-        for (Config config : confs) {
-            if (config.getConfigName() == configName) {
+        for (Config config : new ArrayList<>(this.registeredConfigs)) {
+            if (config.getConfigName().equals(configName)) {
                 this.registeredConfigs.remove(config);
                 config.onUnregister();
             }
@@ -122,6 +118,7 @@ public class ConfigManager {
             for (Config config : this.registeredConfigs) {
                 if (config.getConfigName().equals(configName)) {
                     reload(config);
+                    break;
                 }
             }
         }
@@ -138,13 +135,12 @@ public class ConfigManager {
     }
 
     public boolean isConfigRegistered(String configName) {
-        boolean contains = false;
         for (Config config : this.registeredConfigs) {
             if (config.getConfigName().equals(configName)) {
-                contains = true;
+                return true;
             }
         }
-        return contains;
+        return false;
     }
 
     public Config getConfig(String configName) {

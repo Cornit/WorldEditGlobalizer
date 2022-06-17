@@ -36,7 +36,7 @@ public class PacketReceivedListener implements Listener {
 
     @EventHandler
     public void onPacket(PacketReceivedEvent e) {
-        WorldEditGlobalizerBukkit.getInstance().getConfigManager().registerConfig(WorldEditGlobalizerBukkit.getInstance().getMainConfig());
+//        WorldEditGlobalizerBukkit.getInstance().getConfigManager().reload(WorldEditGlobalizerBukkit.getInstance().getMainConfig());
         if (e.getPacket() instanceof ClipboardSendPacket) {
             new PacketRunnable(e.getPlayer(), e.getPacket()) {
                 @Override
