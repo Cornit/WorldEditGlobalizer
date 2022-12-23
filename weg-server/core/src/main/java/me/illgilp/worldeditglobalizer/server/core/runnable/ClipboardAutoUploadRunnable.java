@@ -21,9 +21,7 @@ public class ClipboardAutoUploadRunnable implements Runnable {
     @Override
     public void run() {
         for (WegPlayer wegPlayer : new ArrayList<>(wegServer.getPlayers())) {
-            if (wegPlayer.getConnection().getState() != WegServerConnection.State.USABLE
-                || !wegPlayer.isAutoUploadReady()
-            ) {
+            if (wegPlayer.getConnection().getState() != WegServerConnection.State.USABLE) {
                 continue;
             }
             if (wegPlayer.getProxyConfig().isClipboardAutoUploadEnabled()) {

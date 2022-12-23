@@ -10,7 +10,7 @@ Commands
 --------
 
 | Command                                                                          | Description                                          | Permissions                                      |
-|----------------------------------------------------------------------------------|------------------------------------------------------|--------------------------------------------------|
+| -------------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------ |
 | [`/weg clipboard`](#weg-clipboard)                                               | commands regarding clipboards                        |                                                  |
 | [`/weg clipboard clear [player name]`](#weg-clipboard-clear-player-name)         | clears your/someone else's clipboard                 | `worldeditglobalizer.command.clipboard.clear`    |
 | [`/weg clipboard download`](#weg-clipboard-download)                             | download your clipboard                              | `worldeditglobalizer.command.clipboard.download` |
@@ -212,7 +212,7 @@ Permissions
 -----------
 
 | Permission                                          | Description                                     | Commands                                                                         |
-|-----------------------------------------------------|-------------------------------------------------|----------------------------------------------------------------------------------|
+| --------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
 | `worldeditglobalizer.admin.notify.update`           | allowing to receive update notifications        |                                                                                  |
 | `worldeditglobalizer.clipboard.auto.download`       | enable clipboard auto-download                  |                                                                                  |
 | `worldeditglobalizer.clipboard.auto.upload`         | enable clipboard auto-upload                    |                                                                                  |

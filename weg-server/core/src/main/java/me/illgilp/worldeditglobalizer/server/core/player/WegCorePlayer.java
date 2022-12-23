@@ -173,9 +173,4 @@ public abstract class WegCorePlayer implements WegPlayer {
             return WegCorePlayer.this.getUniqueId();
         }
     }
-
-    @Override
-    public boolean isAutoUploadReady() {
-        return autoUploadReady;
-    }
 }

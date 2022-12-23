@@ -7,7 +7,7 @@ plugins {
 apply(plugin = "com.github.johnrengelman.shadow")
 
 group = "me.illgilp"
-version = "3.0.0-beta"
+version = "3.0.1-beta"
 
 applyCommonRepositories()
 

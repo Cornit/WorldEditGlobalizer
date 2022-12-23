@@ -125,5 +125,11 @@ public class WorldEditAdapterImpl extends WorldEditAdapter {
         return true;
     }
 
+    @Override
+    public void clearClipboard(WegPlayer player) {
+        Optional.ofNullable(Bukkit.getPlayer(player.getUniqueId()))
+            .map(worldEditPlugin::getSession)
+            .ifPresent(localSession -> localSession.setClipboard(null));
+    }
 
 }

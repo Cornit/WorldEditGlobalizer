@@ -17,4 +17,6 @@ public abstract class WorldEditAdapter {
     public abstract Optional<WegClipboard> getClipboardOfPlayer(WegPlayer player);
 
     public abstract boolean readAndSetClipboard(WegPlayer player, byte[] data, int hashCode);
+
+    public abstract void clearClipboard(WegPlayer player);
 }

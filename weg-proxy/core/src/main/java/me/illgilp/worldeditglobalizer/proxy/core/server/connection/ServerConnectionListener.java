@@ -2,7 +2,6 @@ package me.illgilp.worldeditglobalizer.proxy.core.server.connection;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import me.illgilp.worldeditglobalizer.common.network.protocol.packet.AutoUploadReadyPacket;
 import me.illgilp.worldeditglobalizer.common.permission.Permission;
 import me.illgilp.worldeditglobalizer.common.scheduler.WegScheduler;
 import me.illgilp.worldeditglobalizer.proxy.core.api.WegProxy;
@@ -25,15 +24,8 @@ public final class ServerConnectionListener {
                         } catch (ServerNotUsableException ignored) {
                         }
                     }
-                    sendAutoUploadReady();
                 }, 2500, TimeUnit.MILLISECONDS);
-            } else {
-                sendAutoUploadReady();
             }
         }
-    }
-
-    private void sendAutoUploadReady() {
-        player.getServerConnection().sendPacket(new AutoUploadReadyPacket(true));
     }
 }

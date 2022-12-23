@@ -92,6 +92,8 @@ public class WegServerCoreImpl extends WegServerCore {
 
     @Override
     protected void onPlayerConnected(WegPlayer player) {
+        Optional.ofNullable(WorldEditAdapterFilter.getWorldEditAdapter())
+            .ifPresent(worldEditAdapter -> worldEditAdapter.clearClipboard(player));
         super.onPlayerConnected(player);
     }
 
