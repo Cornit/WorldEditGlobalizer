@@ -1,0 +1,91 @@
+{
+    "version": "1.0.0",
+    "permissions": {
+        "worldeditglobalizer": {
+            "command": {
+                "reload": {
+                    "@": {
+                        "description": "-"
+                    }
+                },
+                "clipboard": {
+                    "upload": {
+                        "@": {
+                            "description": "-"
+                        }
+                    },
+                    "download": {
+                        "@": {
+                            "description": "-"
+                        }
+                    },
+                    "info": {
+                        "@": {
+                            "description": "-"
+                        },
+                        "other": {
+                            "@": {
+                                "description": "allowing to see clipboard info of other players"
+                            }
+                        }
+                    },
+                    "clear": {
+                        "@": {
+                            "description": "-"
+                        },
+                        "other": {
+                            "@": {
+                                "description": "allowing to clear clipboard of other players"
+                            }
+                        }
+                    }
+                },
+                "schematic": {
+                    "list": {
+                        "@": {
+                            "description": "allowing to list saved schematics"
+                        }
+                    },
+                    "save": {
+                        "@": {
+                            "description": "allowing to save a clipboard to a schematic"
+                        }
+                    },
+                    "load": {
+                        "@": {
+                            "description": "allowing to load a schematic to a clipboard"
+                        }
+                    },
+                    "delete": {
+                        "@": {
+                            "description": "allowing to delete a schematic"
+                        }
+                    }
+                }
+            },
+            "clipboard": {
+                "auto": {
+                    "upload": {
+                        "@": {
+                            "description": "enable clipboard auto-upload"
+                        }
+                    },
+                    "download": {
+                        "@": {
+                            "description": "enable clipboard auto-download"
+                        }
+                    }
+                }
+            },
+            "admin": {
+                "notify": {
+                    "update": {
+                        "@": {
+                            "description": "allowing to receive update notifications"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

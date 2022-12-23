@@ -1,0 +1,5 @@
+name: WorldEditGlobalizer
+author: IllgiLP
+version: ${version}
+
+main: me.illgilp.worldeditglobalizer.proxy.bungeecord.WorldEditGlobalizerPlugin

@@ -1,0 +1,7 @@
+name: WorldEditGlobalizer
+author: IllgiLP
+version: ${version}
+
+main: me.illgilp.worldeditglobalizer.server.bukkit.WorldEditGlobalizerPlugin
+
+softdepend: [ WorldEdit, FastAsyncWorldEdit ]

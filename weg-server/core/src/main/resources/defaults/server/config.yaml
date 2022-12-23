@@ -1,0 +1,10 @@
+signature:
+  # This secret is required to validate messages sent between proxy and server.
+  # Copy the secret from the config.yaml of WEG Proxy down here.
+  secret: "PUT SIGNATURE KEY HERE"
+
+
+# In case messages aren't displayed correctly (or not at all).
+# If true: messages will be forwarded to Proxy and sent from there
+# Default value: false
+use-fallback-message-sending: false

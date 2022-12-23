@@ -1,0 +1,26 @@
+signature:
+  # This secret is required to validate messages sent between proxy and server.
+  # Copy the secret below to the config of WorldEditGlobalizer on the server.
+  secret: "${random_secret}"
+
+clipboard:
+  # max allowed clipboard size (in bytes)
+  # Default: 31457280 (30 MiB)
+  max-size: 31457280
+
+  # if true: clipboards will be uploaded automatically
+  # Default: true
+  enable-auto-upload: true
+
+  # if true: clipboards will be downloaded automatically
+  # Default: true
+  enable-auto-download: true
+
+  keep:
+    # if true: clipboards won't be deleted after players logged out.
+    # Default: true
+    enable: true
+
+    # if true: clipboards will be deleted automatically if the player wasn't online for 30 days.
+    # Default: true
+    enable-auto-cleanup: true

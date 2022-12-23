@@ -1,7 +1,0 @@
-name: WorldEditGlobalizerBukkit
-version: {VERSION}
-author: IllgiLP
-
-softdepend: [WorldEdit,FastAsyncWorldEdit,AsyncWorldEdit]
-
-main: me.illgilp.worldeditglobalizerbukkit.WorldEditGlobalizerBukkit

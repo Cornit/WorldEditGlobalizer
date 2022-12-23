@@ -1,0 +1,27 @@
+name: WorldEditGlobalizer Release
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Temurin JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Upload Release Assets
+        run: hub release edit $(find build/libs/ -maxdepth 1 -type f -name "*.jar" -printf "-a %p ") -m "" ${GITHUB_REF#refs/tags/}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: OrlovM/Wiki-Action@v1
+        with:
+          path: 'docs'
+          token: ${{ secrets.GITHUB_TOKEN }}
