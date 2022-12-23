@@ -2,7 +2,7 @@ name: WorldEditGlobalizer Release
 
 on:
   release:
-    types: [ created ]
+    types: [ published ]
 
 jobs:
   release:
