@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import me.illgilp.worldeditglobalizer.common.messages.MessageHelper;
 import me.illgilp.worldeditglobalizer.common.messages.translation.TranslationKey;
 import me.illgilp.worldeditglobalizer.common.network.AbstractPacketHandler;
-import me.illgilp.worldeditglobalizer.common.network.protocol.packet.AutoUploadReadyPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ClipboardDataPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.KeepAlivePacket;
@@ -66,10 +65,5 @@ public class ServerConnectionPacketHandler extends AbstractPacketHandler {
     @Override
     public void handle(ClipboardRequestPacket packet) {
         WegScheduler.getInstance().getSyncExecutor().execute(player::uploadClipboard);
-    }
-
-    @Override
-    public void handle(AutoUploadReadyPacket packet) {
-        player.setAutoUploadReady(packet.isReady());
     }
 }

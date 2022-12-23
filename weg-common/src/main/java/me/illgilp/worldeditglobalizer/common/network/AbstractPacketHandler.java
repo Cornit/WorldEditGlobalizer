@@ -1,7 +1,6 @@
 package me.illgilp.worldeditglobalizer.common.network;
 
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ActionBarPacket;
-import me.illgilp.worldeditglobalizer.common.network.protocol.packet.AutoUploadReadyPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ClipboardDataPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.KeepAlivePacket;
@@ -46,10 +45,6 @@ public abstract class AbstractPacketHandler {
     }
 
     public void handle(ActionBarPacket packet) {
-        throw new UnsupportedOperationException("Method not implemented");
-    }
-
-    public void handle(AutoUploadReadyPacket packet) {
         throw new UnsupportedOperationException("Method not implemented");
     }
 }

@@ -31,6 +31,4 @@ public interface WegPlayer extends Audience, Identified, PermissionSubject {
 
     CommonProxyConfig getProxyConfig();
 
-    boolean isAutoUploadReady();
-
 }

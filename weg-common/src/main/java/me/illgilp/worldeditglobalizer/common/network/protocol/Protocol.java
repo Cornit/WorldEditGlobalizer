@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import lombok.Getter;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ActionBarPacket;
-import me.illgilp.worldeditglobalizer.common.network.protocol.packet.AutoUploadReadyPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ClipboardDataPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.ClipboardRequestPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.KeepAlivePacket;
@@ -36,7 +35,6 @@ public enum Protocol {
             registerPacket(0x2, ProxyConfigResponsePacket.class, ProxyConfigResponsePacket::new);
             registerPacket(0x3, ClipboardDataPacket.class, ClipboardDataPacket::new);
             registerPacket(0x4, ClipboardRequestPacket.class, ClipboardRequestPacket::new);
-            registerPacket(0x5, AutoUploadReadyPacket.class, AutoUploadReadyPacket::new);
         }
     };
 
