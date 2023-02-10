@@ -191,7 +191,7 @@ public class NetworkManagerTests {
         }
     }
 
-    private class TestPacketHandler extends AbstractPacketHandler {
+    private static class TestPacketHandler extends AbstractPacketHandler {
 
         public void handle(FullPacket packet) {
             throw new UnsupportedOperationException("Method not implemented");

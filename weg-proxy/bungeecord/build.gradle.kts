@@ -16,7 +16,7 @@ dependencies {
 }
 
 val relocations = mapOf(
-    "org.bstats" to "me.illgilp.worldeditglobalizer.proxy.bungee.bstats"
+    "org.bstats" to "me.illgilp.worldeditglobalizer.proxy.bungeecord.bstats"
 )
 
 tasks.named<ShadowJar>("shadowJar") {

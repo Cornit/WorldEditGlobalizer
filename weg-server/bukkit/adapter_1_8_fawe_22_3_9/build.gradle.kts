@@ -7,7 +7,7 @@ applyBukkitWorldEditAdapterConfig()
 repositories {
     maven(url = "https://maven.enginehub.org/repo")
     ivy {
-        url = uri("https://ci.athion.net/job/FastAsyncWorldEdit-Legacy/lastSuccessfulBuild/artifact/target/")
+        url = uri("https://ci.athion.net/job/FastAsyncWorldEdit-Legacy/1295/artifact/target/")
 
         patternLayout {
             artifact("/[module]-[revision].jar")
