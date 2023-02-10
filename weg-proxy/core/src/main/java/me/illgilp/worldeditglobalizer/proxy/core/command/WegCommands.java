@@ -18,7 +18,6 @@ public class WegCommands {
 
     @Command(
         aliases = { "reload" },
-        min = 0,
         max = 1,
         desc = TranslationKey.COMMAND_WEG_RELOAD_DESCRIPTION
     )
@@ -40,13 +39,18 @@ public class WegCommands {
         }
         WegProxy.getInstance().getPlayers().stream()
             .filter(player -> player.getServer().getState() == WegServer.State.USABLE)
-            .forEach(player -> {
-                player.getServer().sendPacket(new ProxyConfigResponsePacket(
-                    new UUID(0, 0),
-                    false,
-                    WegProxy.getInstance().getProxyConfig()
-                ));
-            });
+            .forEach(player -> player.getServer().sendPacket(new ProxyConfigResponsePacket(
+                new UUID(0, 0),
+                false,
+                WegProxy.getInstance().getProxyConfig()
+            )).whenComplete((unused, throwable) -> {
+                if (throwable != null) {
+                    WegProxy.getInstance().getLogger().log(Level.SEVERE, "Failed to reload config", throwable);
+                    MessageHelper.builder()
+                        .translation(TranslationKey.COMMAND_WEG_RELOAD_FAILED)
+                        .sendMessageTo(source);
+                }
+            }));
         MessageHelper.builder()
             .translation(TranslationKey.COMMAND_WEG_RELOAD_FINISH)
             .sendMessageTo(source);

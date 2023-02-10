@@ -19,7 +19,12 @@ public class PacketCallback {
         request.setRequest(true);
         CompletableFuture<T> future = new CompletableFuture<>();
         callbacks.put(uuid, new SyncCallbackEntry<>(responseType, future));
-        connection.sendPacket(request);
+        connection.sendPacket(request)
+            .whenComplete((unused, throwable) -> {
+                if (throwable != null) {
+                    future.completeExceptionally(throwable);
+                }
+            });
         return future;
     }
 

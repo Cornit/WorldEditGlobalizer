@@ -3,27 +3,22 @@ package me.illgilp.worldeditglobalizer.proxy.core.server.connection;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import lombok.Getter;
-import me.illgilp.worldeditglobalizer.common.ProgressListener;
 import me.illgilp.worldeditglobalizer.common.network.AbstractPacketHandler;
 import me.illgilp.worldeditglobalizer.common.network.NetworkManager;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.common.network.exception.IncompatibleVersionException;
 import me.illgilp.worldeditglobalizer.common.network.exception.InvalidSignatureException;
 import me.illgilp.worldeditglobalizer.common.network.exception.PacketHandleException;
 import me.illgilp.worldeditglobalizer.common.network.protocol.PacketFactory;
 import me.illgilp.worldeditglobalizer.common.network.protocol.Protocol;
 import me.illgilp.worldeditglobalizer.common.network.protocol.ProtocolPacketFactory;
-import me.illgilp.worldeditglobalizer.common.network.protocol.packet.Packet;
 import me.illgilp.worldeditglobalizer.common.permission.Permission;
-import me.illgilp.worldeditglobalizer.common.scheduler.WegScheduler;
 import me.illgilp.worldeditglobalizer.proxy.core.api.WegProxy;
 import me.illgilp.worldeditglobalizer.proxy.core.api.server.WegServer;
 import me.illgilp.worldeditglobalizer.proxy.core.api.server.WegServerInfo;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.TriState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ServerConnection extends NetworkManager implements WegServer {
 
@@ -39,8 +34,13 @@ public abstract class ServerConnection extends NetworkManager implements WegServ
 
     private final Map<Permission, TriState> cachedPermissions = new HashMap<>();
 
-    public ServerConnection(ServerConnectionListener serverConnectionListener, AbstractPacketHandler packetHandler, WegServerInfo serverInfo) {
-        super(packetHandler);
+    public ServerConnection(
+        ServerConnectionListener serverConnectionListener,
+        AbstractPacketHandler packetHandler,
+        WegServerInfo serverInfo,
+        PacketSender packetSender
+    ) {
+        super(packetHandler, packetSender);
         this.serverConnectionListener = serverConnectionListener;
         this.serverInfo = serverInfo;
         for (Permission value : Permission.values()) {
@@ -90,16 +90,6 @@ public abstract class ServerConnection extends NetworkManager implements WegServ
             this.state = state;
             this.serverConnectionListener.handleStateChange(old, state);
         }
-    }
-
-    @Override
-    public void sendPacket(@NotNull Packet packet, @Nullable ProgressListener progressListener) {
-        WegScheduler.getInstance().getAsyncPacketWriteExecutor().execute(() -> super.sendPacket(packet, progressListener));
-    }
-
-    @Override
-    protected void scheduleFrameSend(Runnable runnable, int index) {
-        WegScheduler.getInstance().getAsyncPacketWriteExecutor().schedule(runnable, 100L * index, TimeUnit.MILLISECONDS);
     }
 
     public TriState getCachedPermissionValue(Permission permission) {

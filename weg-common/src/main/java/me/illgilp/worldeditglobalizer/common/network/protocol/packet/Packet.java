@@ -15,6 +15,14 @@ public abstract class Packet {
 
     public abstract void handle(AbstractPacketHandler packetHandler);
 
+    public boolean canCancelPacketSending(Packet other) {
+        return false;
+    }
+
+    public boolean canBeSentImmediately() {
+        return true;
+    }
+
     @Override
     public abstract int hashCode();
 

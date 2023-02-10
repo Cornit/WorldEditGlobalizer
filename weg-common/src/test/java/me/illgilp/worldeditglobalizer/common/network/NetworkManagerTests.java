@@ -7,26 +7,34 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import me.illgilp.worldeditglobalizer.common.ProgressListener;
 import me.illgilp.worldeditglobalizer.common.WegManifest;
 import me.illgilp.worldeditglobalizer.common.WegVersion;
 import me.illgilp.worldeditglobalizer.common.WorldEditGlobalizer;
 import me.illgilp.worldeditglobalizer.common.network.data.PacketDataInput;
 import me.illgilp.worldeditglobalizer.common.network.data.PacketDataOutput;
+import me.illgilp.worldeditglobalizer.common.network.exception.PacketSendException;
 import me.illgilp.worldeditglobalizer.common.network.protocol.PacketFactory;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.Packet;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class NetworkManagerTests {
+
 
     @BeforeEach
     public void init() {
@@ -63,7 +71,30 @@ public class NetworkManagerTests {
             public void handle(FullPacket packet) {
                 received[0] = packet;
             }
+        }, new PacketSender() {
+            @Override
+            public CompletableFuture<Void> sendPacket(NetworkManager networkManager, OutgoingFragmentedPacketData ofpd, @Nullable ProgressListener progressListener) {
+                CompletableFuture<Void> completableFuture = new CompletableFuture<>();
+                try {
+                    Optional<DataFrame> frame;
+                    int index = 0;
+                    while ((frame = ofpd.nextFrame()).isPresent()) {
+                        networkManager.sendFrame(frame.get(), progressListener, index++, ofpd.size());
+                    }
+                    completableFuture.complete(null);
+                } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+                    completableFuture.completeExceptionally(
+                        new PacketSendException("Failed to send packet", e)
+                    );
+                }
+                return completableFuture;
+            }
         }) {
+            @Override
+            public boolean isConnected() {
+                return true;
+            }
+
             @Override
             protected void sendBytes(byte[] data) {
                 pdata.add(data);
@@ -82,11 +113,6 @@ public class NetworkManagerTests {
             @Override
             protected byte[] getSigningSecret() {
                 return "Secret".getBytes(StandardCharsets.UTF_8);
-            }
-
-            @Override
-            protected void scheduleFrameSend(Runnable runnable, int index) {
-                runnable.run();
             }
         };
         final Random random = new Random();

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import me.illgilp.worldeditglobalizer.common.ProgressListener;
 import me.illgilp.worldeditglobalizer.common.WegVersion;
@@ -17,7 +18,6 @@ import me.illgilp.worldeditglobalizer.common.network.data.stream.PacketDataOutpu
 import me.illgilp.worldeditglobalizer.common.network.exception.IncompatibleVersionException;
 import me.illgilp.worldeditglobalizer.common.network.exception.InvalidSignatureException;
 import me.illgilp.worldeditglobalizer.common.network.exception.PacketHandleException;
-import me.illgilp.worldeditglobalizer.common.network.exception.PacketSendException;
 import me.illgilp.worldeditglobalizer.common.network.protocol.PacketFactory;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.IdentifiedPacket;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.Packet;
@@ -25,14 +25,17 @@ import me.illgilp.worldeditglobalizer.common.util.Signature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class NetworkManager {
+public abstract class NetworkManager implements Connection {
 
     private final Map<UUID, IncomingFragmentedPacketData> incomingFragmentedPacketDataMap = new ConcurrentHashMap<>();
 
     private final AbstractPacketHandler packetHandler;
 
-    public NetworkManager(AbstractPacketHandler packetHandler) {
+    private final PacketSender packetSender;
+
+    public NetworkManager(AbstractPacketHandler packetHandler, PacketSender packetSender) {
         this.packetHandler = Objects.requireNonNull(packetHandler, "AbstractPacketHandler cannot be null");
+        this.packetSender = packetSender;
     }
 
     protected void handleBytes(byte[] data) {
@@ -67,13 +70,17 @@ public abstract class NetworkManager {
             uuid -> new IncomingFragmentedPacketData()
         );
         ifpd.appendFrame(frame);
-        if (ifpd.isComplete()) {
+        if (ifpd.isCancelled()) {
             this.incomingFragmentedPacketDataMap.remove(frame.getFrameId());
-            try (PacketDataInputStream packetIn = PacketDataInputStream.forBytes(ifpd.getPacketData())) {
-                final int packetId = packetIn.readVarInt();
-                Packet packet = getIncomingPacketFactory().createPacket(packetId);
-                packet.read(packetIn);
-                this.handlePacket(packet);
+        } else {
+            if (ifpd.isComplete()) {
+                this.incomingFragmentedPacketDataMap.remove(frame.getFrameId());
+                try (PacketDataInputStream packetIn = PacketDataInputStream.forBytes(ifpd.getPacketData())) {
+                    final int packetId = packetIn.readVarInt();
+                    Packet packet = getIncomingPacketFactory().createPacket(packetId);
+                    packet.read(packetIn);
+                    this.handlePacket(packet);
+                }
             }
         }
     }
@@ -89,17 +96,13 @@ public abstract class NetworkManager {
         packet.handle(this.packetHandler);
     }
 
-    public void sendPacket(@NotNull Packet packet, @Nullable ProgressListener progressListener) {
-        try {
-            final OutgoingFragmentedPacketData ofpd = new OutgoingFragmentedPacketData(packet, getOutgoingPacketFactory());
-            Optional<DataFrame> frame;
-            int index = 0;
-            while ((frame = ofpd.nextFrame()).isPresent()) {
-                this.sendFrame(frame.get(), progressListener, index++, ofpd.size());
-            }
-        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new PacketSendException(e);
-        }
+    public CompletableFuture<Void> sendPacket(@NotNull Packet packet, @Nullable ProgressListener progressListener) {
+        return packetSender.sendPacket(
+            this,
+            new OutgoingFragmentedPacketData(packet, getOutgoingPacketFactory()),
+            progressListener
+        );
+
     }
 
     protected void sendFrame(DataFrame dataFrame, ProgressListener progressListener, int index, int size) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
@@ -117,19 +120,10 @@ public abstract class NetworkManager {
             }
             bytes.write(Signature.sign(frameData, getSigningSecret()));
             bytes.write(frameData);
-            if (index == 0) {
-                this.sendBytes(bytes.toByteArray());
-                listener.ifPresent(l -> l.onProgressChanged(((float) (index + 1) / size)));
-            } else {
-                this.scheduleFrameSend(() -> {
-                    this.sendBytes(bytes.toByteArray());
-                    listener.ifPresent(l -> l.onProgressChanged(((float) (index + 1) / size)));
-                }, index);
-            }
+            this.sendBytes(bytes.toByteArray());
+            listener.ifPresent(l -> l.onProgressChanged(((float) (index + 1) / size)));
         }
     }
-
-    protected abstract void scheduleFrameSend(Runnable runnable, int index);
 
     protected abstract void sendBytes(byte[] data);
 

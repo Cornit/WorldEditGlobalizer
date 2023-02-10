@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import java.util.Locale;
 import java.util.UUID;
 import me.illgilp.worldeditglobalizer.common.network.AbstractPacketHandler;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.proxy.core.api.WegProxy;
 import me.illgilp.worldeditglobalizer.proxy.core.api.schematic.WegSchematicContainer;
 import me.illgilp.worldeditglobalizer.proxy.core.api.server.WegServerInfo;
@@ -23,10 +24,12 @@ import org.jetbrains.annotations.NotNull;
 public class WegCorePlayerImpl extends WegCorePlayer {
 
     private final Player player;
+    private final PacketSender packetSender;
 
-    public WegCorePlayerImpl(Player player, WegSchematicContainer schematicContainer) {
+    public WegCorePlayerImpl(Player player, WegSchematicContainer schematicContainer, PacketSender packetSender) {
         super(schematicContainer);
         this.player = player;
+        this.packetSender = packetSender;
     }
 
     @Override
@@ -66,7 +69,13 @@ public class WegCorePlayerImpl extends WegCorePlayer {
 
     @Override
     protected ServerConnection getNewServerConnection(ServerConnectionListener serverConnectionListener, AbstractPacketHandler packetHandler) {
-        return new ServerConnectionImpl(serverConnectionListener, packetHandler, getServerInfo(), this.player.getCurrentServer().orElse(null));
+        return new ServerConnectionImpl(
+            serverConnectionListener,
+            packetHandler,
+            getServerInfo(),
+            this.player.getCurrentServer().orElse(null),
+            packetSender
+        );
     }
 
     @Override

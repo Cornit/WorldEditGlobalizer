@@ -19,11 +19,13 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
 import lombok.Getter;
 import me.illgilp.worldeditglobalizer.common.WorldEditGlobalizer;
 import me.illgilp.worldeditglobalizer.common.messages.MessageHelper;
 import me.illgilp.worldeditglobalizer.common.messages.translation.TranslationKey;
 import me.illgilp.worldeditglobalizer.common.network.PacketCallback;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.common.permission.Permission;
 import me.illgilp.worldeditglobalizer.common.scheduler.WegScheduler;
 import me.illgilp.worldeditglobalizer.common.scheduler.WegSimpleScheduler;
@@ -61,7 +63,11 @@ public abstract class WegProxyCore implements WegProxy {
     @Getter
     private final OfflinePlayerCache offlinePlayerCache;
 
+    @Getter(AccessLevel.PROTECTED)
     private final WegSchematicContainer globalSchematicContainer;
+
+    @Getter(AccessLevel.PROTECTED)
+    private PacketSender packetSender;
 
     public WegProxyCore() {
         INSTANCE = this;
@@ -86,6 +92,8 @@ public abstract class WegProxyCore implements WegProxy {
         this.loadConfiguration();
         this.offlinePlayerCache.load();
         this.commandManager = new SimpleCommandManager();
+        this.packetSender = new PacketSender();
+        this.packetSender.start();
     }
 
     protected void onEnable() {
@@ -103,10 +111,6 @@ public abstract class WegProxyCore implements WegProxy {
                 getLogger().log(Level.WARNING, "shutdown of WegSimpleScheduler interrupted", e);
             }
         }
-    }
-
-    protected final WegSchematicContainer getGlobalSchematicContainer() {
-        return globalSchematicContainer;
     }
 
     protected abstract WegSimpleScheduler getNewScheduler();
@@ -231,14 +235,14 @@ public abstract class WegProxyCore implements WegProxy {
                 if (stream == null) {
                     throw new FileNotFoundException();
                 }
-                copyDefaultConfig(stream, targetFile, name);
+                copyDefaultConfig(stream, targetFile);
             } catch (IOException e) {
                 throw new IOException("Unable to read default configuration: " + name, e);
             }
         }
     }
 
-    private void copyDefaultConfig(InputStream input, File actual, String name) throws IOException {
+    private void copyDefaultConfig(InputStream input, File actual) throws IOException {
         if (actual.getParentFile() != null) {
             if (!actual.getParentFile().exists()) {
                 actual.getParentFile().mkdirs();
