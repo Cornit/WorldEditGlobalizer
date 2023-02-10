@@ -1,6 +1,11 @@
 rootProject.name = "worldeditglobalizer"
 include("weg-common")
-include("weg-proxy", "weg-proxy:core", "weg-proxy:bungeecord")
+include(
+    "weg-proxy",
+    "weg-proxy:core",
+    "weg-proxy:bungeecord",
+    "weg-proxy:velocity"
+)
 include(
     "weg-server",
     "weg-server:core",

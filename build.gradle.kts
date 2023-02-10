@@ -15,6 +15,7 @@ dependencies {
     implementation(project(path = ":weg-common", configuration = "shadow"))
     implementation(project(path = ":weg-proxy:core", configuration = "shadow"))
     implementation(project(path = ":weg-proxy:bungeecord", configuration = "shadow"))
+    implementation(project(path = ":weg-proxy:velocity", configuration = "shadow"))
     implementation(project(path = ":weg-server:core", configuration = "shadow"))
     implementation(project(path = ":weg-server:bukkit:impl", configuration = "shadow"))
     implementation(project(path = ":weg-server:bukkit:adapter_1_13_worldedit_7_2_12", configuration = "shadow"))
