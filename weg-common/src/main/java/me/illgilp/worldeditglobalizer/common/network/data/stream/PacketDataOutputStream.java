@@ -58,17 +58,14 @@ public class PacketDataOutputStream extends OutputStream implements PacketDataOu
     @Override
     public void writeVarInt(int value) throws IOException {
         int part;
-        while (true) {
+        do {
             part = value & 0x7F;
             value >>>= 7;
             if (value != 0) {
                 part |= 0x80;
             }
             this.write(part);
-            if (value == 0) {
-                break;
-            }
-        }
+        } while (value != 0);
     }
 
     @Override

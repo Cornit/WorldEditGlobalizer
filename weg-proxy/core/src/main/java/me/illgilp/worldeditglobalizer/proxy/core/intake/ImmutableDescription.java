@@ -113,13 +113,6 @@ public final class ImmutableDescription implements Description {
         return Optional.of(builder);
     }
 
-
-//    @Override
-//    public String toString() {
-//        return getUsage().buildPlain();
-//    }
-
-
     @Override
     public String toString() {
         return "ImmutableDescription{" +

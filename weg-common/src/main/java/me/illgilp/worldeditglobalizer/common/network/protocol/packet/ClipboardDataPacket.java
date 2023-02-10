@@ -31,6 +31,16 @@ public class ClipboardDataPacket extends Packet {
     }
 
     @Override
+    public boolean canCancelPacketSending(Packet other) {
+        return other instanceof ClipboardDataPacket;
+    }
+
+    @Override
+    public boolean canBeSentImmediately() {
+        return false;
+    }
+
+    @Override
     public void handle(AbstractPacketHandler packetHandler) {
         packetHandler.handle(this);
     }

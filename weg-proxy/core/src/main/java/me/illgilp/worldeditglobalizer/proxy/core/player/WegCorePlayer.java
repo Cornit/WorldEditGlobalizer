@@ -113,7 +113,15 @@ public abstract class WegCorePlayer implements WegPlayer {
                         .tagResolver(Placeholder.unparsed("percentage", percFormatted))
                         .sendActionBarTo(this);
                 }
-            );
+            ).whenComplete((unused, throwable) -> {
+                if (throwable != null) {
+                    MessageHelper.builder()
+                        .translation(TranslationKey.CLIPBOARD_DOWNLOAD_ERROR)
+                        .sendMessageTo(this);
+                    WegProxy.getInstance().getLogger()
+                        .log(Level.SEVERE, "Exception while downloading clipboard of player '" + this.getName() + "'", throwable);
+                }
+            });
             return true;
         } catch (IOException e) {
             MessageHelper.builder()

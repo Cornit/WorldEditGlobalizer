@@ -20,23 +20,27 @@ class DataFrame {
             - WegVersion.BYTES_SIZE
             - 16 // UUID frameId
             - 1 //  boolean hasMore
+            - 1 // boolean cancelled
             - 32 // byte[] signature
         ;
 
     private UUID frameId;
     private boolean moreFollowing;
+    private boolean cancelled;
     private byte[] payload;
 
 
     void read(PacketDataInput in) throws IOException {
         this.frameId = in.readUUID();
         this.moreFollowing = in.readBoolean();
+        this.cancelled = in.readBoolean();
         this.payload = in.readRemainingBytes();
     }
 
     void write(PacketDataOutput out) throws IOException {
         out.writeUUID(this.frameId);
         out.writeBoolean(this.moreFollowing);
+        out.writeBoolean(this.cancelled);
         out.writeRawBytes(this.payload);
     }
 }

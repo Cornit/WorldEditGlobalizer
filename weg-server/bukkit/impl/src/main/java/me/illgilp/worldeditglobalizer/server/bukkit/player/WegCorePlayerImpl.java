@@ -3,6 +3,7 @@ package me.illgilp.worldeditglobalizer.server.bukkit.player;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.common.permission.Permission;
 import me.illgilp.worldeditglobalizer.server.bukkit.api.worldedit.adapter.WorldEditAdapterFilter;
 import me.illgilp.worldeditglobalizer.server.bukkit.server.connection.ServerConnectionImpl;
@@ -26,16 +27,18 @@ public class WegCorePlayerImpl extends WegCorePlayer {
     private final Player player;
     private final Audience audience;
     private final Plugin plugin;
+    private final PacketSender packetSender;
 
-    public WegCorePlayerImpl(Player player, Audience audience, Plugin plugin) {
+    public WegCorePlayerImpl(Player player, Audience audience, Plugin plugin, PacketSender packetSender) {
         this.player = player;
         this.audience = audience;
         this.plugin = plugin;
+        this.packetSender = packetSender;
     }
 
     @Override
     protected ServerConnection getNewConnection() {
-        return new ServerConnectionImpl(new ServerConnectionPacketHandler(this), player, plugin);
+        return new ServerConnectionImpl(new ServerConnectionPacketHandler(this), player, plugin, packetSender);
     }
 
     @Override

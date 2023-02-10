@@ -81,13 +81,13 @@ public class WegServerCoreImpl extends WegServerCore {
     @Override
     protected Optional<WegCorePlayer> fetchPlayer(UUID uniqueId) {
         return Optional.ofNullable(Bukkit.getPlayer(uniqueId))
-            .map(player -> new WegCorePlayerImpl(player, this.plugin.adventure().player(player), plugin));
+            .map(player -> new WegCorePlayerImpl(player, this.plugin.adventure().player(player), plugin, getPacketSender()));
     }
 
     @Override
     protected Optional<WegCorePlayer> fetchPlayer(String name) {
         return Optional.ofNullable(Bukkit.getPlayer(name))
-            .map(player -> new WegCorePlayerImpl(player, this.plugin.adventure().player(player), plugin));
+            .map(player -> new WegCorePlayerImpl(player, this.plugin.adventure().player(player), plugin, getPacketSender()));
     }
 
     @Override

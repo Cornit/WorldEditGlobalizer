@@ -2,24 +2,19 @@ package me.illgilp.worldeditglobalizer.server.core.server.connection;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import lombok.Getter;
-import me.illgilp.worldeditglobalizer.common.ProgressListener;
 import me.illgilp.worldeditglobalizer.common.network.AbstractPacketHandler;
 import me.illgilp.worldeditglobalizer.common.network.NetworkManager;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.common.network.exception.IncompatibleVersionException;
 import me.illgilp.worldeditglobalizer.common.network.exception.InvalidSignatureException;
 import me.illgilp.worldeditglobalizer.common.network.exception.PacketHandleException;
 import me.illgilp.worldeditglobalizer.common.network.protocol.PacketFactory;
 import me.illgilp.worldeditglobalizer.common.network.protocol.Protocol;
 import me.illgilp.worldeditglobalizer.common.network.protocol.ProtocolPacketFactory;
-import me.illgilp.worldeditglobalizer.common.network.protocol.packet.Packet;
-import me.illgilp.worldeditglobalizer.common.scheduler.WegScheduler;
 import me.illgilp.worldeditglobalizer.server.core.api.WegServer;
 import me.illgilp.worldeditglobalizer.server.core.server.WegServerConnection;
 import net.kyori.adventure.key.Key;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ServerConnection extends NetworkManager implements WegServerConnection {
 
@@ -28,8 +23,8 @@ public abstract class ServerConnection extends NetworkManager implements WegServ
     @Getter
     private State state = State.UNKNOWN;
 
-    public ServerConnection(AbstractPacketHandler packetHandler) {
-        super(packetHandler);
+    public ServerConnection(AbstractPacketHandler packetHandler, PacketSender packetSender) {
+        super(packetHandler, packetSender);
     }
 
     @Override
@@ -66,15 +61,5 @@ public abstract class ServerConnection extends NetworkManager implements WegServ
             throw new PacketHandleException(e);
         }
         this.state = State.USABLE;
-    }
-
-    @Override
-    public void sendPacket(@NotNull Packet packet, @Nullable ProgressListener progressListener) {
-        WegScheduler.getInstance().getAsyncPacketWriteExecutor().execute(() -> super.sendPacket(packet, progressListener));
-    }
-
-    @Override
-    protected void scheduleFrameSend(Runnable runnable, int index) {
-        WegScheduler.getInstance().getAsyncPacketWriteExecutor().schedule(runnable, 100L * index, TimeUnit.MILLISECONDS);
     }
 }

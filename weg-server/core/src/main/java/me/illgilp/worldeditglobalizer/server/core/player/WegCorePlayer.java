@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import lombok.Getter;
-import lombok.Setter;
 import me.illgilp.worldeditglobalizer.common.config.CommonProxyConfig;
 import me.illgilp.worldeditglobalizer.common.messages.MessageHelper;
 import me.illgilp.worldeditglobalizer.common.messages.tag.ProgressBarTag;
@@ -39,9 +38,6 @@ public abstract class WegCorePlayer implements WegPlayer {
     private final Identity identity = new IdentityImpl();
 
     private CommonProxyConfig proxyConfig;
-
-    @Setter
-    private boolean autoUploadReady = false;
 
     @Getter
     private ServerConnection serverConnection;
@@ -131,7 +127,15 @@ public abstract class WegCorePlayer implements WegPlayer {
                     .tagResolver(Placeholder.unparsed("percentage", percFormatted))
                     .sendActionBarTo(this);
             }
-        );
+        ).whenComplete((unused, throwable) -> {
+            if (throwable != null) {
+                MessageHelper.builder()
+                    .translation(TranslationKey.CLIPBOARD_UPLOAD_ERROR)
+                    .sendMessageTo(this);
+                WegServer.getInstance().getLogger()
+                    .log(Level.SEVERE, "Exception while uploading clipboard of player '" + this.getName() + "'", throwable);
+            }
+        });
         return true;
     }
 

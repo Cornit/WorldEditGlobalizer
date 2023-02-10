@@ -72,8 +72,8 @@ public class WegProxyCoreImpl extends WegProxyCore {
                 new WegCorePlayerImpl(
                     proxiedPlayer,
                     this.plugin.adventure().player(proxiedPlayer),
-                    getGlobalSchematicContainer()
-                ));
+                    getGlobalSchematicContainer(),
+                    getPacketSender()));
     }
 
     @Override
@@ -83,8 +83,8 @@ public class WegProxyCoreImpl extends WegProxyCore {
                 new WegCorePlayerImpl(
                     proxiedPlayer,
                     this.plugin.adventure().player(proxiedPlayer),
-                    getGlobalSchematicContainer()
-                ));
+                    getGlobalSchematicContainer(),
+                    getPacketSender()));
     }
 
     @Override

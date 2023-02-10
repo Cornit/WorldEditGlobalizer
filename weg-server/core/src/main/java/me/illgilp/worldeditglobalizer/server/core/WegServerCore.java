@@ -17,9 +17,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.AccessLevel;
 import lombok.Getter;
 import me.illgilp.worldeditglobalizer.common.messages.MessageHelper;
 import me.illgilp.worldeditglobalizer.common.network.PacketCallback;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.common.network.protocol.packet.KeepAlivePacket;
 import me.illgilp.worldeditglobalizer.common.scheduler.WegScheduler;
 import me.illgilp.worldeditglobalizer.common.scheduler.WegSimpleScheduler;
@@ -43,6 +45,9 @@ public abstract class WegServerCore implements WegServer {
     @Getter
     private ServerConfig serverConfig;
 
+    @Getter(AccessLevel.PROTECTED)
+    private PacketSender packetSender;
+
     public WegServerCore() {
         INSTANCE = this;
     }
@@ -62,6 +67,8 @@ public abstract class WegServerCore implements WegServer {
         }
         serverConfig = new ServerConfig(new YamlConfiguration(new File(getDataFolder(), "config.yaml")));
         this.loadConfiguration();
+        this.packetSender = new PacketSender();
+        this.packetSender.start();
     }
 
     protected void onEnable() {
@@ -186,14 +193,14 @@ public abstract class WegServerCore implements WegServer {
                 if (stream == null) {
                     throw new FileNotFoundException();
                 }
-                copyDefaultConfig(stream, targetFile, name);
+                copyDefaultConfig(stream, targetFile);
             } catch (IOException e) {
                 throw new IOException("Unable to read default configuration: " + name, e);
             }
         }
     }
 
-    private void copyDefaultConfig(InputStream input, File actual, String name) throws IOException {
+    private void copyDefaultConfig(InputStream input, File actual) throws IOException {
         if (actual.getParentFile() != null) {
             if (!actual.getParentFile().exists()) {
                 actual.getParentFile().mkdirs();

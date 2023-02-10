@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import me.illgilp.worldeditglobalizer.common.network.AbstractPacketHandler;
+import me.illgilp.worldeditglobalizer.common.network.PacketSender;
 import me.illgilp.worldeditglobalizer.proxy.bungeecord.server.connection.ServerConnectionImpl;
 import me.illgilp.worldeditglobalizer.proxy.core.api.WegProxy;
 import me.illgilp.worldeditglobalizer.proxy.core.api.schematic.WegSchematicContainer;
@@ -26,11 +27,13 @@ public class WegCorePlayerImpl extends WegCorePlayer {
 
     private final ProxiedPlayer proxiedPlayer;
     private final Audience audience;
+    private final PacketSender packetSender;
 
-    public WegCorePlayerImpl(ProxiedPlayer proxiedPlayer, Audience audience, WegSchematicContainer schematicContainer) {
+    public WegCorePlayerImpl(ProxiedPlayer proxiedPlayer, Audience audience, WegSchematicContainer schematicContainer, PacketSender packetSender) {
         super(schematicContainer);
         this.proxiedPlayer = proxiedPlayer;
         this.audience = audience;
+        this.packetSender = packetSender;
     }
 
     @Override
@@ -70,7 +73,7 @@ public class WegCorePlayerImpl extends WegCorePlayer {
 
     @Override
     protected ServerConnection getNewServerConnection(ServerConnectionListener serverConnectionListener, AbstractPacketHandler packetHandler) {
-        return new ServerConnectionImpl(serverConnectionListener, packetHandler, getServerInfo(), this.proxiedPlayer.getServer());
+        return new ServerConnectionImpl(serverConnectionListener, packetHandler, getServerInfo(), this.proxiedPlayer.getServer(), packetSender);
     }
 
     @Override

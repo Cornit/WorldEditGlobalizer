@@ -70,16 +70,13 @@ public class PacketDataInputStream extends InputStream implements PacketDataInpu
         int numRead = 0;
         int result = 0;
         byte read;
-        while (true) {
+        do {
             read = this.readByte();
             result |= (read & 0x7F) << (numRead++ * 7);
             if (numRead > 5) {
                 throw new RuntimeException("VarInt too big");
             }
-            if ((read & 0x80) != 0x80) {
-                break;
-            }
-        }
+        } while ((read & 0x80) == 0x80);
         return result;
     }
 
