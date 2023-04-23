@@ -1,6 +1,5 @@
 package me.illgilp.worldeditglobalizer.proxy.bungeecord;
 
-import java.io.IOException;
 import me.illgilp.worldeditglobalizer.proxy.bungeecord.command.ConsoleCommandSource;
 import me.illgilp.worldeditglobalizer.proxy.core.api.command.CommandSource;
 import me.illgilp.worldeditglobalizer.proxy.core.server.connection.ServerConnection;
@@ -18,6 +17,8 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import org.bstats.bungeecord.Metrics;
+
+import java.io.IOException;
 
 public class WorldEditGlobalizerPlugin extends Plugin implements Listener {
 
@@ -59,7 +60,7 @@ public class WorldEditGlobalizerPlugin extends Plugin implements Listener {
                 CommandSource commandSource;
                 if (sender instanceof ProxiedPlayer) {
                     commandSource = wegProxyCore.getPlayer(((ProxiedPlayer) sender).getUniqueId())
-                        .orElseThrow(() -> new IllegalStateException("strange state caught: could not find WegCorePlayer from online player"));
+                            .orElseThrow(() -> new IllegalStateException("strange state caught: could not find WegCorePlayer from online player"));
                 } else {
                     commandSource = new ConsoleCommandSource(WorldEditGlobalizerPlugin.this.adventure().sender(sender));
                 }
@@ -81,23 +82,23 @@ public class WorldEditGlobalizerPlugin extends Plugin implements Listener {
     @EventHandler
     public void onPlayerConnected(PostLoginEvent event) {
         this.wegProxyCore.onPlayerConnected(this.wegProxyCore.getPlayer(event.getPlayer().getUniqueId())
-            .orElseThrow(() -> new IllegalStateException("could not get WegCorePlayer in PostLoginEvent")));
+                .orElseThrow(() -> new IllegalStateException("could not get WegCorePlayer in PostLoginEvent")));
     }
 
     @EventHandler
     public void onPlayerDisconnected(PlayerDisconnectEvent event) {
         this.wegProxyCore.onPlayerDisconnected(this.wegProxyCore.getPlayer(event.getPlayer().getUniqueId())
-            .orElseThrow(() -> new IllegalStateException("could not get WegCorePlayer in PlayerDisconnectEvent")));
+                .orElseThrow(() -> new IllegalStateException("could not get WegCorePlayer in PlayerDisconnectEvent")));
     }
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
         if (event.getReceiver() instanceof ProxiedPlayer && event.getSender() instanceof Server) {
             boolean cancel = this.wegProxyCore.onPluginMessage(
-                wegProxyCore.getCorePlayer(((ProxiedPlayer) event.getReceiver()).getUniqueId())
-                    .orElseThrow(() -> new IllegalStateException("strange state caught: could not find WegCorePlayer from online player")),
-                event.getTag(),
-                event.getData()
+                    wegProxyCore.getCorePlayer(((ProxiedPlayer) event.getReceiver()).getUniqueId())
+                            .orElseThrow(() -> new IllegalStateException("strange state caught: could not find WegCorePlayer from online player")),
+                    event.getTag(),
+                    event.getData()
             );
             event.setCancelled(cancel);
         }
@@ -105,19 +106,20 @@ public class WorldEditGlobalizerPlugin extends Plugin implements Listener {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent e) {
-        CommandSource commandSource;
-        if (e.getSender() instanceof CommandSender) {
-            if (e.getSender() instanceof ProxiedPlayer) {
-                commandSource = wegProxyCore.getPlayer(((ProxiedPlayer) e.getSender()).getUniqueId())
-                    .orElseThrow(() -> new IllegalStateException("strange state caught: could not find WegCorePlayer from online player"));
-            } else {
-                commandSource = new ConsoleCommandSource(WorldEditGlobalizerPlugin.this.adventure().sender((CommandSender) e.getSender()));
+        final String commandLine = e.getCursor().startsWith("/") ? e.getCursor().substring(1) : e.getCursor();
+
+        if (commandLine.startsWith("weg ")) {
+            CommandSource commandSource;
+            if (e.getSender() instanceof CommandSender) {
+                if (e.getSender() instanceof ProxiedPlayer) {
+                    commandSource = wegProxyCore.getPlayer(((ProxiedPlayer) e.getSender()).getUniqueId())
+                            .orElseThrow(() -> new IllegalStateException("strange state caught: could not find WegCorePlayer from online player"));
+                } else {
+                    commandSource = new ConsoleCommandSource(WorldEditGlobalizerPlugin.this.adventure().sender((CommandSender) e.getSender()));
+                }
+                e.getSuggestions().clear();
+                e.getSuggestions().addAll(this.wegProxyCore.onTabComplete(commandSource, commandLine));
             }
-            e.getSuggestions().clear();
-            e.getSuggestions().addAll(this.wegProxyCore.onTabComplete(
-                commandSource,
-                e.getCursor().startsWith("/") ? e.getCursor().substring(1) : e.getCursor()
-            ));
         }
     }
 }
